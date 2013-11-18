@@ -26,7 +26,7 @@ include('header.php');
                 </div>
 				<div class="col_2">
                     <label>Service</label>
-                    <div class="input">
+                    <div class="input" id="service_select">
 						<select>
 							<option>All</option>
 							<option>Fixed Line</option>
@@ -34,10 +34,19 @@ include('header.php');
 						</select>
                     </div>
                 </div>
-				<div class="col_2">
+				<div class="col_3">
                     <label>Node Name</label>
                     <div class="input">
-                       <input type="text" placeholder="CLLI or IP Address" class="medium" />
+					<select multiple="multiple" id="node_select">
+						<optgroup label="NeList.site_name #1">
+							<option value="NeList.ip_addr">NeList.name #1</option>
+							<option value="NeList.ip_addr">NeList.name #2</option>
+						</optgroup>
+						<optgroup label="NeList.site_name #2">
+							<option value="NeList.ip_addr">NeList.name #3</option>
+							<option value="NeList.ip_addr">NeList.name #4</option>
+						</optgroup>
+					</select>
                     </div>
                 </div>
 				<div class="col_2 last">
@@ -148,12 +157,15 @@ include('header.php');
         </div>
     </div>
 </div>
-    
-           
         </div><!--container -->
     </div>
 </div>
-
+<script type="text/javascript">
+$("select").multiselect({
+   minWidth: 150
+});
+$("select").multiselect().multiselectfilter();
+</script>
 <?php
 include('footer.php');
 ?>
