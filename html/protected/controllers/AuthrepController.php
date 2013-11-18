@@ -39,13 +39,15 @@ class AuthrepController extends Controller
 			$strEvent = "a.status LIKE '%".$_POST['event']."'";
 		}
 		if(!empty($_POST['ne_name'])){
-			$node = explode(',',$_POST['ne_name']);
-			foreach($node as $item){
-				$long = ip2long(trim($item));
-				if ($long == -1 || $long === FALSE) {
-					$strNodeName .= "'".trim($item)."',";
-				}else{
-					$strNodeIp .= "'".trim($item)."',";
+			foreach($_POST['ne_name'] as $item){
+				$node = explode('xx#xx',$item);
+				foreach($node as $val){
+					$long = ip2long(trim($val));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($val)."',";
+					}else{
+						$strNodeIp .= "'".trim($val)."',";
+					}
 				}
 			}
 			if(!empty($strNodeName)){
@@ -57,7 +59,7 @@ class AuthrepController extends Controller
 				$strNodeIp = 'a.node_ip IN '.$strNodeIp;
 			}
 		}
-		if(empty($_POST['username']) && empty($_POST['ne_name']) && empty($_POST['event']) && $_POST['click'] === 'false'){
+		if((strtotime(date('d-m-Y')) == strtotime($_POST['start_date'])) && empty($_POST['username']) && empty($_POST['ne_name']) && empty($_POST['event']) && $_POST['click'] === 'false'){
 			$row = Yii::app()->db->createCommand()
 			->select("a.id,DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd")
 			->from('NE_AUTHACCT a, (SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT) b')

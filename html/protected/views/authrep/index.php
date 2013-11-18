@@ -11,12 +11,18 @@ $form=$this->beginWidget('CActiveForm', array(
 			if($(".errorSummary").css("display") !== "none") return;
 			var result = $("#req_result");
 			result.html("<img src='.Yii::app()->request->baseUrl.'/images/loading.gif>");
+			var NodeName = $("#NodeName").val();
+			if(NodeName !== null){
+				NodeName = (NodeName.length == $("#NodeName option").length) ? "" : NodeName;
+			}else{
+				NodeName = "";
+			}
 			$.ajax({
 				url: "'.$this->createUrl($serv).'",
 				dataType: "json",
 				cache: false,
 				type: "post",
-				data:{"username":$("#UserName").val(),"start_date":$("#'.get_class($model).'_StartDate").val(),"end_date":$("#'.get_class($model).'_EndDate").val(),"ne_name":$("#NodeName").val(),"event":$("#Event option:selected").val(),"click":"true"},
+				data:{"username":$("#UserName").val(),"start_date":$("#'.get_class($model).'_StartDate").val(),"end_date":$("#'.get_class($model).'_EndDate").val(),"ne_name":NodeName,"event":$("#Event option:selected").val(),"click":"true"},
 				success: function(data) {
 					SplitTable(data);
 				}
@@ -63,12 +69,21 @@ $form=$this->beginWidget('CActiveForm', array(
 						<?php echo $form->error($model,'EndDate'); ?>
                     </div>
                 </div>
-				<div class="col_1">
+				<div class="col_2">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'Event');?></div>
                     <div class="input">
 						<? //echo CHtml::dropDownList('Event','',CHtml::listData(TblAuthacct::model()->findAll(), 'status', 'status'),array('empty' => 'All'));
 						echo CHtml::dropDownList('Event','',array('ACCEPT'=>'Accept','REJECT'=>'Reject'),array('empty' => 'All'));
 						?>    
+						<?
+						Yii::import('application.extensions.multiselect.multiSelect');
+						$options = array(
+							'multiple' => false,
+							'header' => 'Select an option',
+							'noneSelectedText' => "All",
+						);
+						multiSelect::addMultiselect('#Event',$options);
+						?>
                     </div>
                 </div>
 
@@ -87,10 +102,18 @@ $form=$this->beginWidget('CActiveForm', array(
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'NodeName');?></div>
                     <div class="input"> 
 						<?php
-						  echo CHtml::textField('NodeName','',array('id'=>'NodeName','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium"));
-						 //echo $form->textField($model,'NodeName','',array('id'=>'NodeName','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium"));
+
+						$sql = Yii::app()->db->createCommand('SELECT CONCAT(name,"xx#xx",ip_addr) AS value,CONCAT(name," , ",ip_addr) AS item,site_name FROM NE_LIST')->queryAll();
+						$data = CHtml::listData($sql, 'value', 'item' ,'site_name');
+						echo CHtml::dropDownList('NodeName','',$data,array('multiple' => 'multiple',)); 
+						$options = array(
+							'multiple' => true,
+						);
+						multiSelect::addMultiselect('#NodeName',$options);
+						//echo CHtml::textField('NodeName','',array('id'=>'NodeName','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium"));
+						//echo $form->textField($model,'NodeName','',array('id'=>'NodeName','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium"));
 						//echo CHtml::activeTextField($model,'NodeName',array('id'=>get_class($model).'_'.'NodeName','width'=>100,'maxlength'=>100,'placeholder'=>'CLLI or IP Address','class'=>'medium')); 
-						 ?>
+						?>    
 						<?php //echo $form->error($model,'NodeName'); ?>
 					</div>
 				</div>
