@@ -88,10 +88,11 @@
             </header>
             
             <nav class="container">
-                <select class="mobile-only row" onchange="window.open(this.options[this.selectedIndex].value,'_top')">
+                <!-- <select class="mobile-only row" onchange="window.open(this.options[this.selectedIndex].value,'_top')">
 
                     <option value="index.html">Dashboard</option>
                 </select>
+				-->
 
                 <ul class="sf-menu mobile-hide row clearfix">
                     <li>
