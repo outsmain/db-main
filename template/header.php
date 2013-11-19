@@ -27,14 +27,20 @@
         <link rel="stylesheet" href="assets/styles/style.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="assets/styles/global.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="assets/styles/config.css" type="text/css" media="screen" />
-        
-        <!-- Adds HTML5 Placeholder attributes to those lesser browsers (i.e. IE) -->
-        <script type="text/javascript" src="assets/scripts/jquery.placeholder.1.2.min.shrink.js"></script>
+		<link rel="stylesheet" href="assets/styles/jquery.multiselect.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="assets/styles/jquery.multiselect.filter.css" type="text/css" media="screen" />
 
-        
         <!-- Use CDN on production server -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+        
+        <!-- Adds HTML5 Placeholder attributes to those lesser browsers (i.e. IE) -->
+        <script type="text/javascript" src="assets/scripts/jquery.placeholder.1.2.min.shrink.js"></script>
+		
+		<script type="text/javascript" src="assets/scripts/jquery.multiselect.filter.min.js"></script>
+		<script type="text/javascript" src="assets/scripts/jquery.multiselect.min.js"></script>
+		<script type="text/javascript" src="assets/scripts/flot/jquery.flot.min.js"></script>
+		<script type="text/javascript" src="assets/scripts/flot/jquery.flot.stack.min.js"></script>
         
         <!-- Menu -->
         <link rel="stylesheet" href="assets/scripts/superfish/superfish.css" type="text/css" media="screen" />
@@ -82,10 +88,11 @@
             </header>
             
             <nav class="container">
-                <select class="mobile-only row" onchange="window.open(this.options[this.selectedIndex].value,'_top')">
+                <!-- <select class="mobile-only row" onchange="window.open(this.options[this.selectedIndex].value,'_top')">
 
                     <option value="index.html">Dashboard</option>
                 </select>
+				-->
 
                 <ul class="sf-menu mobile-hide row clearfix">
                     <li>
@@ -93,8 +100,18 @@
                     </li>
                     <li><a href="/subsrep"><span>Subscriber</span></a>
                         <ul>
-                            <li><a href="/subsrep/?serv=online">Online</a></li>
-							<li><a href="/subsrep/?serv=wifi">Wi-Fi</a></li>
+							<li><a href="/subsrep/outage?serv=wifi">Impact</a>
+								<ul>
+									<li><a href="/subsrep/outage?serv=online">Online</a></li>
+									<li><a href="/subsrep/outage?serv=wifi">Wi-Fi</a></li>
+								</ul>
+							</li>
+							<li><a href="/subsrep/query?serv=wifi">Query</a>
+								<ul>
+									<li><a href="/subsrep/outage?serv=online">Online</a></li>
+									<li><a href="/subsrep/outage?serv=wifi">Wi-Fi</a></li>
+								</ul>
+							</li>
                         </ul>
                     </li>
 					<li class="active iconed"><a href="/authrep"><span>Authen Log</span></a>
