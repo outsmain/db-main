@@ -1,42 +1,12 @@
 <?php
-$page_name="Dashboard1";
-include('header.php');
-?>
+// change the following paths if necessary
+$yii=dirname(__FILE__).'/framework/yii.php';
+$config=dirname(__FILE__).'/protected/config/main.php';
 
-<div class="container" id="actualbody">
+// remove the following lines when in production mode
+defined('YII_DEBUG') or define('YII_DEBUG',true);
+// specify how many levels of call stack should be shown in each log message
+defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
-<div class="row clearfix">
-	<div class="col_12">
-		<div class="widget clearfix">
-        <h2>Report</h2>
-			<div class="widget_inside">
-				<h3>Current Statistics</h3>
-				
-				<div class="report">
-					<div class="button up">
-
-						<span class="value">35,331</span>
-						<span class="attr">Devices</span>
-					</div>
-					<div class="button down">
-						<span class="value">25</span>
-						<span class="attr">Users</span>
-					</div>
-                    <div class="button">
-						<span class="value">65,325</span>
-						<span class="attr">Interfaces</span>
-					</div>
-				</div>
-            </div>
-        </div>
-    </div>
-</div>
-    
-           
-        </div><!--container -->
-    </div>
-</div>
-
-<?php
-include('footer.php');
-?>
+require_once($yii);
+Yii::createWebApplication($config)->run();

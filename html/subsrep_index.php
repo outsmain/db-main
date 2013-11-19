@@ -10,18 +10,18 @@ include('header.php');
 		<div class="widget clearfix">
         <h2>Filter</h2>
 			<div class="widget_inside">				
-				<div class="col_2">
+				<div class="col_3">
                     <div class="clearfix">
                         <label>Start Date</label>
                         <div class="input">
-                            <input type="text" placeholder="DD/MM/YYYY HH:MM:SS" class="medium" />
+                            <input type="text" placeholder="DD/MM/YYYY HH:MM:SS" class="large" />
                         </div>
                     </div>
 				</div>
-				<div class="col_2">
+				<div class="col_3">
                     <label>End Date</label>
                     <div class="input">
-                       <input type="text" placeholder="DD/MM/YYYY HH:MM:SS" class="medium" />
+                       <input type="text" placeholder="DD/MM/YYYY HH:MM:SS" class="large" />
                     </div>
                 </div>
 				<div class="col_2">
@@ -34,18 +34,12 @@ include('header.php');
 						</select>
                     </div>
                 </div>
-				<div class="col_2">
+				<div class="col_2 last">
                     <label>Node Name</label>
                     <div class="input">
-                       <input type="text" placeholder="CLLI or IP Address" class="medium" />
+                       <input type="text" placeholder="CLLI or IP Address" class="large" />
                     </div>
                 </div>
-				<div class="col_2 last">
-					<label>&nbsp;</label>
-                    <div class="input">
-						<input type="submit" class="button blue" value="Submit"></input>
-					</div>
-				</div>
 			</div>
         </div>
     </div>

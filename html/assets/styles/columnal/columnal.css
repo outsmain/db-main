@@ -58,7 +58,7 @@ The 1140px Grid by Andy Taylor – http://cssgrid.net – http://www.twitter.com
 
 .col_1, .col_2, .col_3, .col_4, .col_5, .col_6, .col_7, .col_8, .col_9, .col_10, .col_11 {float: left; margin-right: 3.8%; position: relative;}
 
-.col_1 {width: 4.85%;}  /* ie - 4.7% */
+.col_1 {width: 9.85%;}  /* ie - 4.7% */
 .col_2 {width: 13.5%;}  /* ie - 13.2% */
 .col_3 {width: 22.15%;} /* ie - 22.05% */
 .col_4 {width: 30.8%;} 	/* ie - 30.6% */
