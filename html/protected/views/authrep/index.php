@@ -103,7 +103,7 @@ $form=$this->beginWidget('CActiveForm', array(
                     <div class="input"> 
 						<?php
 
-						$sql = Yii::app()->db->createCommand('SELECT CONCAT(name,"xx#xx",ip_addr) AS value,CONCAT(name," , ",ip_addr) AS item,site_name FROM NE_LIST')->queryAll();
+						$sql = Yii::app()->db->createCommand('SELECT CONCAT(name,"xx#xx",ip_addr) AS value,CONCAT(name," / ",ip_addr) AS item,site_name FROM NE_LIST')->queryAll();
 						$data = CHtml::listData($sql, 'value', 'item' ,'site_name');
 						echo CHtml::dropDownList('NodeName','',$data,array('multiple' => 'multiple',)); 
 						$options = array(

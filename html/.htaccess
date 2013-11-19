@@ -5,10 +5,10 @@ RewriteEngine on
 # if a directory or a file exists, use it directly
 #RewriteCond %{REQUEST_FILENAME} !-f
 #RewriteCond %{REQUEST_FILENAME} !-d
-RedirectMatch ^/$ http://localhost/true
+#RedirectMatch ^/$ http://localhost/true
 
 
 # otherwise forward it to index.php
-RewriteRule ^authrep(.*)$ true/index.php?r=Authrep&%{QUERY_STRING} [L]
-RewriteRule ^subsrep(.*)$ true/index.php?r=Subsrep&%{QUERY_STRING} [L]
+RewriteRule ^authrep(.*)$ index.php?r=Authrep&%{QUERY_STRING} [L]
+RewriteRule ^subsrep(.*)$ index.php?r=Subsrep&%{QUERY_STRING} [L]
 </IfModule>
