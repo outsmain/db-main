@@ -87,31 +87,24 @@ function onDrop(){
 function SplitTable(data){
 	var result = $('#req_result');
 	if(data.length > 0){
-		var tmp = '<table class="dataTable">';
-			tmp += '<thead>';
-			tmp += '<tr>';
-			tmp += '<th class="align-left">Login Date</th>';
-			tmp += '<th class="align-left">Node Name</th>';
-			tmp += '<th class="align-left">Node IP</th>';
-			tmp += '<th class="align-left">User Name</th>';
-			tmp += '<th class="align-left">User IP</th>';
-			tmp += '<th class="align-left">Command</th>';
-			tmp += '</tr>';
-			tmp += '</thead>';
-			tmp += '<tbody id="detail">';
-		for(var i=0;i<data.length;++i){
-			tmp += '<tr class="gradeX" id="dt-'+((data[i].id == null)?'-':data[i].id)+'">';
-			tmp += '<td>'+((data[i].login_date == null)?'-':data[i].login_date)+'</td>';
-			tmp += '<td>'+((data[i].node_name == null)?'-':data[i].node_name)+'</td>';
-			tmp += '<td>'+((data[i].node_ip == null)?'-':data[i].node_ip)+'</td>';
-			tmp += '<td>'+((data[i].user_name == null)?'-':data[i].user_name)+'</td>';
-			tmp += '<td>'+((data[i].user_ip == null)?'-':data[i].user_ip)+'</td>';
-			tmp += '<td>'+((data[i].cmd == null)?'-':data[i].cmd)+'</td>';
-			tmp += '</tr>';
+		var tmp = [];
+		tmp.push('<table class="dataTable"><thead><tr><th class="align-left">Login Date</th><th class="align-left">Node Name</th><th class="align-left">Node IP</th><th class="align-left">User Name</th><th class="align-left">User IP</th><th class="align-left">Command</th></tr></thead><tbody id="detail">');
+		var j = data.length;
+		var i=0;
+		while(i<j){
+			tmp.push('<tr class="gradeX" id="dt-'+((data[i].id == null)?'-':data[i].id)+'">');
+			tmp.push('<td>'+((data[i].login_date == null)?'-':data[i].login_date)+'</td>');
+			tmp.push('<td>'+((data[i].node_name == null)?'-':data[i].node_name)+'</td>');
+			tmp.push('<td>'+((data[i].node_ip == null)?'-':data[i].node_ip)+'</td>');
+			tmp.push('<td>'+((data[i].user_name == null)?'-':data[i].user_name)+'</td>');
+			tmp.push('<td>'+((data[i].user_ip == null)?'-':data[i].user_ip)+'</td>');
+			tmp.push('<td>'+((data[i].cmd == null)?'-':data[i].cmd)+'</td>');
+			tmp.push('</tr>');
+			++i;
 		}
-		tmp	+= '</tbody>';
-		tmp	+= '</table>';
-		result.html(tmp);
+		tmp.push('</tbody></table>');
+		var Str = tmp.join('');
+		result.html(Str);
 		$('.dataTable').dataTable({
 			"sPaginationType": "full_numbers",
 			"bJQueryUI": true
@@ -123,8 +116,9 @@ function SplitTable(data){
 }
 
 function SplitDialog(url){
-	$('#detail > tr').click(function(){
-	var id = this.id.split('-');
+	$('.dataTable > tbody').click(function(event){
+	var tr = $(event.target).parent();
+	var id = tr[0].id.split('-');
 	$.ajax({
 		url: url,
 		dataType: 'json',
@@ -132,7 +126,7 @@ function SplitDialog(url){
 		type: 'post',
 		data: {'id':id[1]},
 		success: function(data){
-			var tmp = '';
+			var tmp = [];
 			if(data.length > 0){
 				$.each(data,function(i, val){
 					switch(val.is_use){
@@ -149,24 +143,24 @@ function SplitDialog(url){
 							var use = 'Disable';
 							break;
 					}
-					tmp += '<p>Add Date : '+((val.add_date == null)?'-':formatDate(val.add_date))+'</p>';
-					tmp += '<p>Update Date : '+((val.update_date == null)?'-':formatDate(val.update_date))+'</p>';
-					tmp += '<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>';
-					tmp += '<p>Name : '+((val.name == null)?'-':val.name)+'</p>';
-					tmp += '<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>';
-					tmp += '<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>';
-					tmp += '<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>';
-					tmp += '<p>Model : '+((val.model == null)?'-':val.model)+'</p>';
-					tmp += '<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>';
-					tmp += '<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>';
-					tmp += '<p>Level : '+((val.level == null)?'-':val.level)+'</p>';
-					tmp += '<p>Status Mapped Values : '+use+'</p>';
-					tmp += (i > 0)?'<p></p>':'';
+					tmp.push('<p>Add Date : '+((val.add_date == null)?'-':formatDate(val.add_date))+'</p>');
+					tmp.push('<p>Update Date : '+((val.update_date == null)?'-':formatDate(val.update_date))+'</p>');
+					tmp.push('<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>');
+					tmp.push('<p>Name : '+((val.name == null)?'-':val.name)+'</p>');
+					tmp.push('<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>');
+					tmp.push('<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>');
+					tmp.push('<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>');
+					tmp.push('<p>Model : '+((val.model == null)?'-':val.model)+'</p>');
+					tmp.push('<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>');
+					tmp.push('<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>');
+					tmp.push('<p>Level : '+((val.level == null)?'-':val.level)+'</p>');
+					tmp.push('<p>Status Mapped Values : '+use+'</p>');
+					if(i > 0) tmp.push('<p></p>');
 				});
 			}else{
-				tmp = 'No Data Found.';
+				tmp.push('No Data Found.');
 			}
-			$('#dialog').html(tmp);
+			$('#dialog').html(tmp.join(''));
 			$('#dialog').dialog('open');						 
 		}
 	});	

@@ -63,7 +63,7 @@ class AuthrepController extends Controller
 			$row = Yii::app()->db->createCommand()
 			->select("a.id,DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd")
 			->from('NE_AUTHACCT a, (SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT) b')
-			->where(array('and', "UNIX_TIMESTAMP(a.login_date) >= UNIX_TIMESTAMP(b.MaxDate)", "UNIX_TIMESTAMP(a.login_date) <= UNIX_TIMESTAMP(b.MaxDate)"))
+			->where("UNIX_TIMESTAMP(DATE(a.login_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate))")
 			->order('UNIX_TIMESTAMP(a.login_date) desc')
 			->queryAll();
 		}else{
@@ -73,7 +73,7 @@ class AuthrepController extends Controller
 			->where(array('and', $strUsername, "UNIX_TIMESTAMP(a.login_date) >= UNIX_TIMESTAMP('".$start_date."')", "UNIX_TIMESTAMP(a.login_date) <= UNIX_TIMESTAMP('".$end_date."')", $strEvent, $strNodeName, $strNodeIp))
 			->order('UNIX_TIMESTAMP(a.login_date) desc')
 			->queryAll();
-		}	
+		}
 		echo CJSON::encode($row);
 			 /* $sql = "SELECT
 					  a.login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd 
