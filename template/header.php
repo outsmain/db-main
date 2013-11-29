@@ -1,4 +1,5 @@
 <html lang="en-us">
+<html lang="en-us">
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
@@ -116,7 +117,8 @@
                     </li>
 					<li class="active iconed"><a href="/authrep"><span>Authen Log</span></a>
                         <ul>
-                            <li><a href="/authrep/?serv=online">User</a></li>
+                            <li><a href="/authrep/user">User</a></li>
+							<li><a href="/authrep/device">Device</a></li>
                         </ul>
                     </li>
 					<li><a href="/confrepo"><span>Config Repos.</span></a>
