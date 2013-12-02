@@ -92,12 +92,12 @@ function SplitTable(data){
 		var j = data.length;
 		var i=0;
 		while(i<j){
-			tmp.push('<tr class="gradeX" id="dt-'+data[i].id+'">');
+			tmp.push('<tr class="gradeX" id="dt-'+((data[i].id == null)?'-':data[i].id)+'">');
 			tmp.push('<td>'+((data[i].login_date == null)?'-':data[i].login_date)+'</td>');
-			tmp.push('<td>'+((data[i].node_name == null)?'All':data[i].node_name)+'</td>');
-			tmp.push('<td>'+((data[i].node_ip == null)?'All':data[i].node_ip)+'</td>');
-			tmp.push('<td>'+((data[i].user_name == null)?'All':data[i].user_name)+'</td>');
-			tmp.push('<td>'+((data[i].user_ip == null)?'All':data[i].user_ip)+'</td>');
+			tmp.push('<td>'+((data[i].node_name == null)?'-':data[i].node_name)+'</td>');
+			tmp.push('<td>'+((data[i].node_ip == null)?'-':data[i].node_ip)+'</td>');
+			tmp.push('<td>'+((data[i].user_name == null)?'-':data[i].user_name)+'</td>');
+			tmp.push('<td>'+((data[i].user_ip == null)?'-':data[i].user_ip)+'</td>');
 			tmp.push('<td>'+((data[i].cmd == null)?'-':data[i].cmd)+'</td>');
 			tmp.push('</tr>');
 			++i;
@@ -148,12 +148,12 @@ function SplitDialog(url){
 					tmp.push('<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>');
 					tmp.push('<p>Name : '+((val.name == null)?'-':val.name)+'</p>');
 					tmp.push('<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>');
-					tmp.push('<p>Site Name : '+((val.site_name == null)?'All':val.site_name)+'</p>');
+					tmp.push('<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>');
 					tmp.push('<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>');
 					tmp.push('<p>Model : '+((val.model == null)?'-':val.model)+'</p>');
 					tmp.push('<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>');
 					tmp.push('<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>');
-					tmp.push('<p>Level : '+((val.level == null)?'All':val.level)+'</p>');
+					tmp.push('<p>Level : '+((val.level == null)?'-':val.level)+'</p>');
 					tmp.push('<p>Status Mapped Values : '+use+'</p>');
 					if(i > 0) tmp.push('<p></p>');
 				});

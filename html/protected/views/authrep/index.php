@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.min.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
 <?php 
@@ -9,22 +10,26 @@ $form=$this->beginWidget('CActiveForm', array(
 		'validateOnSubmit'=>true,
 		'afterValidate' => 'js:function(){
 			if($(".errorSummary").css("display") !== "none") return;
-			var result = $("#req_result");
-			result.html("<img src='.Yii::app()->request->baseUrl.'/images/loading.gif>");
+			$("#dataTable").dataTable().fnDestroy();
 			var NodeName = $("#NodeName").val();
 			if(NodeName !== null){
 				NodeName = (NodeName.length == $("#NodeName option").length) ? "" : NodeName;
 			}else{
 				NodeName = "";
 			}
-			$.ajax({
-				url: "'.$this->createUrl($serv).'",
-				dataType: "json",
-				cache: false,
-				type: "post",
-				data:{"username":$("#UserName").val(),"start_date":$("#'.get_class($model).'_StartDate").val(),"end_date":$("#'.get_class($model).'_EndDate").val(),"ne_name":NodeName,"event":$("#Event option:selected").val(),"click":"true"},
-				success: function(data) {
-					SplitTable(data);
+				$("#dataTable").dataTable({
+				"sPaginationType": "full_numbers",
+				"bJQueryUI": true,
+				"bProcessing": true,
+				"bServerSide": true,
+				"sAjaxSource": "'.$this->createUrl($serv).'",
+				"fnServerParams": function ( aoData ) {
+					aoData.push( {"name": "username", "value": $("#UserName").val()} );
+					aoData.push( {"name": "start_date", "value": $("#'.get_class($model).'_StartDate").val()} );
+					aoData.push( {"name": "end_date", "value": $("#'.get_class($model).'_EndDate").val()} );
+					aoData.push( {"name": "ne_name", "value": NodeName} );
+					aoData.push( {"name": "event", "value": $("#Event option:selected").val()} );
+					aoData.push( {"name": "click", "value": "true"} );
 				}
 			});
 		}'
@@ -103,7 +108,7 @@ $form=$this->beginWidget('CActiveForm', array(
                     <div class="input"> 
 						<?php
 
-						$sql = Yii::app()->db->createCommand('SELECT CONCAT(name,"xx#xx",ip_addr) AS value,CONCAT(name," / ",ip_addr) AS item,site_name FROM NE_LIST')->queryAll();
+						$sql = Yii::app()->db->createCommand("SELECT (CASE WHEN name IN ('', NULL) THEN ip_addr WHEN ip_addr IN ('', NULL) THEN name ELSE CONCAT(name, 'xx#xx', ip_addr) END) AS value,(CASE WHEN name IN ('', NULL) THEN ip_addr WHEN ip_addr IN ('', NULL) THEN name ELSE CONCAT(name, ' / ', ip_addr) END) AS item,site_name FROM NE_LIST")->queryAll();
 						$data = CHtml::listData($sql, 'value', 'item' ,'site_name');
 						echo CHtml::dropDownList('NodeName','',$data,array('multiple' => 'multiple',)); 
 						$options = array(
@@ -152,8 +157,8 @@ $form=$this->beginWidget('CActiveForm', array(
 			<div class="widget_inside">				
 				<div class="report">
 					<div class="col_12"  id="req_result">
-						<!-- <table class='dataTable'>
-						<thead>
+						 <table id='dataTable'>
+						    <thead>
 								<tr>
 										<th class="align-left">Login Date</th>
 										<th class="align-left">Node Name</th>
@@ -163,33 +168,8 @@ $form=$this->beginWidget('CActiveForm', array(
 										<th class="align-left">Command</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr class="gradeX">
-										<td>1 Oct 2013 01:20:00</td>
-										<td>DSLAM 1</td>
-										<td>12.1.2.2</td>
-										<td>user1@domain</td>
-										<td>102.2.3.1</td>
-										<td>show</td>
-								</tr>
-								<tr class="gradeX">
-										<td>1 Oct 2013 01:20:02</td>
-										<td>DSLAM 1</td>
-										<td>12.1.2.2</td>
-										<td>user1@domain</td>
-										<td>102.2.3.1</td>
-										<td>show conf</td>
-								</tr>
-								<tr class="gradeX">
-										<td>1 Oct 2013 01:21:02</td>
-										<td>DSLAM 2</td>
-										<td>12.1.2.3</td>
-										<td>user2@domain</td>
-										<td>102.2.3.1</td>
-										<td>quit</td>
-								</tr>
-							</tbody>
-						</table> -->
+							<tbody id="tbody"></tbody>
+						</table> 
 					</div>
 				</div>
             </div>
@@ -205,18 +185,21 @@ $form=$this->beginWidget('CActiveForm', array(
 	var cl = '<?=get_class($model)?>';
 	$(document).ready(function(){
 		if($('.errorSummary').css('display') !== 'none') return;
-			var result = $('#req_result');
-			result.html("<img src='<?=Yii::app()->request->baseUrl;?>/images/loading.gif'>");
-			$.ajax({
-				url: "<?php echo $this->createUrl($serv)?>",
-				dataType: 'json',
-				cache: false,
-				type: 'post',
-				data: {'username':$('#UserName').val(),'start_date':$('#'+"<?=get_class($model)?>"+'_StartDate').val(),'end_date':$('#'+"<?=get_class($model)?>"+'_EndDate').val(),'ne_name':$('#NodeName').val(),'event':$('#Event option:selected').val(),'click':'false'},
-				success: function(data) {
-					SplitTable(data);
+		$('#dataTable').dataTable({
+			"sPaginationType": "full_numbers",
+			"bJQueryUI": true,
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "<?php echo $this->createUrl($serv)?>",
+			"fnServerParams": function ( aoData ) {
+				aoData.push( {"name": "username", "value": $('#UserName').val()} );
+				aoData.push( {"name": "start_date", "value": $('#'+"<?=get_class($model)?>"+'_StartDate').val()} );
+				aoData.push( {"name": "end_date", "value": $('#'+"<?=get_class($model)?>"+'_EndDate').val()} );
+				aoData.push( {"name": "ne_name", "value": $('#NodeName').val()} );
+				aoData.push( {"name": "event", "value": $('#Event option:selected').val()} );
+				aoData.push( {"name": "click", "value": false} );
 			}
-		});
+		});	
 	});
 </script>
 <div id="dialog" title="Node Detail Dialog"></div>

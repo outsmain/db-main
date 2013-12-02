@@ -114,8 +114,8 @@ switch(strtoupper($_GET['r'])){
                     </li>
 					<li <?=$dauthrep?>><a href="/authrep"><span>Authen Log</span></a>
                         <ul>
-                            <li><a href="/authrep/?serv=online">User</a></li> 
-                            <!-- <li><a href="<?=Yii::app()->createUrl('authrep', array('serv'=>'online',))?>">User</a></li> -->
+                            <li><a href="/authrep/user">User</a></li>
+							<li><a href="/authrep/device">Device</a></li>
                         </ul>
                     </li>
 					<li><a href="/confrepo"><span>Config Repos.</span></a>
