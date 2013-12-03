@@ -38,9 +38,9 @@ IF(sum_type = 'USER_GROUP',c.group_name, NULL) AS group_name,
 c.accept_num, 
 c.reject_num, 
 IF((c.accept_num + c.reject_num) > 0,(c.accept_num / (c.accept_num + c.reject_num))*100, 0) AS success_rate,
-((c.accept_num + c.reject_num) / (UNIX_TIMESTAMP(end_date)-UNIX_TIMESTAMP(start_date))*100) AS login_rate ,
+((c.accept_num + c.reject_num) / (UNIX_TIMESTAMP(end_date)-UNIX_TIMESTAMP(start_date))) AS login_rate ,
 c.cmd_num,
-((c.cmd_num / (UNIX_TIMESTAMP(end_date)-UNIX_TIMESTAMP(start_date)))*100) AS cmd_rate
+((c.cmd_num / (UNIX_TIMESTAMP(end_date)-UNIX_TIMESTAMP(start_date)))) AS cmd_rate
 FROM(
 SELECT 
 a.node_ip,
