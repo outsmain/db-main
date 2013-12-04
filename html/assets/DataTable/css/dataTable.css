@@ -2,6 +2,7 @@
 .dataTables_wrapper {
     clear: both;
     position: relative;
+	cursor:pointer;
 }
 .dataTables_processing {
     background-color: #FFFFFF;

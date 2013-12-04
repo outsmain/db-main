@@ -4,7 +4,7 @@
 <?php 
 $serv = $_GET["serv"];
 $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'auth-form',
+	'id'=>'device-form',
 	'enableClientValidation'=>true,
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
@@ -24,11 +24,10 @@ $form=$this->beginWidget('CActiveForm', array(
 				"bServerSide": true,
 				"sAjaxSource": "'.$this->createUrl($serv).'",
 				"fnServerParams": function ( aoData ) {
-					aoData.push( {"name": "username", "value": $("#UserName").val()} );
 					aoData.push( {"name": "start_date", "value": $("#'.get_class($model).'_StartDate").val()} );
 					aoData.push( {"name": "end_date", "value": $("#'.get_class($model).'_EndDate").val()} );
 					aoData.push( {"name": "ne_name", "value": NodeName} );
-					aoData.push( {"name": "event", "value": $("#Event option:selected").val()} );
+					aoData.push( {"name": "summary_type", "value": $("#summary_type option:selected").val()} );
 					aoData.push( {"name": "click", "value": "true"} );
 				}
 			});
@@ -48,23 +47,23 @@ $form=$this->beginWidget('CActiveForm', array(
 			<div class="widget_inside">				
 				<div class="col_2">
                     <div class="clearfix">
-                        <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'StartDate');?></div>
+                        <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'start_date');?></div>
                         <div class="input">
-						<?php
-						$this->widget('application.extensions.timepicker.timepicker', array(
-							'model'=>$model,
-							'name'=>'StartDate',
-							'id' => 'StartDate',
-							'datetime'=>date('d-m-Y 00:00:00'),
-						)); ?>
-						 <?php echo $form->error($model,'StartDate'); ?>
+                            <?php
+							$this->widget('application.extensions.timepicker.timepicker', array(
+								'model'=>$model,
+								'name'=>'StartDate',
+								'id' => 'StartDate',
+								'datetime'=>date('d-m-Y 00:00:00'),
+							)); ?>
+							 <?php echo $form->error($model,'StartDate'); ?>
                         </div>
                     </div>
 				</div>
 				<div class="col_2">
-                    <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'EndDate');?></div>
+                    <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'end_date');?></div>
                     <div class="input">
-					   <?php
+                      <?php
 						$this->widget('application.extensions.timepicker.timepicker', array(
 							'model'=>$model,
 							'name'=>'EndDate',
@@ -75,39 +74,24 @@ $form=$this->beginWidget('CActiveForm', array(
                     </div>
                 </div>
 				<div class="col_2">
-                    <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'Event');?></div>
+                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'summary_type');?></div>
                     <div class="input">
-						<? //echo CHtml::dropDownList('Event','',CHtml::listData(TblAuthacct::model()->findAll(), 'status', 'status'),array('empty' => 'All'));
-						echo CHtml::dropDownList('Event','',array('ACCEPT'=>'Accept','REJECT'=>'Reject'),array('empty' => 'All'));
-						?>    
-						<?
+						<? 
+						echo CHtml::dropDownList('summary_type','',array('DAILY'=>'Daily', 'DATE_HOURLY'=>'Date Hourly'));
 						Yii::import('application.extensions.multiselect.multiSelect');
 						$options = array(
 							'multiple' => false,
 							'header' => 'Select an option',
 							'noneSelectedText' => "All",
 						);
-						multiSelect::addMultiselect('#Event',$options);
+						multiSelect::addMultiselect('#summary_type',$options);
 						?>
                     </div>
                 </div>
-
 				<div class="col_2">
-                    <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'UserName');?></div>
+					<div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'NodeName');?></div>
                     <div class="input">
-					   <?php
-					   echo CHtml::textField('UserName','',array('id'=>'UserName','width'=>100,'maxlength'=>100,'placeholder'=>'User Name','class'=>'medium'));
-					   //echo $form->textField($model,'UserName','',array('id'=>'UserName','width'=>100,'maxlength'=>100,'placeholder'=>'User Name','class'=>'medium')); 
-					   //echo CHtml::activeTextField($model,'UserName',array('id'=>get_class($model).'_'.'UserName','width'=>100,'maxlength'=>100,'placeholder'=>'User Name','class'=>'medium')); 
-					   ?>
-					   <?php //echo $form->error($model,'UserName'); ?>
-                    </div>
-                </div>
-				<div class="col_2">
-                    <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'NodeName');?></div>
-                    <div class="input"> 
-						<?php
-
+					<?php
 						$sql = Yii::app()->db->createCommand("SELECT (CASE WHEN name IN ('', NULL) THEN ip_addr WHEN ip_addr IN ('', NULL) THEN name ELSE CONCAT(name, 'xx#xx', ip_addr) END) AS value,(CASE WHEN name IN ('', NULL) THEN ip_addr WHEN ip_addr IN ('', NULL) THEN name ELSE CONCAT(name, ' / ', ip_addr) END) AS item,site_name FROM NE_LIST GROUP BY ip_addr")->queryAll();
 						$data = CHtml::listData($sql, 'value', 'item' ,'site_name');
 						echo CHtml::dropDownList('NodeName','',$data,array('multiple' => 'multiple',)); 
@@ -115,69 +99,51 @@ $form=$this->beginWidget('CActiveForm', array(
 							'multiple' => true,
 						);
 						multiSelect::addMultiselect('#NodeName',$options);
-						//echo CHtml::textField('NodeName','',array('id'=>'NodeName','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium"));
-						//echo $form->textField($model,'NodeName','',array('id'=>'NodeName','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium"));
-						//echo CHtml::activeTextField($model,'NodeName',array('id'=>get_class($model).'_'.'NodeName','width'=>100,'maxlength'=>100,'placeholder'=>'CLLI or IP Address','class'=>'medium')); 
-						?>    
-						<?php //echo $form->error($model,'NodeName'); ?>
+					?>
 					</div>
 				</div>
 				<div class="col_2 last">
 					<label>&nbsp;</label>
-					<? 
-					/*Yii::app()->clientScript->registerScript('alert("ok");');
-					echo CHtml::textField('username','',array('id'=>'username','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium")); 
-					echo CHtml::activeTextField($model,'',array('id'=>'idTextField','width'=>100,'maxlength'=>100)); 
-					Yii::app()->clientScript->registerScript('yourScript', '$("#' . CHtml::activeId($model, 'start_date') . '");');
-					*/?>
                     <div class="input" style="padding:6 0 0 40px;">
-						<?php echo CHtml::submitButton('Submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));
-//							echo CHtml::button('submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));
-							/*echo CHtml::ajaxSubmitButton(
-								'Submit',
-								array('Authrep/Search'),
-								array(
-									'update'=>'#req_result',
-									'beforeSend' => 'function(call,settings){
-													$("#req_result").html("Loading, Please wait..");
-												}',
-								)
-							);*/
-						?>
+						<input type="submit" class="button blue" value="Submit"></input>
 					</div>
 				</div>
 			</div>
         </div>
     </div>
 </div>
+
 <div class="row clearfix">
 	<div class="col_12">
 		<div class="widget clearfix">
         <h2>Report</h2>
 			<div class="widget_inside">				
 				<div class="report">
-					<div class="col_12"  id="req_result">
-						 <table id='dataTable' class="dataTable">
-						    <thead>
-								<tr>
-										<th class="align-left">Login Date</th>
-										<th class="align-left">Node Name</th>
-										<th class="align-left">Node IP</th>
-										<th class="align-left">User Name</th>
-										<th class="align-left">User IP</th>
-										<th class="align-left">Command</th>
-								</tr>
-							</thead>
-							<tbody id="tbody"></tbody>
-						</table> 
-					</div>
+            <div class="col_12">
+                <table id='dataTable' class='dataTable'>
+                <thead>
+                        <tr>
+								<th class="align-left">Update Date</th>
+								<th class="align-left">Last Login</th>
+								<th class="align-left">Node Name</th>
+								<th class="align-left">Node IP</th>
+								<th class="align-left">Login Num (Acp / Rej)</th>
+								<th class="align-left">Success Rate (%)</th>
+								<th class="align-left">Login Req. /s</th>
+								<th class="align-left">Cmd Num</th>
+								<th class="align-left">Cmd /s</th>                                
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
 				</div>
             </div>
         </div>
     </div>
-</div>  
-        </div><!--container -->
-    </div>
+</div>
+</div><!--container -->
+</div>
 </div>
 <?php $this->endWidget(); ?>
 <script type="text/javascript">
@@ -192,17 +158,16 @@ $form=$this->beginWidget('CActiveForm', array(
 			"bServerSide": true,
 			"sAjaxSource": "<?php echo $this->createUrl($serv)?>",
 			"fnServerParams": function ( aoData ) {
-				aoData.push( {"name": "username", "value": $('#UserName').val()} );
 				aoData.push( {"name": "start_date", "value": $('#'+"<?=get_class($model)?>"+'_StartDate').val()} );
 				aoData.push( {"name": "end_date", "value": $('#'+"<?=get_class($model)?>"+'_EndDate').val()} );
 				aoData.push( {"name": "ne_name", "value": $('#NodeName').val()} );
-				aoData.push( {"name": "event", "value": $('#Event option:selected').val()} );
+				aoData.push( {"name": "summary_type", "value": $('#summary_type option:selected').val()} );
 				aoData.push( {"name": "click", "value": false} );
 			},
 			"fnInitComplete": function(oSettings) {
 				$('#dataTable tbody tr').live('click', function () {
 					var nTds = $('td', this);
-					var ip = $(nTds[2]).text();
+					var ip = $(nTds[3]).text();
 					$.ajax({
 						url: secondurl,
 						dataType: 'json',

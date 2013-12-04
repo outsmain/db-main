@@ -13,7 +13,7 @@ class timepicker extends CWidget {
 	public function init() {
 		$this->assets = Yii::app()->assetManager->publish(dirname(__FILE__).DIRECTORY_SEPARATOR.'assets');
 		Yii::app()->clientScript
-		->registerCoreScript( 'jquery' )
+		//->registerCoreScript( 'jquery' )
 		->registerCoreScript( 'jquery.ui' )
         
 		->registerScriptFile( $this->assets.'/js/jquery.ui.timepicker.js' )

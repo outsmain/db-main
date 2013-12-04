@@ -10,7 +10,7 @@ class multiSelect
 		$baseUrl = Yii::app()->assetManager->publish($asset);
 
 		$cs = Yii::app()->clientScript;
-		$cs->registerCoreScript('jquery');
+		//$cs->registerCoreScript('jquery');
 		$cs->registerScriptFile($baseUrl.'/jquery.multiselect.min.js', CClientScript::POS_HEAD);
 		$cs->registerScriptFile($baseUrl.'/jquery.multiselect.filter.min.js', CClientScript::POS_HEAD);
 		$cs->registerCssFile($baseUrl.'/css/jquery.multiselect.css');

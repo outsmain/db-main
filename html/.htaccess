@@ -10,8 +10,9 @@ RedirectMatch ^/$ http://localhost/true
 #RedirectMatch 301 ^(.*)/$ /$1
 
 # otherwise forward it to index.php
-RewriteRule ^authrep$ true/index.php?r=Authrep&serv=Online [L]
-RewriteRule ^authrep/$ true/index.php?r=Authrep&serv=Online [L]
-RewriteRule ^authrep/user$ true/index.php?r=Authrep&serv=Online [L]
+RewriteRule ^authrep$ true/index.php?r=Authrep/User&serv=LoadUser [L]
+RewriteRule ^authrep/$ true/index.php?r=Authrep/User&serv=LoadUser [L]
+RewriteRule ^authrep/user$ true/index.php?r=Authrep/User&serv=LoadUser [L]
+RewriteRule ^authrep/device$ true/index.php?r=Authrep/Device&serv=LoadDevice [L]
 RewriteRule ^subsrep(.*)$ true/index.php?r=Subsrep&%{QUERY_STRING} [L]
 </IfModule>

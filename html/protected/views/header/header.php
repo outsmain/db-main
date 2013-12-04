@@ -1,14 +1,11 @@
 <html lang="en-us">
-
 <head>
+	<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.min.js"></script>
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
 	<meta charset="utf-8" />
-
-        <link rel="apple-touch-con" href="" />
-
-        <title>IPNTM Admin Panel</title>
-
-        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="apple-touch-con" href="" />
+	<title>IPNTM Admin Panel</title>
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
 
 	<!-- The Columnal Grid and mobile stylesheet -->
 	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/styles/columnal/columnal.css" type="text/css" media="screen" />
@@ -27,16 +24,8 @@
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/styles/style.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/styles/global.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/styles/config.css" type="text/css" media="screen" />
-        
-		<!-- Use CDN on production server -->
-		<script type="text/javascript">
-			if(typeof jQuery == 'undefined'){
-				var url = '<?=Yii::app()->request->baseUrl?>';	
-				document.write('<script src="'+url+'/assets/scripts/jquery-1.6.4.min.js">\x3C/script>');
-				document.write('<script src="'+url+'/assets/scripts/jquery-ui.min.js"">\x3C/script>');
-			}
-		</script>
 
+		
         <!-- Adds HTML5 Placeholder attributes to those lesser browsers (i.e. IE) -->
         <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/jquery.placeholder.1.2.min.shrink.js"></script>
         
@@ -46,7 +35,7 @@
 		
 
         <!-- Js used in the theme -->
-        <!-- <script src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/muse.js"></script> -->
+        <script src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/muse.js"></script>
 
 </head>
 <body>

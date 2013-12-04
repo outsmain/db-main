@@ -117,63 +117,68 @@ function SplitTable(data){
 
 function SplitDialog(url){
 	$('.dataTable > tbody').click(function(event){
-	var tr = $(event.target).parent();
-	var id = tr[0].id.split('-');
-	$.ajax({
-		url: url,
-		dataType: 'json',
-		cache: false,
-		type: 'post',
-		data: {'id':id[1]},
-		success: function(data){
-			var tmp = [];
-			if(data.length > 0){
-				$.each(data,function(i, val){
-					switch(val.is_use){
-						case 'null' :
-							var use = '-';
-							break;
-						case '0' :
-							var use = 'Not Active';
-							break;
-						case '1' :
-							var use = 'Active';
-							break;
-						case '2' :
-							var use = 'Disable';
-							break;
-					}
-					tmp.push('<p>Add Date : '+((val.add_date == null)?'-':formatDate(val.add_date))+'</p>');
-					tmp.push('<p>Update Date : '+((val.update_date == null)?'-':formatDate(val.update_date))+'</p>');
-					tmp.push('<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>');
-					tmp.push('<p>Name : '+((val.name == null)?'-':val.name)+'</p>');
-					tmp.push('<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>');
-					tmp.push('<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>');
-					tmp.push('<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>');
-					tmp.push('<p>Model : '+((val.model == null)?'-':val.model)+'</p>');
-					tmp.push('<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>');
-					tmp.push('<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>');
-					tmp.push('<p>Level : '+((val.level == null)?'-':val.level)+'</p>');
-					tmp.push('<p>Status Mapped Values : '+use+'</p>');
-					if(i > 0) tmp.push('<p></p>');
-				});
-			}else{
-				tmp.push('No Data Found.');
+		var tr = $(event.target).parent();
+		var id = tr[0].id.split('-');
+		$.ajax({
+			url: url,
+			dataType: 'json',
+			cache: false,
+			type: 'post',
+			data: {'id':id[1]},
+			success: function(data){
+				ShowDialog(data);					 
 			}
-			$('#dialog').html(tmp.join(''));
-			$('#dialog').dialog('open');						 
-		}
-	});	
-});
+		});	
+	});
 }
+
+function ShowDialog(data){
+	var tmp = [];
+	if(data.length > 0){
+		$.each(data,function(i, val){
+			switch(val.is_use){
+				case 'null' :
+					var use = '-';
+					break;
+				case '0' :
+					var use = 'Not Active';
+					break;
+				case '1' :
+					var use = 'Active';
+					break;
+				case '2' :
+					var use = 'Disable';
+					break;
+			}
+			tmp.push('<p>Add Date : '+((val.add_date == null)?'-':formatDate(val.add_date))+'</p>');
+			tmp.push('<p>Update Date : '+((val.update_date == null)?'-':formatDate(val.update_date))+'</p>');
+			tmp.push('<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>');
+			tmp.push('<p>Name : '+((val.name == null)?'-':val.name)+'</p>');
+			tmp.push('<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>');
+			tmp.push('<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>');
+			tmp.push('<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>');
+			tmp.push('<p>Model : '+((val.model == null)?'-':val.model)+'</p>');
+			tmp.push('<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>');
+			tmp.push('<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>');
+			tmp.push('<p>Level : '+((val.level == null)?'-':val.level)+'</p>');
+			tmp.push('<p>Status Mapped Values : '+use+'</p>');
+			if(i > 0) tmp.push('<p></p>');
+		});
+	}else{
+		tmp.push('No Data Found.');
+	}
+	$('#dialog').html(tmp.join(''));
+	$('#dialog').dialog('open');	
+}
+
 $(function() {
 	$('#dialog').dialog({
             autoOpen: false,
             width: 600,
             buttons: {
-                        "Close": function() {
-                        $(this).dialog("close");
-                    }
+				"Close": function() {
+				$(this).dialog("close");
+                }
             },
             modal: true
 	});
