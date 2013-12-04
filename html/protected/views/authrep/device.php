@@ -9,7 +9,16 @@ $form=$this->beginWidget('CActiveForm', array(
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
 		'afterValidate' => 'js:function(){
-			if($(".errorSummary").css("display") !== "none") return;
+			var StartDate = $("#'.get_class($model).'_StartDate");
+			var EndDate = $("#'.get_class($model).'_EndDate");
+			if($(".errorSummary").css("display") !== "none" || StartDate.val() == "" || EndDate.val() == ""){
+				alert("Please input Start Date and End Date");
+				return false;
+			}
+			if(!CheckFormatDate(StartDate.val()) || !CheckFormatDate(EndDate.val())){
+				alert("Please input date to format DD/MM/YYYY HH:MM:SS");
+				return false;
+			}
 			$("#dataTable").dataTable().fnDestroy();
 			var NodeName = $("#NodeName").val();
 			if(NodeName !== null){
@@ -150,7 +159,16 @@ $form=$this->beginWidget('CActiveForm', array(
 	var secondurl = "<?php echo $this->createUrl('Detail')?>";
 	var cl = '<?=get_class($model)?>';
 	$(document).ready(function(){
-		if($('.errorSummary').css('display') !== 'none') return;
+		var StartDate = $('#'+"<?=get_class($model)?>"+'_StartDate');
+		var EndDate = $('#'+"<?=get_class($model)?>"+'_EndDate');
+		if($('.errorSummary').css('display') !== 'none' || StartDate.val() == '' || EndDate.val() == ''){
+			alert('Please input Start Date and End Date');
+			return false;
+		}
+		if(!CheckFormatDate(StartDate.val()) || !CheckFormatDate(EndDate.val())){
+			alert('Please input date to format DD/MM/YYYY HH:MM:SS');
+			return false;
+		}
 		$('#dataTable').dataTable({
 			"sPaginationType": "full_numbers",
 			"bJQueryUI": true,
@@ -158,8 +176,8 @@ $form=$this->beginWidget('CActiveForm', array(
 			"bServerSide": true,
 			"sAjaxSource": "<?php echo $this->createUrl($serv)?>",
 			"fnServerParams": function ( aoData ) {
-				aoData.push( {"name": "start_date", "value": $('#'+"<?=get_class($model)?>"+'_StartDate').val()} );
-				aoData.push( {"name": "end_date", "value": $('#'+"<?=get_class($model)?>"+'_EndDate').val()} );
+				aoData.push( {"name": "start_date", "value": StartDate.val()} );
+				aoData.push( {"name": "end_date", "value": EndDate.val()} );
 				aoData.push( {"name": "ne_name", "value": $('#NodeName').val()} );
 				aoData.push( {"name": "summary_type", "value": $('#summary_type option:selected').val()} );
 				aoData.push( {"name": "click", "value": false} );
