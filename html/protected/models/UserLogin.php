@@ -4,19 +4,20 @@
  * This is the model class for table "USERNAME".
  *
  * The followings are the available columns in table 'USERNAME':
- * @property integer $id
- * @property string $name
- * @property string $full_name
- * @property string $comment
- * @property string $password
- * @property string $email
- * @property string $groupname
- * @property string $accessgroup_id
- * @property string $last_login_date
- * @property string $last_login_ip
+ * @property integer $ID
+ * @property string $NAME
+ * @property string $FULL_NAME
+ * @property string $COMMENT
+ * @property string $PASSWORD
+ * @property string $EMAIL
+ * @property string $GROUPNAME_ID
+ * @property string $ACCESSGROUP_ID
+ * @property string $LAST_LOGIN_DATE
+ * @property string $LAST_LOGIN_IP
  */
 class UserLogin extends CActiveRecord
 {
+	public $PASSWORD2;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -25,9 +26,6 @@ class UserLogin extends CActiveRecord
 		return 'USERNAME';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
 	 public function validatePassword($password) {
 		//return true;
 		return md5($password) === $this->PASSWORD;
@@ -38,14 +36,14 @@ class UserLogin extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, full_name, password, email', 'length', 'max'=>64),
-			array('comment', 'length', 'max'=>256),
-			array('groupname, accessgroup_id', 'length', 'max'=>11),
-			array('last_login_ip', 'length', 'max'=>32),
-			array('last_login_date', 'safe'),
+			array('NAME, FULL_NAME, PASSWORD, EMAIL', 'length', 'max'=>64),
+			array('COMMENT', 'length', 'max'=>256),
+			array('GROUPNAME_ID, ACCESSGROUP_ID', 'length', 'max'=>11),
+			array('LAST_LOGIN_IP', 'length', 'max'=>32),
+			array('LAST_LOGIN_DATE', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, full_name, comment, password, email, groupname, accessgroup_id, last_login_date, last_login_ip', 'safe', 'on'=>'search'),
+			array('ID, NAME, FULL_NAME, COMMENT, PASSWORD, EMAIL, GROUPNAME_ID, ACCESSGROUP_ID, LAST_LOGIN_DATE, LAST_LOGIN_IP', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,9 +52,10 @@ class UserLogin extends CActiveRecord
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
+		
 		return array(
+		//'ACCESSGROUP'=>array(self::BELONGS_TO, 'ID', 'ACCESSGROUP_ID'),
+	//	'GROUPNAME'=>array(self::BELONGS_TO, 'ID', 'GROUPNAME_ID'),
 		);
 	}
 
@@ -66,16 +65,17 @@ class UserLogin extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'full_name' => 'Full Name',
-			'comment' => 'Comment',
-			'password' => 'Password',
-			'email' => 'Email',
-			'groupname' => 'Groupname',
-			'accessgroup_id' => 'Accessgroup',
-			'last_login_date' => 'Last Login Date',
-			'last_login_ip' => 'Last Login Ip',
+			'ID' => 'ID',
+			'NAME' => 'Name',
+			'FULL_NAME' => 'Full Name',
+			'COMMENT' => 'Comment',
+			'PASSWORD' => 'Password',
+			'PASSWORD2' => 'Password2',
+			'EMAIL' => 'Email',
+			'GROUPNAME_ID' => 'Groupname',
+			'ACCESSGROUP_ID' => 'Accessgroup',
+			'LAST_LOGIN_DATE' => 'Last Login Date',
+			'LAST_LOGIN_IP' => 'Last Login Ip',
 		);
 	}
 
@@ -97,16 +97,16 @@ class UserLogin extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('full_name',$this->full_name,true);
-		$criteria->compare('comment',$this->comment,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('groupname',$this->groupname,true);
-		$criteria->compare('accessgroup_id',$this->accessgroup_id,true);
-		$criteria->compare('last_login_date',$this->last_login_date,true);
-		$criteria->compare('last_login_ip',$this->last_login_ip,true);
+		$criteria->compare('ID',$this->ID);
+		$criteria->compare('NAME',$this->NAME,true);
+		$criteria->compare('FULL_NAME',$this->FULL_NAME,true);
+		$criteria->compare('COMMENT',$this->COMMENT,true);
+		$criteria->compare('PASSWORD',$this->PASSWORD,true);
+		$criteria->compare('EMAIL',$this->EMAIL,true);
+		$criteria->compare('GROUPNAME_ID',$this->GROUPNAME_ID,true);
+		$criteria->compare('ACCESSGROUP_ID',$this->ACCESSGROUP_ID,true);
+		$criteria->compare('LAST_LOGIN_DATE',$this->LAST_LOGIN_DATE,true);
+		$criteria->compare('LAST_LOGIN_IP',$this->LAST_LOGIN_IP,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

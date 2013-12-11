@@ -20,7 +20,8 @@ class Func {
 		//global $connection;
 		$connection = Yii::app()->db;
 		$menu = array();
-		$sql = "SELECT c.* FROM username a JOIN groupauthorize b ON (a.`GROUPNAME_ID`=b.`GROUPNAME_ID`) JOIN pagename c ON (b.`PAGENAME_ID`=c.`ID`) WHERE a.name='{$username}' ORDER BY PREVPAGE";
+		$sql = "SELECT c.* FROM username a JOIN groupauthorize b ON (a.`GROUPNAME_ID`=b.`GROUPNAME_ID`)
+		JOIN pagename c ON (b.`PAGENAME_ID`=c.`ID`) WHERE a.name='{$username}' ORDER BY PREVPAGE";
 		$command = $connection->createCommand($sql);
 		$dataReader = $command->query();
 		
@@ -33,6 +34,15 @@ class Func {
 		
 		self::page_header($menu);
 	}
+	public function resetPassword($user,$pass){
+	
+		$connection = Yii::app()->db;
+		
+		$sql = "UPDATE  USERNAME SET PASSWORD ='{$pass}' WHERE NAME = '{$user}' ";
+		$command = $connection->createCommand($sql);
+		$dataReader = $command->query();
+		
+		}
 	
 	
 	public function add_logtime($username)
@@ -50,15 +60,32 @@ class Func {
 		$sql = "SELECT c.* FROM username a JOIN groupauthorize b ON (a.`GROUPNAME_ID`=b.`GROUPNAME_ID`) JOIN pagename c ON (b.`PAGENAME_ID`=c.`ID`) WHERE a.name='{$username}' ORDER BY PREVPAGE ASC  LIMIT 0,1";
 		$command = $connection->createCommand($sql);
 		$dataReader = $command->query();
+		foreach ($dataReader as $row) { 
+		$reurl = $row['NAME'];					
+		}	
+		return $reurl;
+		}
+	
+		public static  function to_edit($username){
+		$connection = Yii::app()->db;
+		$sql = "SELECT * FROM USERNAME WHERE NAME = '{$username}'";
+		$command = $connection->createCommand($sql);
+		$dataReader = $command->query();
 		
 		foreach ($dataReader as $row) { 
-			//$reurl = "s";	
-			$reurl = $row['NAME'];	
-			
-	
+		
+		$user_id = $row['ID'];	
+				
 	}
 		
-		return $reurl;
+		return $user_id;
 	}
+	/* public static function change_profile($name,$full_name,$comment,$password,$email,$id){
+	$connection = Yii::app()->db;
+			$sql = "UPDATE USERNAME SET NAME = '{$name}',FULL_NAME = '{$full_name}',COMMENT = '{$comment}',PASSWORD = '{$password}',EMAIL = '{$email}'
+			WHERE ID = '{$id}'";
+			$command = $connection->createCommand($sql);
+			$dataReader = $command->query();
+			} */
 }
 ?>

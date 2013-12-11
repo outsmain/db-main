@@ -10,7 +10,7 @@ class SiteController extends Controller
 		if(!isset(Yii::app()->session['user'])){
 			//$this->redirect('/');
 		}
-		self::CheckLogin();
+		//self::CheckLogin();
 		return array(
 			// captcha action renders the CAPTCHA image displayed on the contact page
 			'captcha'=>array(
@@ -61,9 +61,13 @@ class SiteController extends Controller
 		}
 	}
 
-	/**
-	 * Displays the contact page
-	 */
+	public function actionRepass(){
+		
+			$model= new LoginForm;
+			$this->render('repass',array('model'=>$model));
+			exit;
+		
+	}
 	public function actionContact()
 	{
 		$model=new ContactForm;
@@ -115,29 +119,15 @@ class SiteController extends Controller
 				
 				// redirect from user rule 
 				
-		$connection = Yii::app()->db;
-		$sql = "SELECT c.* FROM username a JOIN groupauthorize b ON (a.`GROUPNAME_ID`=b.`GROUPNAME_ID`) JOIN pagename c ON (b.`PAGENAME_ID`=c.`ID`) WHERE a.name='{$username}' ORDER BY PREVPAGE ASC  LIMIT 0,1";
-		$command = $connection->createCommand($sql);
-		$dataReader = $command->query();
-		
-		foreach ($dataReader as $row) { 
-			$reurl = $row['NAME'];
 			
-			
-	
-		}
-		
-		$first_url = Func::redirect_page($user);  
-		
+			$first_url = Func::redirect_page($user);  		
 			$this->redirect($first_url);	
-				//$this->redirect($dreurl);	
 				
-				//$this->redirect('index.php?r=site/page&view=index');	
 			}
 	
 		}
 				// display the login form
-				$this->render('login',array('model'=>$model));
+			$this->render('login',array('model'=>$model));
 	}
 	
 	
@@ -148,11 +138,32 @@ class SiteController extends Controller
 		{
 			//Yii::app()->user->logout();
 			//$this->redirect(Yii::app()->homeUrl);
-			  if(!Yii::app()->user->isGuest)
-				  Yii::app()->user->logout(true);
+			if(!Yii::app()->user->isGuest)
+				Yii::app()->user->logout(true);
 					
 			$this->redirect('index');
 		}
+		public function actionKeepAlive()
+		{
+			echo 'OK';
+			Yii::app()->end();
+		}
+		public function actionSendMail()
+		{
+		$model=new UserLogin;
+		print($_POST);
+		//$name =$_POST['GROUPNAME']['NAME'];
+		$from_name ="nueng.me@gmail.com";
+		$from_email ="nueng.me@gmail.com";
+		$to_email ="nuengnaja_00@hotmail.com";
+		$subject ="testtttt";
+		$message = "dkglk;lkg;lkv;gksmbl";
+		echo "fff;";
+		//Email::sendGmail($from_name,$from_email, $to_name,$to_email, $subject, $message); 
+		//Email::sendEmail($from_name, $to_email, $subject, $message);
+	
+   }
+
 	
 	
 }

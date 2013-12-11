@@ -18,6 +18,7 @@ class UserIdentity extends CUserIdentity
 	public function authenticate()
 	{
 		$username = strtolower($this->username);  
+		
     // $this->username; username คือ ชื่อ Textbox ในฟอร์ม Login
  
     $user = UserLogin::model()->find('LOWER(NAME)=?',array($username));
@@ -30,10 +31,12 @@ class UserIdentity extends CUserIdentity
     }else{           
         $this->username = $user->NAME;
 		
+		
         // $user->name; name ชื่อ Field :: name ในตาราง user
         $this->errorCode = self::ERROR_NONE;
 		
 		 Yii::app()->session['user'] = $this->username;
+		
 		
 		// 'session'=>array('timeout'=>60),
 		

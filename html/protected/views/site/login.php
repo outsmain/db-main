@@ -67,12 +67,21 @@ Yii::app()->user->logout();
                                 </div>
                             </div>
                             <div class="clearfix">
+							<div class="input" style="padding-left:90px;">
+                            <?php echo $form->checkBox($model,'rememberMe'). "  Remember me "; ?>
+                          
+						   
+						  <?php echo "<a href=index.php?r=resetpass/repass>  forgot your password</a>"; ?> 
+						  </div>
+							<?php echo $form->error($model,'rememberMe'); ?>
 							
-                            <?php echo $form->checkBox($model,'rememberMe'). "  Remember me"; ?>
-                          <label></label>
-							<?php echo $form->error($model,'rememberMe'); ?>					
+							
 							</div>
-                            </div>
+							 <div class="clearfix">
+							 <div class="input" style="padding-left:120px;">
+                            
+							</div>
+							</div>
                             <div class="clearfix grey-highlight">
                                 <div class="input no-label ">
                                   <!--  <a href="index.php" class="button blue"><span>Login</span></a> -->

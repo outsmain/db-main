@@ -100,20 +100,7 @@ nav li li:hover {background:url(../images/header/1px.png) repeat;}
 
 /* Sidebar
 -------------------------------------------------------------------*/
-#sidebar {position:absolute;top:0;left:0;width:204px;height:100%;background-image: url("../images/header/header_bg.png"); background-repeat: repeat-y; background-position: top right}
-@media screen{
-  body>div#sidebar{position:fixed;}
-}
-* html body{overflow:hidden;}
-* html #wrap{height:100%;overflow:auto;}
-#wrap.sidebarred {margin-left: 204px;} /* same as width of #sidebar */
 
-#sidebar nav {margin-top: 0}
-#sidebar nav li {width: 100%}
-#sidebar nav li ul {top: 0; left: 204px}
-#sidebar nav li ul ul {left: 10em}
-
-.full_width .row {max-width: none;}
 
 /* Page Title
 -------------------------------------------------------------------*/

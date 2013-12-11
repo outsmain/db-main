@@ -5,6 +5,16 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
+		/* 	$user = Yii::app()->session['user'];
+			$connection = Yii::app()->db;
+			$sql = "SELECT * FROM USERNAME
+			WHERE NAME = '{$user}'";
+			$command = $connection->createCommand($sql);
+			$dataReader = $command->query();
+			
+			foreach ($dataReader as $row) { 
+			$name = $row['ACCESSGROUP_ID'];
+			} */	
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'My Web Application',
@@ -16,6 +26,8 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.extensions.jformvalidate.EHtml',
+		//'application.extensions.yii-mail.*',
 	),
 
 	'modules'=>array(
@@ -29,20 +41,23 @@ return array(
 		),
 		
 	),
-
+	/* 'behaviors'=>array(
+    'appBehav'=>'ApplicationBehavior',    
+    ), */
 	// application components
 	'components'=>array(
 		'user'=>array(
 			// enable cookie-based authentication
-			'allowAutoLogin'=>true,
-			   //'authTimeout'=>400, //ONE MINUTE.
+			'allowAutoLogin'=>true,	
 		),
 		
 		//force timeout 
-		    'session' => array(
-               'class' => 'CDbHttpSession',
-               'timeout' => 3600,  //10 sec 1hr = 60*60
-            ),
+		    
+			 'session' => array(
+			'class' => 'CDbHttpSession',
+			'timeout' => 3600 ,  //10 sec 1hr = 60*60
+            ), 
+			
 		// uncomment the following to enable URLs in path-format
 		/*
 		'urlManager'=>array(
@@ -72,6 +87,7 @@ return array(
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
+			'errorAction'=>'Resetpass/error',
 		),
 		'log'=>array(
 			'class'=>'CLogRouter',
@@ -88,12 +104,18 @@ return array(
 				*/
 			),
 		),
+		   'jformvalidate' => array (
+    	'class' => 'application.extensions.jformvalidate.EJFValidate',
+     	'enable' => true
+    ),
 	),
+	   
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
+		
 	),
 );

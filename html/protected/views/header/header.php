@@ -1,17 +1,10 @@
 <?php  
 $connection = Yii::app()->db;
- $user = Yii::app()->session['user'];
-
-//$sql = "SELECT P.TITLE, P.NAME, U.GROUPNAME_ID FROM USERNAME U ,GROUPAUTHORIZE G ,PAGENAME P WHERE  U.GROUPNAME_ID = G.GROUPNAME_ID AND G.PAGENAME_ID = P.ID AND  U.NAME = '".$user."'";
-
-//$command = $connection->createCommand($sql);
-//$dataReader = $command->query();
-//foreach ($dataReader as $row) {    
-  //  echo $murl = $row['NAME'];
-	// echo $title = $row['TITLE'];
-	//echo "<br>";
-
-//}
+$user = Yii::app()->session['user'];
+$user_id =Func::to_edit($user);
+//$user_id = Yii::app()->session['user_id'];
+Yii::import('application.components.UserIdentity');
+$user_id_en = base64_encode($user_id);
 
 ?>
 
@@ -50,11 +43,12 @@ $connection = Yii::app()->db;
 		<link rel="stylesheet" href="assets/styles/jquery.multiselect.filter.css" type="text/css" media="screen" />
 
         <!-- Use CDN on production server -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+       <!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>-->
+		<script type="text/javascript" src="assets/scripts/jquery-ui.min.js"></script>
         
         <!-- Adds HTML5 Placeholder attributes to those lesser browsers (i.e. IE) -->
-        <script type="text/javascript" src="assets/scripts/jquery.placeholder.1.2.min.shrink.js"></script>
+       <script type="text/javascript" src="assets/scripts/jquery.placeholder.1.2.min.shrink.js"></script>
 		
 		<script type="text/javascript" src="assets/scripts/jquery.multiselect.filter.min.js"></script>
 		<script type="text/javascript" src="assets/scripts/jquery.multiselect.min.js"></script>
@@ -67,7 +61,7 @@ $connection = Yii::app()->db;
 		
 
         <!-- Js used in the theme -->
-        <script src="assets/scripts/muse.js"></script>
+       <script src="assets/scripts/muse.js"></script>
 
 </head>
 <body>
@@ -94,7 +88,7 @@ $connection = Yii::app()->db;
 
                         <div id="logindrop">
                             <ul>
-                                <li id="editprofile"><a href="#">Edit Profile</a></li>
+                                <li id="editprofile"><a href="index.php?r=userLogin/update&id=<?php echo $user_id; ?>">Edit Profile</a></li>
                                 <li id="logoutprofile"><a href="index.php?r=site/logout">Logout</a></li>
                             </ul>
 
@@ -114,8 +108,7 @@ $connection = Yii::app()->db;
                 </select>
 				-->
 				<?php
-					
-				Yii::import('application.components.UserIdentity');
+				// call function show menu
 				Func::display_menus($user);
 				
 				?>

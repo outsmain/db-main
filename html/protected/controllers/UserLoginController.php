@@ -32,12 +32,12 @@ class UserLoginController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','admin'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'users'=>array('admin','@'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -51,9 +51,20 @@ class UserLoginController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		//$this->render('view',array(
+		//	'model'=>$this->loadModel($id),
+		//));
+		//print_r($this);
+		 //  $this->render('view', array('dataProvider' => $dataProvider)); 
+		$sql = "SELECT c.* FROM username a JOIN groupauthorize b ON (a.`GROUPNAME_ID`=b.`GROUPNAME_ID`)
+				JOIN pagename c ON (b.`PAGENAME_ID`=c.`ID`) WHERE a.id='{$id}' ORDER BY PREVPAGE"; 
+		$dataProvider = new CSqlDataProvider($sql, array(    // เอา sql แปลงเป็น dataProvider
+		 /*  'pagination' => array(
+		  'pageSize' => 10,       
+		  ), */
+		  ));
+          $this->render('view', array('dataProvider' => $dataProvider));   // ส่งตัวแปรไปยัง view
+		 
 	}
 
 	/**
@@ -66,7 +77,7 @@ class UserLoginController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+		$user =$_POST['LoginForm']['username'];	
 		if(isset($_POST['UserLogin']))
 		{
 			$model->attributes=$_POST['UserLogin'];
@@ -85,31 +96,41 @@ class UserLoginController extends Controller
 	 * @param integer $id the ID of the model to be updated
 	 */
 	public function actionUpdate($id)
-	{
-		$model=$this->loadModel($id);
+	{ 
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+	$model=$this->loadModel($id);
+//print_r($model);
+//print_r($_POST);
+	$model->attributes=$_POST['UserLogin']; // call value form
+	$id = $model->ID;
+	$name =$_POST['UserLogin']['NAME'];
+	$full_name =$_POST['UserLogin']['FULL_NAME'];
+	$comment =$_POST['UserLogin']['COMMENT'];
+	$passwordold =$_POST['UserLogin']['PASSWORD'];	
+	$password =md5($passwordold);
+	$email =$_POST['UserLogin']['EMAIL'];	
 
 		if(isset($_POST['UserLogin']))
 		{
 			$model->attributes=$_POST['UserLogin'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			$connection = Yii::app()->db;
+			$sql = "UPDATE USERNAME SET NAME = '{$name}',FULL_NAME = '{$full_name}',COMMENT = '{$comment}',PASSWORD = '{$password}',EMAIL = '{$email}'
+			WHERE ID = '{$id}'";
+			$command = $connection->createCommand($sql);
+			$dataReader = $command->query();
+			$this->redirect(array('view','id'=>$model->ID));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 		));
 	}
+	
 
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
 	public function actionDelete($id)
 	{
+	
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -122,10 +143,12 @@ class UserLoginController extends Controller
 	 */
 	public function actionIndex()
 	{
+	
 		$dataProvider=new CActiveDataProvider('UserLogin');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
+		print_r($dataProvider);
 	}
 
 	/**
@@ -142,6 +165,7 @@ class UserLoginController extends Controller
 			'model'=>$model,
 		));
 	}
+	
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

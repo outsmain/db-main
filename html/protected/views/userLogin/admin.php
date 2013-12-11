@@ -25,40 +25,64 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
-<h1>Manage User Logins</h1>
-
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
-
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
+<div class="row clearfix">
+<h2> All User </h2>
+<?php //echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
 	'model'=>$model,
 )); ?>
 </div><!-- search-form -->
 
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'user-login-grid',
 	'dataProvider'=>$model->search(),
-	'filter'=>$model,
+	//'filter'=>$model,
 	'columns'=>array(
 		'ID',
 		'NAME',
 		'FULL_NAME',
 		'COMMENT',
-		'PASSWORD',
+		//'PASSWORD',
 		'EMAIL',
-		/*
 		'GROUPNAME_ID',
 		'ACCESSGROUP_ID',
 		'LAST_LOGIN_DATE',
 		'LAST_LOGIN_IP',
-		*/
-		array(
+	
+	array(
 			'class'=>'CButtonColumn',
+			'template'=>'{edit}  {deleted}',
+			// view,edit ,delete
+			'buttons'=>array
+		(
+        'edit' => array
+        (
+            'label'=>'EDIT',
+            'imageUrl'=>Yii::app()->request->baseUrl.'/images/edit.png',
+            'url'=>'Yii::app()->createUrl("groupauthorize/update", array("id"=>$data->ID,"acc_id" =>$data->ACCESSGROUP_ID))',
+        ),
+		'deleted' => array
+        (
+            'label'=>'EDIT',
+			'click'=>'function(){alert("test");}',
+			  'visible'=>'1',
+            'imageUrl'=>Yii::app()->request->baseUrl.'/images/del.png',
+            //'url'=>'Yii::app()->createUrl("groupname/deleted", array("id"=>$data->ID,"acc_id" =>$data->ACCESSGROUP_ID))',
+		   'url'=>'Yii::app()->createUrl("#")',
+		   //'click'=>'alert("Are You Sure?")',
+		
+        ),
 		),
-	),
-)); ?>
+		),
+		
+	)
+	
+)); 
+
+////////////////////////
+
+?>
+
+</div>
