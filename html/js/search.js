@@ -1,3 +1,4 @@
+var timer;
 function TimeDifferenceCounter(datestart,dateend){ //in > 2013-11-03 00:00:01
 	var content = "";
         if(datestart=="-" || dateend=="-"){
@@ -175,6 +176,29 @@ function ShowDialog(data){
 	}
 	$('#dialog').html(tmp.join(''));
 	$('#dialog').dialog('open');	
+}
+
+function CheckStatus(t, val=0){
+	$.ajax({
+		url: urlExportData,
+		dataType: 'json',
+		cache: false,
+		type: 'post',
+		data: {'str':t},
+		success: function(data){
+			if(data === false){
+				if(val > 100){
+					window.clearTimeout(timer);
+					timer = setTimeout(function(){CheckStatus(t,val)},3000);
+				}else{	
+					window.clearTimeout(timer);
+					timer = setTimeout(function(){CheckStatus(t,val)},800);
+				}
+			}else{
+				$("#dia-exp").dialog('close');
+			}
+		}
+	});
 }
 
 $(function() {

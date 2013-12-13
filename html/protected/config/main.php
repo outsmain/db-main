@@ -41,6 +41,9 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
+		'session' => array (
+			'autoStart' => true,
+		),
 		/*'bootstrap'=>array(
             'class'=>'bootstrap.components.Bootstrap',
         ),*/

@@ -2,7 +2,8 @@
 
 class AuthrepController extends Controller
 {
-	public function filters(){
+	public function filters()
+	{
 		return array('ajaxOnly + field');
 	}
 
@@ -15,6 +16,7 @@ class AuthrepController extends Controller
 	public function actionUser()
 	{
 		$model = new NEAUTHACCT;
+		self::ClearTempFile();
 		$this->render('index',array('model'=>$model));
 	}
 
@@ -108,53 +110,57 @@ class AuthrepController extends Controller
 		}
 
 		if((strtotime(date('d-m-Y')) == strtotime($_GET['start_date'])) && empty($_GET['username']) && empty($_GET['ne_name']) && empty($_GET['event']) && $_GET['click'] === 'false'){
-			$sql = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a, (SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT) b WHERE UNIX_TIMESTAMP(DATE(a.login_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
-			$sql .= $sWhere;
-			$sql .= $sOrder;
+			$strSQL = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a, (SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT) b WHERE UNIX_TIMESTAMP(DATE(a.login_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
+			$strSQL .= $sWhere;
+			$strSQL .= $sOrder;
+			$tmpSQL = $strSQL;
+
 			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$sql .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
 			}
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
+			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
+					$v = (empty($v)) ? '-' : $v;
 					$aaData[$k][$i] = $v;
 					$i++;
 				}
 			}
-			$sql = "SELECT COUNT(*) AS cnt FROM NE_AUTHACCT"; 
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
-			$n = $query[0]['cnt'];
+			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
+			$n = count($query);
 		}else{
-			$sql = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a
+			$strSQL = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a
 			WHERE UNIX_TIMESTAMP(a.login_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.login_date) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp." ".$strUsername;
-			$sql .= $sWhere;
-			$sql .= $sOrder;
+			$strSQL .= $sWhere;
+			$strSQL .= $sOrder;
+			$tmpSQL = $strSQL;
+
 			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$sql .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
 			}
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
+			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
+					$v = (empty($v)) ? '-' : $v;
 					$aaData[$k][$i] = $v;
 					$i++;
 				}
 			}
-			$sql = "SELECT COUNT(*) AS cnt FROM NE_AUTHACCT a
-			WHERE UNIX_TIMESTAMP(a.login_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.login_date) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp." ".$strUsername;
-			$sql .= $sWhere;
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
-			$n = $query[0]['cnt'];
+
+			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
+			$n = count($query);
 		}
 		
-		$arrData = array('sEcho'=>$_GET['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData);
+		$arrData = array('sEcho'=>$_GET['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
 		echo CJSON::encode($arrData);
 	}
 	
 	public function actionDevice()
 	{
 		$model = new NEAUTHSUM;
+		self::ClearTempFile();
 		$this->render('device',array('model'=>$model));
 	}
 
@@ -239,14 +245,16 @@ class AuthrepController extends Controller
 		}
 
 		if((strtotime(date('d-m-Y')) == strtotime($_GET['start_date'])) && ($_GET['summary_type'] == 'DAILY') && empty($_GET['ne_name']) && $_GET['click'] === 'false'){
-			$sql = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a, (SELECT MAX(update_date) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.update_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
-			$sql .= $strEvent;
-			$sql .= $sWhere;
-			$sql .= $sOrder;
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a, (SELECT MAX(update_date) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.update_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
+			$strSQL .= $strEvent;
+			$strSQL .= $sWhere;
+			$strSQL .= $sOrder;
+			$tmpSQL = $strSQL;
+ 
 			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$sql .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
 			}
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
+			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
@@ -256,17 +264,18 @@ class AuthrepController extends Controller
 					$i++;
 				}
 			}
-			$sql = "SELECT COUNT(*) AS cnt FROM NE_AUTHSUM"; 
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
-			$n = $query[0]['cnt'];
+			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
+			$n = count($query);
 		}else{
-			$sql = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a WHERE UNIX_TIMESTAMP(a.update_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
-			$sql .= $sWhere;
-			$sql .= $sOrder;
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a WHERE UNIX_TIMESTAMP(a.update_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
+			$strSQL .= $sWhere;
+			$strSQL .= $sOrder;
+			$tmpSQL = $strSQL;
+		
 			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$sql .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
 			}
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
+			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
@@ -276,14 +285,11 @@ class AuthrepController extends Controller
 					$i++;
 				}
 			}
-			$sql = "SELECT COUNT(*) AS cnt FROM NE_AUTHSUM a
-			WHERE UNIX_TIMESTAMP(a.update_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
-			$sql .= $sWhere;
-			$query = Yii::app()->db->createCommand($sql)->queryAll();
-			$n = $query[0]['cnt'];
+			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
+			$n = count($query);
 		}
 		
-		$arrData = array('sEcho'=>$_GET['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData);
+		$arrData = array('sEcho'=>$_GET['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
 		echo CJSON::encode($arrData);
 	}
 
@@ -295,5 +301,330 @@ class AuthrepController extends Controller
 			->where("b.ip_addr = '".$_POST['ip']."'")
 			->queryAll();
 		echo CJSON::encode($row);
+	}
+
+	public function actionUserExportExcel()
+	{
+		ini_set("memory_limit","512M");
+		set_time_limit(0);
+		$query = Yii::app()->db->createCommand($_POST['tmpSQL'])->queryAll();
+		spl_autoload_unregister(array('YiiBase','autoload')); 
+		$phpExcelPath = Yii::import('ext.phpexcel');
+		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+		$objPHPExcel = new PHPExcel();
+		
+		// Set document properties
+		$objPHPExcel->getProperties()->setCreator("")
+		 ->setLastModifiedBy("")
+		 ->setTitle("Report Authen Log By User")
+		 ->setSubject("Report Authen Log By User")
+		 ->setDescription("Report Authen Log By User")
+		 ->setKeywords("Report Authen Log By User")
+		 ->setCategory("Report Authen Log By User");
+	
+		// Add some data
+		$objPHPExcel->getActiveSheet()->setTitle('User-1');
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+		$data = $objPHPExcel->setActiveSheetIndex(0);
+		$data->setCellValue('A1', 'Login Date');
+		$data->setCellValue('B1', 'Node Name');
+		$data->setCellValue('C1', 'Node IP');
+		$data->setCellValue('D1', 'User Name');
+		$data->setCellValue('E1', 'User IP');
+		$data->setCellValue('F1', 'Command');
+		$k = $j = $i = 1;
+		$n = 0;
+		$chk = count($query);
+		foreach($query as $row){
+			++$k;
+			if(is_integer($n/10000) && $n != 0){
+				$objPHPExcel->createSheet();
+				
+				$data = $objPHPExcel->setActiveSheetIndex($j);
+				$objPHPExcel->getActiveSheet()->setTitle('User-'.($j+1));
+				$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+				$data->setCellValue('A1', 'Login Date');
+				$data->setCellValue('B1', 'Node Name');
+				$data->setCellValue('C1', 'Node IP');
+				$data->setCellValue('D1', 'User Name');
+				$data->setCellValue('E1', 'User IP');
+				$data->setCellValue('F1', 'Command');
+				$j++;
+				$k = 2;
+				$n - 1;
+			}
+
+			$data->setCellValue('A'.$k, (empty($row['login_date']))?'-':$row['login_date']);
+			$data->setCellValue('B'.$k, (empty($row['node_name']))?'-':$row['node_name']);
+			$data->setCellValue('C'.$k, (empty($row['node_ip']))?'-':$row['node_ip']);
+			$data->setCellValue('D'.$k, (empty($row['user_name']))?'-':$row['user_name']);
+			$data->setCellValue('E'.$k, (empty($row['user_ip']))?'-':$row['user_ip']);
+			$data->setCellValue('F'.$k, (empty($row['cmd']))?'-':$row['cmd']);
+			$n++;
+			$i++;
+		}
+
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex(0);
+		
+		// Redirect output to a client’s web browser (Excel2007)
+		$filename = "Report_user_".date("Y-m-d_H-i",time()).".xlsx"; 
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.$filename);
+		header('Cache-Control: max-age=0');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+		
+		self::CreateFileCheck('excel');
+		
+		spl_autoload_register(array('YiiBase','autoload'));
+        Yii::app()->end();
+	}
+
+	public function actionDeviceExportExcel()
+	{
+		ini_set("memory_limit","512M");
+		set_time_limit(0);
+		$query = Yii::app()->db->createCommand($_POST['tmpSQL'])->queryAll();
+		spl_autoload_unregister(array('YiiBase','autoload')); 
+		$phpExcelPath = Yii::import('ext.phpexcel');
+		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+		$objPHPExcel = new PHPExcel();
+		
+		// Set document properties
+		$objPHPExcel->getProperties()->setCreator("")
+		 ->setLastModifiedBy("")
+		 ->setTitle("Report Authen Log By Device")
+		 ->setSubject("Report Authen Log By Device")
+		 ->setDescription("Report Authen Log By Device")
+		 ->setKeywords("Report Authen Log By Device")
+		 ->setCategory("Report Authen Log By Device");
+	
+		// Add some data
+		$objPHPExcel->getActiveSheet()->setTitle('Device-1');
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+		$data = $objPHPExcel->setActiveSheetIndex(0);
+		$data->setCellValue('A1', 'Update Date');
+		$data->setCellValue('B1', 'Last Login');
+		$data->setCellValue('C1', 'Node Name');
+		$data->setCellValue('D1', 'Node IP');
+		$data->setCellValue('E1', 'Login Num (Acp/Rej)');
+		$data->setCellValue('F1', 'Success Rate (%)');
+		$data->setCellValue('G1', 'Login Req. /s');
+		$data->setCellValue('H1', 'Cmd Num');
+		$data->setCellValue('I1', 'Cmd /s');
+		$k = $j = $i = 1;
+		$n = 0;
+		$chk = count($query);
+		foreach($query as $row){
+			++$k;
+			if(is_integer($n/10000) && $n != 0){
+				$objPHPExcel->createSheet();
+				
+				$data = $objPHPExcel->setActiveSheetIndex($j);
+				$objPHPExcel->getActiveSheet()->setTitle('Device-'.($j+1));
+				$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+				$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+				$data->setCellValue('A1', 'Update Date');
+				$data->setCellValue('B1', 'Last Login');
+				$data->setCellValue('C1', 'Node Name');
+				$data->setCellValue('D1', 'Node IP');
+				$data->setCellValue('E1', 'Login Num (Acp/Rej)');
+				$data->setCellValue('F1', 'Success Rate (%)');
+				$data->setCellValue('G1', 'Login Req. /s');
+				$data->setCellValue('H1', 'Cmd Num');
+				$data->setCellValue('I1', 'Cmd /s');
+				$j++;
+				$k = 2;
+				$n - 1;
+			}
+
+			$data->setCellValue('A'.$k, (empty($row['update_date']))?'-':$row['update_date']);
+			$data->setCellValue('B'.$k, (empty($row['last_login']))?'-':$row['last_login']);
+			$data->setCellValue('C'.$k, (empty($row['node_name']))?'-':$row['node_name']);
+			$data->setCellValue('D'.$k, (empty($row['node_ip']))?'-':$row['node_ip']);
+			$data->setCellValue('E'.$k, (empty($row['login_num']))?'-':$row['login_num']);
+			$data->setCellValue('F'.$k, (empty($row['success_rate']))?'-':number_format($row['success_rate'],2));
+			$data->setCellValue('G'.$k, (empty($row['login_rate']))?'-':number_format($row['login_rate'],3));
+			$data->setCellValue('H'.$k, (empty($row['cmd_num']))?'-':$row['cmd_num']);
+			$data->setCellValue('I'.$k, (empty($row['cmd_rate']))?'-':number_format($row['cmd_rate'],3));
+			$n++;
+			$i++;
+		}
+
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex(0);
+		
+		// Redirect output to a client’s web browser (Excel2007)
+		$filename = "Report_device_".date("Y-m-d_H-i",time()).".xlsx"; 
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.$filename);
+		header('Cache-Control: max-age=0');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+		
+		self::CreateFileCheck('excel');
+		
+		spl_autoload_register(array('YiiBase','autoload'));
+        Yii::app()->end();
+	}
+
+	public function actionUserExportTxt()
+	{
+		ini_set("memory_limit","256M");
+		set_time_limit(0);
+		$row = Yii::app()->db->createCommand($_POST['tmpSQL'])->queryAll();
+		$strFileName = "assets\Report_user_".date("Y-m-d_H-i",time()).".txt";
+		$fileName = "Report_user_".date("Y-m-d_H-i",time()).".txt";
+		$objFopen = fopen($strFileName, 'w');
+		$tab = (chr(011)); 
+		$space = (chr(040)); 
+		$arr = array("login_date"=>"Login Date", "node_name"=>"Node Name", "node_ip"=>"Node IP", "user_name"=>"User Name", "user_ip"=>"User IP", "cmd"=>"Command");
+		$str = '';
+		foreach($arr as $k=>$item){
+			$str .= $item.$tab;
+		}
+		$str .= "\r\n";
+
+		foreach($row as $item){
+			foreach($item as $v){
+				$v = (empty($v)) ? '-' : $v;
+				$str .= $v.$tab;
+			}
+			$str .= "\r\n"; 
+		}
+
+		header ("Content-Type: application/download");
+		header ("Content-Disposition: attachment; filename=$fileName");
+		
+		fwrite($objFopen, $str);
+		fclose($objFopen);
+		$fp = fopen($strFileName, "r");
+		fpassthru($fp);
+		fclose($fp);
+		
+		unlink($strFileName);
+		self::CreateFileCheck('txt');
+	}
+
+	public function actionDeviceExportTxt()
+	{
+		ini_set("memory_limit","256M");
+		set_time_limit(0);
+		$row = Yii::app()->db->createCommand($_POST['tmpSQL'])->queryAll();
+		$strFileName = "assets\Report_device_".date("Y-m-d_H-i",time()).".txt";
+		$fileName = "Report_device_".date("Y-m-d_H-i",time()).".txt";
+		$objFopen = fopen($strFileName, 'w');
+		$tab = (chr(011)); 
+		$space = (chr(040)); 
+		$arr = array("update_date"=>"Update Date", "last_login"=>"Last Login", "node_name"=>"Node Name","node_ip"=>"Node IP", "login_num"=>"login Num (Acp/Rej)", "success_rate"=>"Success Rate (%)", "login_rate"=>"Login Req. /s", "cmd_num"=>"Cmd Num", "cmd_rate"=>"Cmd /s");
+		$str = '';
+		foreach($arr as $k=>$item){
+			$str .= $item.$tab;
+		}
+		$str .= "\r\n";
+
+		foreach($row as $item){
+			foreach($item as $k=>$v){
+				if($k === 'success_rate') $v = number_format($v,2);
+				if($k === 'login_rate') $v = number_format($v,3);
+				if($k === 'cmd_rate') $v = number_format($v,3);
+				$v = (empty($v)) ? '-' : $v;
+				$str .= $v.$tab;
+			}
+			$str .= "\r\n"; 
+		}
+
+		header ("Content-Type: application/download");
+		header ("Content-Disposition: attachment; filename=$fileName");
+		
+		fwrite($objFopen, $str);
+		fclose($objFopen);
+		$fp = fopen($strFileName, "r");
+		fpassthru($fp);
+		fclose($fp);
+		
+		unlink($strFileName);
+		self::CreateFileCheck('txt');
+	}
+
+	public function actionCheckExportData()
+	{
+		ob_start();
+		if($_POST['str'] == 'exl'){
+			if(is_file("assets/chkexcel_".Yii::app()->session->sessionID.".tmp")){
+				unlink("assets/chkexcel_".Yii::app()->session->sessionID.".tmp");
+				echo "true";
+			}else{
+				echo "false";
+			}
+		}else{
+			if(is_file("assets/chktxt_".Yii::app()->session->sessionID.".tmp")){
+				unlink("assets/chktxt_".Yii::app()->session->sessionID.".tmp");
+				echo "true";
+				exit;
+			}else{
+				echo "false";
+			}
+		}
+		ob_end_flush();
+	}
+
+	public function CreateFileCheck($str)
+	{
+		$strFileName = "assets/chk".$str."_".Yii::app()->session->sessionID.".tmp";
+		$objFopen = fopen($strFileName, 'w');
+		fwrite($objFopen, "");
+		fclose($objFopen);
+	}
+
+	public function ClearTempFile()
+	{
+		if(is_file("assets/chktxt_".Yii::app()->session->sessionID.".tmp")){
+			unlink("assets/chktxt_".Yii::app()->session->sessionID.".tmp");
+		}
+		if(is_file("assets/chkexcel_".Yii::app()->session->sessionID.".tmp")){
+			unlink("assets/chkexcel_".Yii::app()->session->sessionID.".tmp");
+		}
+		$dir = scandir("assets");
+		foreach($dir as $item){
+			
+			if(pathinfo($item, PATHINFO_EXTENSION) === 'tmp'){
+				$strDateTime1 = date("Y-m-d H:i:s", fileatime('assets/'.$item));
+				$strDateTime2 = date("Y-m-d H:i:s");
+				$datediff = (strtotime($strDateTime2) - strtotime($strDateTime1))/  ( 60 * 60 ); 
+				if($datediff > 23){
+					unlink('assets/'.$item);
+				}
+			}
+		}
+		
 	}
 }

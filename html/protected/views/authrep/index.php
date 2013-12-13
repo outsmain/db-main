@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.min.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
+<div class="container" id="actualbody">
 <?php 
 $serv = $_GET["serv"];
 $form=$this->beginWidget('CActiveForm', array(
@@ -11,12 +12,37 @@ $form=$this->beginWidget('CActiveForm', array(
 		'afterValidate' => 'js:function(){
 			var StartDate = $("#'.get_class($model).'_StartDate");
 			var EndDate = $("#'.get_class($model).'_EndDate");
-			if($(".errorSummary").css("display") !== "none" || StartDate.val() == "" || EndDate.val() == ""){
-				alert("Please input Start Date and End Date");
+			if($(".errorSummary").css("display") !== "none") return false;
+			if(StartDate.val() == ""){
+				$("#'.get_class($model).'_StartDate").parent().removeClass("input").addClass("input error");
+				$("#'.get_class($model).'_StartDate_em_").css({"display":"block"}).html("Start Date cannot be blank.");
+				$("#req_result").hide();
+				$("#error-search").show();
+				$("#frmExport").hide();
 				return false;
 			}
-			if(!CheckFormatDate(StartDate.val()) || !CheckFormatDate(EndDate.val())){
-				alert("Please input date to format DD/MM/YYYY HH:MM:SS");
+			if(EndDate.val() == ""){
+				$("#'.get_class($model).'_EndDate").parent().removeClass("input").addClass("input error");
+				$("#'.get_class($model).'_EndDate_em_").css({"display":"block"}).html("Start Date cannot be blank.");
+				$("#req_result").hide();
+				$("#error-search").show();
+				return false;
+			}
+			if(!CheckFormatDate(StartDate.val())){
+				$("#'.get_class($model).'_StartDate").parent().removeClass("input").addClass("input error");
+				$("#'.get_class($model).'_StartDate_em_").css({"display":"block"}).html("Please fill in the correct.");
+				$("#req_result").hide();
+				$("#error-search").show();
+				$("#frmExport").hide();
+				return false;
+			}
+							
+			if(!CheckFormatDate(EndDate.val())){
+				$("#'.get_class($model).'_EndDate").parent().removeClass("input").addClass("input error");
+				$("#'.get_class($model).'_EndDate_em_").css({"display":"block"}).html("Please fill in the correct.");
+				$("#req_result").hide();
+				$("#error-search").show();
+				$("#frmExport").hide();
 				return false;
 			}
 			$("#dataTable").dataTable().fnDestroy();
@@ -39,6 +65,14 @@ $form=$this->beginWidget('CActiveForm', array(
 					aoData.push( {"name": "ne_name", "value": NodeName} );
 					aoData.push( {"name": "event", "value": $("#Event option:selected").val()} );
 					aoData.push( {"name": "click", "value": "true"} );
+				},
+				"fnInitComplete": function(oSettings) {
+					if($("#req_result").css("display") === "none") $("#req_result").css("display","");
+					if($("#frmExport").css("display") === "none") $("#frmExport").css("display","");
+					$("#error-search").hide();
+					var txt = eval("("+oSettings.jqXHR.responseText+")");
+					$("#tmpSQL").val(txt.tmpSQL);
+					$("#num_row").val(txt.iTotalRecords);
 				}
 			});
 		}'
@@ -48,7 +82,6 @@ $form=$this->beginWidget('CActiveForm', array(
     ),
 ));
 ?>
-<div class="container" id="actualbody">
 <?php echo $form->errorSummary($model); ?>
 <div class="row clearfix">
 	<div class="col_12">
@@ -159,13 +192,14 @@ $form=$this->beginWidget('CActiveForm', array(
         </div>
     </div>
 </div>
+<?php $this->endWidget(); ?>
 <div class="row clearfix">
 	<div class="col_12">
 		<div class="widget clearfix">
         <h2>Report</h2>
 			<div class="widget_inside">				
 				<div class="report">
-					<div class="col_12"  id="req_result">
+					<div class="col_12" id="req_result">
 						 <table id='dataTable' class="dataTable">
 						    <thead>
 								<tr>
@@ -182,25 +216,63 @@ $form=$this->beginWidget('CActiveForm', array(
 					</div>
 				</div>
             </div>
+			<form name="frmExport" id="frmExport" method="post" action="" target="iframe_target" style="display:none;">
+				<iframe id="iframe_target" name="iframe_target" style="width:0;height:0;border:0px;"></iframe>
+				<input type="textarea" id="tmpSQL" name="tmpSQL" style="display:none;"></textarea>
+				<div style="padding-left:20px;">
+					<button id="rerun">Export data</button>
+					<button id="select">Select an action</button>
+				</div>
+				<ul>
+					<li><a id="excel">Excel (*.xlsx)</a></li>
+					<li><a id="txt">Tab Delimited (*.txt)</a></li>
+					
+				</ul>
+			</form>
+			<div id="error-search" align="center" style="font-size:14px;font-weight:bold;display:none;">Please fill out completely and accurately.</div>
+			<input type="hidden" id="num_row">
         </div>
     </div>
 </div>  
         </div><!--container -->
     </div>
 </div>
-<?php $this->endWidget(); ?>
+
+<div id="hide-sql" style="display:none;"></div>
 <script type="text/javascript">
 	var secondurl = "<?php echo $this->createUrl('Detail')?>";
+	var urlExportData ="<?php echo $this->createUrl('CheckExportData')?>";
 	var cl = '<?=get_class($model)?>';
 	$(document).ready(function(){
 		var StartDate = $('#'+"<?=get_class($model)?>"+'_StartDate');
 		var EndDate = $('#'+"<?=get_class($model)?>"+'_EndDate');
-		if($('.errorSummary').css('display') !== 'none' || StartDate.val() == '' || EndDate.val() == ''){
-			alert('Please input Start Date and End Date');
+		if($('.errorSummary').css('display') !== 'none') return false;
+		if(StartDate.val() == ''){
+			$('#'+cl+'_StartDate').parent().removeClass('input').addClass('input error');
+			$('#'+cl+'_StartDate_em_').css({'display':'block'}).html('Start Date cannot be blank.');
+			$('#req_result').hide();
+			$('#error-search').show();
 			return false;
 		}
-		if(!CheckFormatDate(StartDate.val()) || !CheckFormatDate(EndDate.val())){
-			alert('Please input date to format DD/MM/YYYY HH:MM:SS');
+		if(EndDate.val() == ''){
+			$('#'+cl+'_EndDate').parent().removeClass('input').addClass('input error');
+			$('#'+cl+'_EndDate_em_').css({'display':'block'}).html('Start Date cannot be blank.');
+			$('#req_result').hide();
+			$('#error-search').show();
+			return false;
+		}
+		if(!CheckFormatDate(StartDate.val())){
+			$('#'+cl+'_StartDate').parent().removeClass('input').addClass('input error');
+			$('#'+cl+'_StartDate_em_').css({'display':'block'}).html('Please fill in the correct.');
+			$('#req_result').hide();
+			$('#error-search').show();
+			return false;
+		}
+		if(!CheckFormatDate(EndDate.val())){
+			$('#'+cl+'_EndDate').parent().removeClass('input').addClass('input error');
+			$('#'+cl+'_EndDate_em_').css({'display':'block'}).html('Please fill in the correct.');
+			$('#req_result').hide();
+			$('#error-search').show();
 			return false;
 		}
 		$('#dataTable').dataTable({
@@ -218,6 +290,10 @@ $form=$this->beginWidget('CActiveForm', array(
 				aoData.push( {"name": "click", "value": false} );
 			},
 			"fnInitComplete": function(oSettings) {
+				$('#frmExport').show();
+				var txt = eval('('+oSettings.jqXHR.responseText+')');
+				$('#num_row').val(txt.iTotalRecords);
+				$('#tmpSQL').val(txt.tmpSQL);
 				$('#dataTable tbody tr').live('click', function () {
 					var nTds = $('td', this);
 					var ip = $(nTds[2]).text();
@@ -234,6 +310,32 @@ $form=$this->beginWidget('CActiveForm', array(
 				});
 			}
 		});
+		$( "#rerun" ).button().next().button({
+				text: false,
+				icons: {
+					primary: "ui-icon-triangle-1-s"
+				}
+			}).click(function() {
+				var menu = $( this ).parent().next().show().position({
+				my: "left top",
+				at: "left bottom",
+				of: this
+			});
+			$('#excel').one("click", function(){
+				menu.hide();
+				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export excel (.*xlsx)'});
+				$("#frmExport").attr("action","<?php echo $this->createUrl('UserExportExcel')?>").submit();
+				CheckStatus('exl',$('#num_row').val());
+			});
+			$('#txt').one("click", function() {
+				menu.hide();
+				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export tab delimited (*.txt)'});
+				$("#frmExport").attr("action","<?php echo $this->createUrl('UserExportTxt')?>").submit();
+				CheckStatus('txt',$('#num_row').val());
+			});
+				return false;
+			}).parent().buttonset().next().hide().menu();
 	});
 </script>
 <div id="dialog" title="Node Detail Dialog"></div>
+<div id="dia-exp" title="">Export data...</div>
