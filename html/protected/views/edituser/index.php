@@ -10,6 +10,11 @@ $this->menu=array(
 	array('label'=>'Create UserLogin', 'url'=>array('create')),
 	array('label'=>'Manage UserLogin', 'url'=>array('admin')),
 );
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 	
 ?>
 
 <h1>User Logins</h1>

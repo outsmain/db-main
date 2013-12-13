@@ -63,9 +63,10 @@ class AccessnameController extends Controller
 	public function actionCreate()
 	{
 		$model=new ACCESSNAME;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="ADD";
+		$name =$_POST['ACCESSNAME']['ID'];
 		$start = $_POST['ACCESSNAME']['STARTTIME'];
 		$end = $_POST['ACCESSNAME']['ENDTIME'];
 		$ip = $_POST['ACCESSNAME']['ALLOWIP']; 	
@@ -74,12 +75,12 @@ class AccessnameController extends Controller
 			foreach($_POST['DOW'] as $item_id){
 				$item_id1  = $item_id1.",".$item_id;
 				}
-
 				$connection3 = Yii::app()->db;
 				$sql3 = "INSERT INTO ACCESSNAME (STARTTIME ,ENDTIME ,DOW ,ALLOWIP)
 				VALUES ('{$start}','{$end}','{$item_id1}','{$ip}')";
 				$command3 = $connection3->createCommand($sql3);
 				$dataReader3 = $command3->query();
+				Func::add_loglogmodify($user,$status,$action,$name); 
 				$this->redirect(array('admin'));
 		}
 
@@ -95,6 +96,15 @@ class AccessnameController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="MODIFY";
+		$row=Yii::app()->db->createCommand("SELECT DOW FROM ACCESSNAME WHERE ID = '{$id}'")->queryAll();
+		foreach($row as $item){
+		$dow1 = $item['DOW'];
+		$dow =explode(",",$dow1);
+		}
+		
 		$model=$this->loadModel($id);
 		//print_r($_POST);
 		$start = $_POST['ACCESSNAME']['STARTTIME'];
@@ -110,12 +120,14 @@ class AccessnameController extends Controller
 				$sql3 = "UPDATE   ACCESSNAME  SET STARTTIME = '{$start}' ,ENDTIME ='{$end}' ,DOW = '{$item_id1}',ALLOWIP ='{$ip}' WHERE ID = '{$id}'";
 				$command3 = $connection3->createCommand($sql3);
 				$dataReader3 = $command3->query();
+				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('admin'));
 			}
 		
 
 		$this->render('update',array(
 			'model'=>$model,
+			'dow'=>$dow,
 		));
 	}
 
@@ -127,10 +139,15 @@ class AccessnameController extends Controller
 	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="REMOVE";
+		
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
+			Func::add_loglogmodify($user,$status,$action,$id); 
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			
 	}
 
 	/**

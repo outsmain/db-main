@@ -41,8 +41,6 @@
 		<label>Page Allow</label>
 		</div>
 		<div class="input" style="padding-left:180px;">	
-
-		 <?php // echo  $form->checkBoxList($model2,'PAGENAME_ID',PAGENAME::getPagename()); ?>
 		 <?php $listData = CHtml::listData(PAGENAME::model()->findAll(), 'ID', 'NAME'); ?>
 		<?php echo CHtml::checkBoxList('PAGENAME_ID',$pag,$listData,array('ID'=>'checklist')); ?>
 		</div>

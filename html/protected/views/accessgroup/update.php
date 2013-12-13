@@ -14,6 +14,11 @@ $this->menu=array(
 	array('label'=>'View ACCESSGROUP', 'url'=>array('view', 'id'=>$model->ID)),
 	array('label'=>'Manage ACCESSGROUP', 'url'=>array('admin')),
 );
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
 
 <h1>Update ACCESSGROUP <?php echo $model->ID; ?></h1>

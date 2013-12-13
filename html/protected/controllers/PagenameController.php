@@ -63,14 +63,15 @@ class PAGENAMEController extends Controller
 	public function actionCreate()
 	{
 		$model=new PAGENAME;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="ADD";
+		$name =$_POST['PAGENAME']['NAME'];
 		if(isset($_POST['PAGENAME']))
 		{
 			$model->attributes=$_POST['PAGENAME'];
 			if($model->save())
+				Func::add_loglogmodify($user,$status,$action,$name); 
 				$this->redirect(array('view','id'=>$model->ID));
 		}
 
@@ -88,14 +89,15 @@ class PAGENAMEController extends Controller
 	{
 
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="MODIFY";
 
 		if(isset($_POST['PAGENAME']))
 		{
 			$model->attributes=$_POST['PAGENAME'];
 			if($model->save())
+				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('view','id'=>$model->ID));
 		}
 
@@ -112,10 +114,15 @@ class PAGENAMEController extends Controller
 	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="REMOVE";
+		Func::add_loglogmodify($user,$status,$action,$id); 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
+		if(!isset($_GET['ajax'])){
+			Func::add_loglogmodify($user,$status,$action,$id); 
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			}
 	}
 
 	/**

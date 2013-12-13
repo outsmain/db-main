@@ -7,41 +7,52 @@
  */
 class UserIdentity extends CUserIdentity
 {
-	/**
-	 * Authenticates a user.
-	 * The example implementation makes sure if the username and password
-	 * are both 'demo'.
-	 * In practical applications, this should be changed to authenticate
-	 * against some persistent user identity storage (e.g. database).
-	 * @return boolean whether authentication succeeds.
-	 */
+
+	const ERROR_TIME_INVALID = 67;
+	const ERROR_CLIENT_INVALID = 68;
+
 	public function authenticate()
-	{
+	{	
+		$action ="LOGIN";
 		$username = strtolower($this->username);  
-		
-    // $this->username; username คือ ชื่อ Textbox ในฟอร์ม Login
- 
-    $user = UserLogin::model()->find('LOWER(NAME)=?',array($username));
-    // UserLogin ชื่อ Model ที่เราสร้างไว้
- 
+		$user = UserLogin::model()->find('LOWER(NAME)=?',array($username));
+		$result_time = Func::checkAccess($username);
+		$result_ip = Func::checkAllowip($username);
+
     if(!isset($user)){ // === NULL
-        $this->errorCode = self::ERROR_USERNAME_INVALID;
-    }else if(!$user->validatePassword($this->password)){ // !== Password
+		$status ="LOGIN_FAILED";
+		$this->errorCode = self::ERROR_USERNAME_INVALID;
+		Func::add_loglogin($username,$status,$action); 
+		
+    }
+	else if(!$user->validatePassword($this->password)){ // !== Password
          $this->errorCode = self::ERROR_PASSWORD_INVALID;
-    }else{           
+		 $status ="LOGIN_FAILED";
+		 Func::add_loglogin($username,$status,$action); 
+		}
+	else if($result_time == 'ok'){
+		$this->errorCode=self::ERROR_TIME_INVALID;	
+		 $status ="INVALID_TIME";
+		Func::add_loglogin($username,$status,$action); 		
+		}
+	else if($result_ip == 'ok'){
+		$this->errorCode=self::ERROR_CLIENT_INVALID;	
+		 $status ="INVALID_CLIENT";
+		Func::add_loglogin($username,$status,$action); 		
+		}
+	else{ 
+		$status ="OK";	
         $this->username = $user->NAME;
-		
-		
-        // $user->name; name ชื่อ Field :: name ในตาราง user
+		// $user->name; name ชื่อ Field :: name ในตาราง user
         $this->errorCode = self::ERROR_NONE;
 		
 		 Yii::app()->session['user'] = $this->username;
-		
-		
-		// 'session'=>array('timeout'=>60),
+		 Func::add_loglogin($username,$status,$action); 
 		
     }
  
     return $this->errorCode == self::ERROR_NONE;
-}
+		}
+
+		
 }

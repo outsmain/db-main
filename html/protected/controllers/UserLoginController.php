@@ -74,14 +74,15 @@ class UserLoginController extends Controller
 	public function actionCreate()
 	{
 		$model=new UserLogin;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="ADD";
 		$user =$_POST['LoginForm']['username'];	
 		if(isset($_POST['UserLogin']))
 		{
 			$model->attributes=$_POST['UserLogin'];
 			if($model->save())
+				Func::add_loglogmodify($user,$status,$action,$user); 
 				$this->redirect(array('view','id'=>$model->id));
 		}
 
@@ -97,10 +98,10 @@ class UserLoginController extends Controller
 	 */
 	public function actionUpdate($id)
 	{ 
-
+	$user = Yii::app()->session['user'];
+	$status ="OK";
+	$action ="MODIFY";
 	$model=$this->loadModel($id);
-//print_r($model);
-//print_r($_POST);
 	$model->attributes=$_POST['UserLogin']; // call value form
 	$id = $model->ID;
 	$name =$_POST['UserLogin']['NAME'];
@@ -112,15 +113,18 @@ class UserLoginController extends Controller
 
 		if(isset($_POST['UserLogin']))
 		{
+			
 			$model->attributes=$_POST['UserLogin'];
-			if($model->save())
+			if($model->save()){
 			$connection = Yii::app()->db;
 			$sql = "UPDATE USERNAME SET NAME = '{$name}',FULL_NAME = '{$full_name}',COMMENT = '{$comment}',PASSWORD = '{$password}',EMAIL = '{$email}'
 			WHERE ID = '{$id}'";
 			$command = $connection->createCommand($sql);
 			$dataReader = $command->query();
-			$this->redirect(array('view','id'=>$model->ID));
+			 Func::add_loglogmodify($user,$status,$action,$name); 	
+			$this->redirect(array('update','id'=>$model->ID));
 		}
+			}
 
 		$this->render('update',array(
 			'model'=>$model,
@@ -132,9 +136,12 @@ class UserLoginController extends Controller
 	{
 	
 		$this->loadModel($id)->delete();
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="REMOVE";
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
+			Func::add_loglogmodify($user,$status,$action,$id); 
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
 

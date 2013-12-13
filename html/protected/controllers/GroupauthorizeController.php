@@ -72,41 +72,24 @@ class GroupauthorizeController extends Controller
 		));
 	}
 
-	public function actionUpdate($id,$acc_id)
+	public function actionUpdate($id)
 	{
 		$model=new GROUPAUTHORIZE;
 		$model2=new GROUPNAME;
 		$model=$this->loadModel($id);
-		$model2=$this->loadModel($acc_id);
-		///
-		/* $connection = Yii::app()->db;
-		$sql = "SELECT * FROM GROUPAUTHORIZE WHERE GROUPNAME_ID ='{$id}' AND ACCESSGROUP_ID = '{$acc_id}' ";
-		$command = $connection->createCommand($sql);
-		$dataReader = $command->query();
-		foreach ($dataReader as $row) { 
-		$reurl = $row['PAGENAME_ID'];	
-		} */
-		//
-		
+
 		$id = $model->GROUPNAME_ID;
-		print_r($model);
 		if(isset($_POST['GROUPAUTHORIZE']))
 		{
 			$model->attributes=$_POST['GROUPAUTHORIZE'];
 	
-			
 		}
 
 		$this->render('update',array(
 		'model'=>$model,
 		));
 	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
+	
 	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();

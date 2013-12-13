@@ -14,8 +14,20 @@ $this->menu=array(
 	array('label'=>'View ACCESSNAME', 'url'=>array('view', 'id'=>$model->ID)),
 	array('label'=>'Manage ACCESSNAME', 'url'=>array('admin')),
 );
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
+<div class="row clearfix">
+<div class="col_12">
 
-<h1>Update ACCESSNAME <?php echo $model->ID; ?></h1>
+<h2>Update Accessname <?php echo $model->ID; ?></h2>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+
+
+<?php $this->renderPartial('_form', array('model'=>$model,'dow'=>$dow)); ?>
+
+</div>
+</div>

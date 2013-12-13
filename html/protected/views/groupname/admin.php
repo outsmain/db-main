@@ -24,6 +24,11 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
 <div class="row clearfix">
 <div class="col_12">

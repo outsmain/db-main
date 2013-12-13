@@ -17,9 +17,14 @@ $this->breadcrumbs=array(
 	array('label'=>'View UserLogin', 'url'=>array('view', 'name'=>$model->ID)), // ID>>NAME
 	array('label'=>'Manage UserLogin', 'url'=>array('admin')),
 ); */
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
 
-<!-- <h1>Update UserLogin <?php// echo $model->NAME; ?> </h1> -->
-Update User Profile
+ <h2>Update UserLogin <?php// echo $model->NAME; ?> </h2> 
+
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

@@ -24,6 +24,11 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
 <div class="container" id="actualbody">
 <div class="row clearfix">
@@ -31,7 +36,7 @@ $('.search-form form').submit(function(){
 <div class="widget clearfix">
 <h2>Manage Page</h2>
 <div class="widget_inside">
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
+<?php// echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
 	'model'=>$model,
@@ -41,7 +46,7 @@ $('.search-form form').submit(function(){
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'pagename-grid',
 	'dataProvider'=>$model->search(),
-	//'filter'=>$model,
+	'filter'=>$model,
 	'columns'=>array(
 		'ID',
 		'NAME',

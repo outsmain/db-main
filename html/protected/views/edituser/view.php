@@ -14,6 +14,11 @@ $this->menu=array(
 	array('label'=>'Delete UserLogin', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->ID),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage UserLogin', 'url'=>array('admin')),
 );
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 	
 ?>
 <div class="container" id="actualbody">
 <div class="row clearfix">

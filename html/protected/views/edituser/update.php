@@ -14,6 +14,11 @@ $this->menu=array(
 	array('label'=>'View UserLogin', 'url'=>array('view', 'id'=>$model->ID)),
 	array('label'=>'Manage UserLogin', 'url'=>array('admin')),
 );
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 	
 ?>
 
 <h2>Update User <?php echo $model->NAME; ?></h2>

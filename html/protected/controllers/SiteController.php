@@ -98,6 +98,7 @@ class SiteController extends Controller
 	{
 		$model=new LoginForm;
 		// if it is ajax validation request
+		
 		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
 		{
 			echo CActiveForm::validate($model);
@@ -136,11 +137,14 @@ class SiteController extends Controller
 	 */
 		public function actionLogout()
 		{
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="LOGOUT";
 			//Yii::app()->user->logout();
 			//$this->redirect(Yii::app()->homeUrl);
 			if(!Yii::app()->user->isGuest)
 				Yii::app()->user->logout(true);
-					
+				 Func::add_loglogin($user,$status,$action); 	
 			$this->redirect('index');
 		}
 		public function actionKeepAlive()
@@ -148,22 +152,6 @@ class SiteController extends Controller
 			echo 'OK';
 			Yii::app()->end();
 		}
-		public function actionSendMail()
-		{
-		$model=new UserLogin;
-		print($_POST);
-		//$name =$_POST['GROUPNAME']['NAME'];
-		$from_name ="nueng.me@gmail.com";
-		$from_email ="nueng.me@gmail.com";
-		$to_email ="nuengnaja_00@hotmail.com";
-		$subject ="testtttt";
-		$message = "dkglk;lkg;lkv;gksmbl";
-		echo "fff;";
-		//Email::sendGmail($from_name,$from_email, $to_name,$to_email, $subject, $message); 
-		//Email::sendEmail($from_name, $to_email, $subject, $message);
-	
-   }
-
 	
 	
 }

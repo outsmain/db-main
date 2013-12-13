@@ -63,6 +63,9 @@ class EdituserController extends Controller
 	public function actionCreate()
 	{
 	$model=new UserLogin;
+	$user = Yii::app()->session['user'];
+	$status ="OK";
+	$action ="ADD";
 	$name =$_POST['UserLogin']['NAME'];
 	$full_name =$_POST['UserLogin']['FULL_NAME'];
 	$comment =$_POST['UserLogin']['COMMENT'];
@@ -79,6 +82,7 @@ class EdituserController extends Controller
 			VALUES ('{$name}' ,'{$full_name}','{$comment}','{$password}' ,'{$email}','{$group}' ,'{$accessgroup}')";
 			$command = $connection->createCommand($sql);
 			$dataReader = $command->query();
+			Func::add_loglogmodify($user,$status,$action,$name); 	
 			$this->redirect(array('admin'));
 			
 		}
@@ -95,6 +99,9 @@ class EdituserController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+	$user = Yii::app()->session['user'];
+	$status ="OK";
+	$action ="MODIFY";
 	$model=$this->loadModel($id);
 	$model->attributes=$_POST['UserLogin']; // call value form
 	$id = $model->ID;
@@ -114,6 +121,7 @@ class EdituserController extends Controller
 			WHERE ID = '{$id}'";
 			$command = $connection->createCommand($sql);
 			$dataReader = $command->query();
+			Func::add_loglogmodify($user,$status,$action,$name); 
 			$this->redirect(array('view','id'=>$model->ID));
 		}
 
@@ -137,11 +145,18 @@ class EdituserController extends Controller
 	} */
 	public function actionDelete($id)
 	{
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="REMOVE";
+		$row=Yii::app()->db->createCommand("SELECT NAME FROM USERNAME WHERE ID='{$id}'")->queryAll();
+		foreach($row as $item){
+			$name = $item['NAME'];
+		}
 		$this->loadModel($id)->delete();
-
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			Func::add_loglogmodify($user,$status,$action,$name); 
 	} 
 
 	public function actionIndex()
@@ -157,6 +172,7 @@ class EdituserController extends Controller
 	 */
 	public function actionAdmin()
 	{
+	
 		$model=new UserLogin('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['UserLogin']))

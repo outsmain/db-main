@@ -15,10 +15,6 @@
 <script src="jquery.datetimepicker.js"></script>
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'accessname-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
 )); ?>
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
@@ -65,10 +61,11 @@
 	<div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'DOW');?></div>
 		 <div class="input" id="checkBoxists">
 		 <?php
-		   echo CHtml::checkBoxList('DOW', '',array('SUNDAY'=>'SUNDAY','MONDAY'=>'MONDAY','TUESDAY'=>'TUESDAY','WEDNESDAY'=>'WEDNESDAY',
+		   echo CHtml::checkBoxList('DOW',$dow,array('SUNDAY'=>'SUNDAY','MONDAY'=>'MONDAY','TUESDAY'=>'TUESDAY','WEDNESDAY'=>'WEDNESDAY',
 														'THURSDAY'=>'THURSDAY','FRIDAY'=>'FRIDAY','SATURDAY'=>'SATURDAY')
 													);
-		 ?>
+		?>										
+		 
 		</div>
 		<?php echo $form->error($model,'DOW'); ?>
 	</div>

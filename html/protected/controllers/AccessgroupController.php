@@ -63,15 +63,17 @@ class ACCESSGROUPController extends Controller
 	public function actionCreate()
 	{
 		$model=new ACCESSGROUP;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="ADD";
+		$name =$_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
 		if(isset($_POST['ACCESSGROUP']))
 		{
 			$model->attributes=$_POST['ACCESSGROUP'];
 			if($model->save())
+				Func::add_loglogmodify($user,$status,$action,$name); 
 				$this->redirect(array('view','id'=>$model->ID));
+					
 		}
 
 		$this->render('create',array(
@@ -87,15 +89,16 @@ class ACCESSGROUPController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="MODIFY";
 		if(isset($_POST['ACCESSGROUP']))
 		{
 			$model->attributes=$_POST['ACCESSGROUP'];
 			if($model->save())
+				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('view','id'=>$model->ID));
+				
 		}
 
 		$this->render('update',array(
@@ -111,10 +114,15 @@ class ACCESSGROUPController extends Controller
 	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
-
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="REMOVE";
+		
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
+		if(!isset($_GET['ajax'])){
+			Func::add_loglogmodify($user,$status,$action,$id); 
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			}
 	}
 
 	/**

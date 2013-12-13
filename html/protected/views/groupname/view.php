@@ -14,6 +14,11 @@ $this->menu=array(
 	array('label'=>'Delete GROUPNAME', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->ID),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage GROUPNAME', 'url'=>array('admin')),
 );
+$url= $_SERVER['REQUEST_URI'];
+$user = Yii::app()->session['user'];
+$status ="ok";
+$action ="OPEN";
+Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
 <div class="row clearfix">
 <div class="widget clearfix">

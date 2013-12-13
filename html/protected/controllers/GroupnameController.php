@@ -65,8 +65,10 @@ class GROUPNAMEController extends Controller
 	{
 		$model=new GROUPNAME;
 		$model2=new GROUPAUTHORIZE;
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="ADD";
 		
-
 		if(isset($_POST['GROUPNAME'])|| isset($_POST['GROUPNAME']))
 		{
 		
@@ -90,24 +92,20 @@ class GROUPNAMEController extends Controller
 		VALUES ('{$group_id}' ,'{$name}','{$comment}','{$acc_id}','{$plat}')";
 		$command3 = $connection3->createCommand($sql3);
 		$dataReader3 = $command3->query();
-		//print_r($_POST);
-			foreach($_POST['GROUPAUTHORIZE'] as $k=>$v){
-			if(count($_POST['GROUPAUTHORIZE'][$k]) > 1){
-			foreach($_POST['GROUPAUTHORIZE'][$k] as $item_id){
+
+			foreach($_POST['PAGENAME_ID'] as $item_id){
 			//insert table GROUPAUTHORIZE
 			$connection2 = Yii::app()->db;
 			$sql2 = "INSERT INTO GROUPAUTHORIZE (GROUPNAME_ID ,PAGENAME_ID ,ACCESSGROUP_ID)
 			VALUES ('{$group_id}' ,'{$item_id}','{$acc_id}')";
 			$command2 = $connection2->createCommand($sql2);
 			$dataReader2 = $command2->query();
-			
-					
+	
 				}
-			}else{
 
-			}
+			Func::add_loglogmodify($user,$status,$action,$name); 	
 			$this->redirect(array('admin'));
-		}
+		
 		}
 
 		$this->render('create',array(
@@ -122,8 +120,10 @@ class GROUPNAMEController extends Controller
 		$model=new GROUPNAME;
 		$model2=new GROUPAUTHORIZE;
 		$model=$this->loadModel($id);
+		$user = Yii::app()->session['user'];
+		$status ="OK";
+		$action ="MODIFY";
 		$row=Yii::app()->db->createCommand("SELECT PAGENAME_ID FROM GROUPAUTHORIZE WHERE GROUPNAME_ID='{$id}' AND ACCESSGROUP_ID ='{$acc_id}'")->queryAll();
-		//echo "SELECT PAGENAME_ID FROM GROUPAUTHORIZE WHERE GROUPNAME_ID='{$id}' AND ACCESSGROUP_ID ='{$acc_id}'";
 		foreach($row as $item){
 			$pag[] = $item['PAGENAME_ID'];
 		}
@@ -158,6 +158,7 @@ class GROUPNAMEController extends Controller
 				$dataReader3 = $command3->query();
 			
 				} 
+				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('admin'));
 					}	
 
@@ -176,13 +177,16 @@ class GROUPNAMEController extends Controller
 	 * @param integer $id the ID of the model to be deleted
 	 */
 	public function actionDelete($id,$acc_id)
-	{
-		$this->loadModel($id)->delete();
+	{	
+			$this->loadModel($id)->delete();
+			$user = Yii::app()->session['user'];
+			$status ="OK";
+			$action ="REMOVE";
 			$connection2 = Yii::app()->db;
 			$sql2 = "DELETE FROM GROUPAUTHORIZE WHERE GROUPNAME_ID = '{$id}' AND ACCESSGROUP_ID = '{$acc_id}'";
 			$command2 = $connection2->createCommand($sql2);
 			$dataReader2 = $command2->query();
-
+			Func::add_loglogmodify($user,$status,$action,$id); 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax'])){
 

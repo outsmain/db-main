@@ -46,15 +46,36 @@ class Func {
 	
 	
 	public function add_logtime($username)
-{	
+	{	
 		$connection = Yii::app()->db;	
 		$ip_address=$_SERVER['REMOTE_ADDR'];
 		$log_date=date('Y-m-d H:i:s'); 
 		$sql = "UPDATE USERNAME SET LAST_LOGIN_DATE = '".$log_date."',LAST_LOGIN_IP = '".$ip_address."' WHERE NAME = '".$username."'";
 		$command = $connection->createCommand($sql);
 		$dataReader = $command->query();
-}
+	}
+	public function add_loglogin($username,$status,$action)
+	{	
+		$connection = Yii::app()->db;	
+		$ip_address=$_SERVER['REMOTE_ADDR'];
+		$log_date=date('Y-m-d H:i:s'); 
+		$sql = "INSERT INTO LOGIN_LOG (UPDATE_DATE,USER_NAME,USER_IP,CLIENT_NAME,COMMAND,VALUE,STATUS) VALUES('{$log_date}','{$username}','{$ip_address}',
+				'','$action','','{$status}')";
+		$command = $connection->createCommand($sql);
+		$dataReader = $command->query();
+	}
 	
+	public function add_loglogmodify($username,$status,$action,$value)
+	{	
+		$connection = Yii::app()->db;	
+		$ip_address=$_SERVER['REMOTE_ADDR'];
+		$log_date=date('Y-m-d H:i:s'); 
+		$sql = "INSERT INTO LOGIN_LOG (UPDATE_DATE,USER_NAME,USER_IP,CLIENT_NAME,COMMAND,VALUE,STATUS) VALUES('{$log_date}','{$username}','{$ip_address}',
+				'','$action','{$value}','{$status}')";
+		$command = $connection->createCommand($sql);
+		$dataReader = $command->query();
+	}
+
 	public static  function redirect_page($username){
 		$connection = Yii::app()->db;
 		$sql = "SELECT c.* FROM username a JOIN groupauthorize b ON (a.`GROUPNAME_ID`=b.`GROUPNAME_ID`) JOIN pagename c ON (b.`PAGENAME_ID`=c.`ID`) WHERE a.name='{$username}' ORDER BY PREVPAGE ASC  LIMIT 0,1";
@@ -66,7 +87,7 @@ class Func {
 		return $reurl;
 		}
 	
-		public static  function to_edit($username){
+	public static  function to_edit($username){
 		$connection = Yii::app()->db;
 		$sql = "SELECT * FROM USERNAME WHERE NAME = '{$username}'";
 		$command = $connection->createCommand($sql);
@@ -77,15 +98,54 @@ class Func {
 		$user_id = $row['ID'];	
 				
 	}
-		
 		return $user_id;
 	}
-	/* public static function change_profile($name,$full_name,$comment,$password,$email,$id){
-	$connection = Yii::app()->db;
-			$sql = "UPDATE USERNAME SET NAME = '{$name}',FULL_NAME = '{$full_name}',COMMENT = '{$comment}',PASSWORD = '{$password}',EMAIL = '{$email}'
-			WHERE ID = '{$id}'";
-			$command = $connection->createCommand($sql);
-			$dataReader = $command->query();
-			} */
+	
+	public function checkAccess($username){
+	
+			$date_ow1 = date('l');
+			$time_now = date('H:i:s');
+			$date_ow = strtoupper($date_ow1);
+		
+			$row=Yii::app()->db->createCommand("SELECT DISTINCT  c.* FROM username a JOIN ACCESSGROUP b ON (a.`ACCESSGROUP_ID`=b.`ACCESSGROUP_ID`) 
+												JOIN ACCESSNAME c ON (b.`ACCESSNAME_ID`=c.`ID`) WHERE a.`NAME` ='{$username}'")->queryAll();
+			//print_r($row);
+			foreach($row as $item){
+				$dow = $item['DOW'];
+				$ip = $item['ALLOWIP'];			 	
+				$st_time = $item['STARTTIME'];
+				$ed_time = $item['ENDTIME'];
+				$show=explode(",",$dow);
+
+					if(!(($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show)))){
+						$acc_time = "ok";
+						}
+						else{
+						$acc_time = "no";
+						}
+			}	
+			return $acc_time;
+		}
+		
+	public function checkAllowip($username){
+	
+			$ip_address=$_SERVER['REMOTE_ADDR'];
+			$row=Yii::app()->db->createCommand("SELECT DISTINCT  c.* FROM username a JOIN ACCESSGROUP b ON (a.`ACCESSGROUP_ID`=b.`ACCESSGROUP_ID`) 
+												JOIN ACCESSNAME c ON (b.`ACCESSNAME_ID`=c.`ID`) WHERE a.`NAME` ='{$username}'")->queryAll();
+			
+				foreach($row as $item){
+				$ip = $item['ALLOWIP'];			 	
+				$pattern ="'".str_replace('%','.',$ip)."'";
+				if(!(preg_match($pattern,$ip_address))) {
+				$re_ip  = "ok";
+				}else {
+				$re_ip = "no";
+				}
+				if($re_ip == "no"){
+				$re_ip ="no";
+				}
+			}
+			return $re_ip;
+		}
 }
 ?>
