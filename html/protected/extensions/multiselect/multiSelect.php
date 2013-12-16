@@ -20,7 +20,7 @@ class multiSelect
 	protected static function create($selector, $options = array(), $position = CClientScript::POS_END){
 		self::registerScript();
 		$options = CJavaScript::encode(array_merge(self::defaultOptions(),$options));
-		Yii::app()->clientScript->registerScript(__CLASS__.$selector, 'jQuery("'.$selector.'").multiselect('.$options.');', $position);
+		Yii::app()->clientScript->registerScript(__CLASS__.$selector, 'jQuery("'.$selector.'").multiselect('.$options.').multiselectfilter();', $position);
 	}
 	
 	public function addMultiselect($selector, $ops = array()){

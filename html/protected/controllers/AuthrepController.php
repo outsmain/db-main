@@ -245,7 +245,7 @@ class AuthrepController extends Controller
 		}
 
 		if((strtotime(date('d-m-Y')) == strtotime($_GET['start_date'])) && ($_GET['summary_type'] == 'DAILY') && empty($_GET['ne_name']) && $_GET['click'] === 'false'){
-			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a, (SELECT MAX(update_date) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.update_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a, (SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.last_login)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
 			$strSQL .= $strEvent;
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
@@ -267,7 +267,7 @@ class AuthrepController extends Controller
 			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
 			$n = count($query);
 		}else{
-			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a WHERE UNIX_TIMESTAMP(a.update_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a WHERE UNIX_TIMESTAMP(a.last_login) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
 			$tmpSQL = $strSQL;
