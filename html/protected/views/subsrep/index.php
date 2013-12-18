@@ -1,8 +1,9 @@
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.min.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
-
+<!--[if lt IE 8]><? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/excanvas.min.js");?><![endif]--> 
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/jquery.flot.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/jquery.flot.symbol.js");?>
+
 
 <?php 
 $form=$this->beginWidget('CActiveForm', array(
@@ -16,7 +17,12 @@ $form=$this->beginWidget('CActiveForm', array(
         'onsubmit' => "return false;",
     ),
 ));
+
+Yii::import('application.extensions.multiselect.multiSelect');
 ?>   
+
+
+
 <div class="container" id="actualbody">
 <?php echo $form->errorSummary($model); ?> 
 <div class="row clearfix">
@@ -55,12 +61,14 @@ $form=$this->beginWidget('CActiveForm', array(
 		<div class="col_2">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'Service');?></div>
                     <div class="input" id="dropDownLists">
+
                        <?php
+                       
+                       
                         echo CHtml::dropDownList('OnlineService','',array('ADSL'=>'ADSL','ATM'=>'ATM','DOCSIS'=>'DOCSIS',
                              'DSL'=>'DSL','ETHERNET'=>'ETHERNET','FDDI'=>'FDDI','FIXED_LINE'=>'FIXED LINE','FRAME_RELAY'=>'FRAME RELAY',
                              'GPON'=>'GPON','LEASED_LINE'=>'LEASED LINE','MOBILE'=>'MOBILE','WIFI'=>'WIFI'),array('empty' => 'All'));
 
-                        Yii::import('application.extensions.multiselect.multiSelect');
                         $options = array(
                                 'multiple' => false,
                                 'header' => 'Select an option',
@@ -85,11 +93,17 @@ $form=$this->beginWidget('CActiveForm', array(
                         $data = CHtml::listData($sql, 'value', 'item' ,'site_name');
                         echo CHtml::dropDownList('NodeName','',$data,array('multiple' => 'multiple',)); 
                         $options = array(
-                                'multiple' => true,
+                                'multiple' => TRUE,
                         );
-                        multiSelect::addMultiselect('#NodeName',$options);
+                       // multiSelect::addMultiselect('#NodeName',$options);
+
+                      // multiSelect::addMultiselect('#NodeName',$options).multiselectfilter();
+
                     ?>
-                        
+
+                <script type="text/javascript">
+                $("#NodeName").multiselect().multiselectfilter();
+                </script>
                     <?php
                         $sql = "SELECT COUNT(*) as count_list FROM NE_LIST";
                         $command = Yii::app()->db->createCommand($sql);
@@ -100,8 +114,9 @@ $form=$this->beginWidget('CActiveForm', array(
                     </div>
                 </div>
 		<div class="col_2 last">
+                    
                     <label>&nbsp;</label>
-                    <div class="input" style="padding-top:6px; padding-left:30px;">
+                    <div class="input" style="padding-top:6px; padding-left:50px;">
                       <?php echo CHtml::submitButton('Submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));?>
                     </div>
 		</div>
@@ -125,18 +140,15 @@ $form=$this->beginWidget('CActiveForm', array(
         </div>
     </div>
 </div>
-    
-    
 <div id="dialog" title="Node Detail Dialog"></div> 
 
 <div id="dialogs" title="Service Graph">
-    <div id="ShowGraph" style="width: 720px; height: 400px; left: 20px; top: 20px;"></div>
+    <div id="ShowGraphHead" style="left: 10px; right: 10px; top: 5px;">
+        <div id="ShowGraph" style="width: 100%; height: 100%; left: 10px; right: 10px; top: 5px;"></div>
+    </div>
 </div> 
 
-    
-    
 <?php $this->endWidget(); ?>
-
 
 <?php  //ส่งค่าจาก URL เพื่อ filter ข้อมูล SUBS_LOG_ARCH.service_type เพื่อแสดงผลแบบกราฟ
 $txtGetString = explode("&", $_SERVER['QUERY_STRING']);
@@ -144,7 +156,7 @@ $txtservs = "";
 for($i=0;$i<=count($txtGetString)-1;$i++){
     if(strstr($txtGetString[$i],"serv=")){
         $ex = explode("serv=",$txtGetString[$i]);
-        $txtservs .= $ex[1];
+        $txtservs .= strtoupper($ex[1]);
         if($i<count($txtGetString)-1){
             $txtservs .= ",";
         }
@@ -153,6 +165,7 @@ for($i=0;$i<=count($txtGetString)-1;$i++){
 ?>
 
 <script type="text/javascript">
+    
 var urlDrop = "<?php echo $this->createUrl('ServiceDropdownlists')?>";
 var urlNas = "<?php echo $this->createUrl('Nas')?>";
 var txtserv = "<?=$txtservs; ?>";
@@ -191,17 +204,17 @@ function onSearch(type){
 						if(nd!=data[i].node_name){
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'"></td>';
                                                     //node_name  **************************************แก้
-                                                    tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date+"','"+data[i].end_date+"','','"+txtserv+"')\">"+data[i].node_ip+"</td>";
+                                                    tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','','"+txtserv+"')\">"+data[i].node_ip+"</td>";
                                                     nd = data[i].node_name;
 						}else{						
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'"></td>';
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">&nbsp;</td>';
 						}
 						
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+formatDate(CheckTextNull(data[i].start_date))+'</td>';
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+formatDate(CheckTextNull(data[i].end_date))+'</td>';
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+TimeDifferenceCounter(CheckTextNull(data[i].start_date), CheckTextNull(data[i].end_date))+'</td>';
-                                                tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date+"','"+data[i].end_date+"','"+data[i].service+"','')\">"+CheckTextNull(data[i].service)+"</td>";
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].start_date)+'</td>';
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].end_date)+'</td>';
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+TimeDifferenceCounter(CheckTextNull(data[i].start_date_diff), CheckTextNull(data[i].end_date_diff))+'</td>';
+                                                tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','"+data[i].service+"','"+txtserv+"')\">"+CheckTextNull(data[i].service)+"</td>";
                                                 tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].prov_subs)+'</td>';
 						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].conn_subs)+'</td>';   
 						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].min_line)+'</td>'; 
@@ -251,8 +264,8 @@ function SplitDialogs(url){
                                                             var use = 'Disable';
                                                             break;
                                             }
-                                            tmp += '<p>Add Date : '+((val.add_date == null)?'-':formatDate(val.add_date))+'</p>';
-                                            tmp += '<p>Update Date : '+((val.update_date == null)?'-':formatDate(val.update_date))+'</p>';
+                                            tmp += '<p>Add Date : '+((val.add_date == null)?'-':val.add_date)+'</p>';
+                                            tmp += '<p>Update Date : '+((val.update_date == null)?'-':val.update_date)+'</p>';
                                             tmp += '<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>';
                                             tmp += '<p>Name : '+((val.name == null)?'-':val.name)+'</p>';
                                             tmp += '<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>';
@@ -293,13 +306,11 @@ function fnGraph(type,txtIP,txtDateStart,txtDateEnd,txtService,txtServType){
                                         var GraphSymbol = new Array()
                                         var txtDate = ""
                                         var a = 0
-                                        
-                                        
 					for(var i=0;i<data.length;++i){
                                                 GraphName[i]=data[i].NAME;
                                                 
                                                 if(txtDate!=data[i].UPDATE_DATE){
-                                                    GraphDate[a] = formatDate(data[i].UPDATE_DATE);
+                                                    GraphDate[a] = data[i].UPDATE_DATE;
                                                     txtDate = data[i].UPDATE_DATE;
                                                     a = a+1
 						}
@@ -312,24 +323,19 @@ function fnGraph(type,txtIP,txtDateStart,txtDateEnd,txtService,txtServType){
                                                     GraphSymbol[i] = "circle";
                                                 }
                                         }
-                                        
-                                        
-                                        
-                                                                                
                                             ServiceGraph(data[0].IP_ADDR,GraphDate,GraphName,GraphSubsNum,GraphSymbol);
-				 }
+				 }else{
+                                    var tmp;
+                                    tmp = 'No Data Found.';
+                                    $('#dialogs').html(tmp);
+                                    $('#dialogs').dialog('open');
+                                }
 			}
 	});
 }
-</script>
 
-
-
-<script language="JavaScript">
       
 function ServiceGraph(NodeGraphIP,NodeGraphDate,NodeGraphName,NodeGraphSubsNum,NodeGraphSymbol){
-    
-    
     
 $('#dialogs').dialog('open');
 
@@ -387,8 +393,12 @@ var data =  data1;
                     GraphTooltip.push(bb[0]+" "+bb[1]+" "+bb[2]+" "+bb[3]);
                     a++;
               }
-         
-
+    var AutoWidth = GraphDate.length * 110;
+    $("#ShowGraphHead").css( {
+        width: AutoWidth+"px",
+        height: "100%"
+    });  
+                      
 var options = {
                 lines: {show: true},
                 points: {show: true},
@@ -403,7 +413,8 @@ var options = {
                 }
                };
                $.plot($('#ShowGraph'), data, options);
-
+               
+               
     function showTooltip(x, y, contents) {
         $('<div id="tooltip">' + contents + '</div>').css( {
             position: 'absolute',
@@ -423,7 +434,7 @@ var options = {
     $("#ShowGraph").bind("plothover", function (event, pos, item) {
         $("#x").text(pos.x.toFixed(2));
         $("#y").text(pos.y.toFixed(2));
-
+        
             if (item) { 
                 if (previousPoint != item.dataIndex) {
                     previousPoint = item.dataIndex;
@@ -431,7 +442,7 @@ var options = {
                     $("#tooltip").remove();
                     var x = item.datapoint[0].toFixed(2),
                         y = item.datapoint[1].toFixed(0);
-                                                   
+                                              
                     showTooltip(item.pageX, item.pageY,
                                 item.series.label + " of " + GraphTooltip[x-2] + " = " + y);
                 }
@@ -447,7 +458,7 @@ var options = {
 $(function() {
   $('#dialogs').dialog({
       autoOpen: false,
-      width: 800,
+      width: 700,
       height: 550,
       zIndex:1,
       buttons: {

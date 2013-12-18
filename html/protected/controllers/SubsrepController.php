@@ -11,7 +11,7 @@ class SubsrepController extends Controller
 	public function actionNas()
 	{
 		$model = Yii::app()->db->createCommand()
-			->select('a.add_date,a.update_date,a.ip_addr,a.name,a.comment,a.site_name,a.brand,a.model,a.sw_ver,a.ne_type,a.level,a.is_use')
+			->select("DATE_FORMAT(a.add_date,'%d %b %Y %H:%i:%s') AS add_date,DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,a.ip_addr,a.name,a.comment,a.site_name,a.brand,a.model,a.sw_ver,a.ne_type,a.level,a.is_use")
 			->from('NE_LIST a, NE_SUBSSTAT b')
 			->where("b.id='$_POST[id]' and a.ip_addr=b.node_ip")
 			->queryAll();
@@ -72,7 +72,7 @@ class SubsrepController extends Controller
                 $txtDateEnd = "a.end_date<='$txtDate2 $txtAll2[1]'";
 
                 $row = Yii::app()->db->createCommand()
-                                ->select('a.id,a.node_name,TIMESTAMPDIFF(second,a.start_date,a.end_date) as diffs,a.start_date,a.end_date,REPLACE(a.service,"_", " ") as service,a.prov_subs,a.conn_subs, ROUND(a.min_line,3) as min_line')
+                                ->select("a.id,a.node_name,a.node_ip,TIMESTAMPDIFF(second,a.start_date,a.end_date) as diffs,DATE_FORMAT(a.start_date,'%d %b %Y %H:%i:%s') AS start_date,DATE_FORMAT(a.end_date,'%d %b %Y %H:%i:%s') AS end_date,a.start_date as start_date_diff,a.end_date as end_date_diff,REPLACE(a.service,'_', ' ') as service,a.prov_subs,a.conn_subs, ROUND(a.min_line,3) as min_line")
                                 ->from('NE_SUBSSTAT a')
                                 //->where("$txtDateStart $txtDateEnd $txtService $txtNode ")
                                 ->where(array('and', $txtDateStart, $txtDateEnd, $txtService, $strNodeName, $strNodeIp))
@@ -86,42 +86,8 @@ class SubsrepController extends Controller
          
 	public function actionShowAll()
 	{
-            
-//                        $row = Yii::app()->db->createCommand()
-//                                ->select('ID,IP_ADDR,NE_TYPE,UPDATE_DATE,PORT_TYPE,SUBS_NUM')
-//                                ->from('SUBS_LOG_ARCH')
-//                                ->where("PORT_STATE='UP'")
-//                                ->order('ID asc')
-//                                //->text;
-//                                ->queryAll();
-//                        echo CJSON::encode($row);
-            
-//                        $row = Yii::app()->db->createCommand()
-//                                ->select('ID,IP_ADDR,NE_TYPE,UPDATE_DATE,PORT_TYPE,SUBS_NUM')
-//                                ->from('SUBS_LOG_ARCH')
-//                                ->where("UPDATE_DATE=(SELECT MAX(UPDATE_DATE) AS maxdate FROM SUBS_LOG_ARCH) AND PORT_STATE='UP'")
-//                                ->order('ID asc')
-//                                //->text;
-//                                ->queryAll();
-//                        echo CJSON::encode($row);
-            
-            
-            
-            //    มีจำนวน
-//                        $row = Yii::app()->db->createCommand()
-//                                ->select('tb2.id,tb3.numService,tb2.node_name,TIMESTAMPDIFF(SECOND,tb2.start_date,tb2.end_date) AS diffs,tb2.start_date,tb2.end_date,REPLACE(tb2.service,"_", " ") AS service,tb2.prov_subs,tb2.conn_subs, ROUND(tb2.min_line,3) AS min_line')
-//                                ->from('(SELECT MAX(end_date) AS maxdate FROM NE_SUBSSTAT) AS tb1 INNER JOIN NE_SUBSSTAT AS tb2 ON tb1.maxdate= tb2.end_date INNER JOIN (SELECT b.node_name,b.service,COUNT(b.service) AS numService FROM (SELECT MAX(end_date) AS maxdate FROM NE_SUBSSTAT) AS a INNER JOIN NE_SUBSSTAT AS b ON a.maxdate= b.end_date GROUP BY b.service ASC) AS tb3 ON tb2.node_name=tb3.node_name AND tb2.service=tb3.service')
-//                               // ->where("$txtDateStart $txtDateEnd $txtService $txtNode ")
-//                                ->order('tb2.node_name asc')
-//                                //->text;
-//                                ->queryAll();
-//                        echo CJSON::encode($row);
-            
-            
-            
-            
                         $row = Yii::app()->db->createCommand()
-                                ->select('tb2.id,tb2.node_name,tb2.node_ip,TIMESTAMPDIFF(second,tb2.start_date,tb2.end_date) as diffs,tb2.start_date,tb2.end_date,REPLACE(tb2.service,"_", " ") as service,tb2.prov_subs,tb2.conn_subs, ROUND(tb2.min_line,3) as min_line')
+                                ->select("tb2.id,tb2.node_name,tb2.node_ip,TIMESTAMPDIFF(second,tb2.start_date,tb2.end_date) as diffs,DATE_FORMAT(tb2.start_date,'%d %b %Y %H:%i:%s') AS start_date,DATE_FORMAT(tb2.end_date,'%d %b %Y %H:%i:%s') AS end_date,tb2.start_date as start_date_diff,tb2.end_date as end_date_diff,REPLACE(tb2.service,'_', ' ') as service,tb2.prov_subs,tb2.conn_subs, ROUND(tb2.min_line,3) as min_line")
                                 //->from('(SELECT max(end_date) as maxdate FROM NE_SUBSSTAT) AS tb1 INNER JOIN NE_SUBSSTAT AS tb2 ON tb1.maxdate= tb2.end_date')
                                 ->from('NE_SUBSSTAT AS tb2')
                                 ->order('tb2.node_name asc')
@@ -154,30 +120,16 @@ class SubsrepController extends Controller
                         
                         
                         $row = Yii::app()->db->createCommand()
-                                ->select('a.IP_ADDR,a.NE_TYPE,a.UPDATE_DATE,b.NAME,a.SUBS_NUM,HIST_SUBS_NUM')
+                                ->select("a.IP_ADDR,a.NE_TYPE,DATE_FORMAT(a.UPDATE_DATE,'%d %b %Y %H:%i:%s') AS UPDATE_DATE,b.NAME,a.SUBS_NUM,HIST_SUBS_NUM")
                                 ->from('SUBS_LOG_ARCH a,PORT_TYPE_MAP b')
                                 //->where("PORT_STATE='UP' and IP_ADDR='$_POST[txtIP]' and UPDATE_DATE='$_POST[txtDate]'")11.159.181.91
                                 ->where("$sqlService $sqlServiceType a.PORT_TYPE=b.ID AND a.PORT_STATE='UP' and a.IP_ADDR='$_POST[txtIP]' and (a.UPDATE_DATE between '$_POST[txtDateStart]' - INTERVAL 6 HOUR and '$_POST[txtDateEnd]' + INTERVAL 6 HOUR)")
                                 ->order('a.UPDATE_DATE asc')
                                 //->text;
                                 ->queryAll();
-                        echo CJSON::encode($row);
+                       echo CJSON::encode($row);
+                        
         }
-        
-        public function actionShowGraphType()
-	{
-            
-                        $row = Yii::app()->db->createCommand()
-                                ->select('a.IP_ADDR,a.NE_TYPE,a.UPDATE_DATE,b.NAME,a.SUBS_NUM,HIST_SUBS_NUM')
-                                ->from('SUBS_LOG_ARCH a,PORT_TYPE_MAP b')
-                                //->where("PORT_STATE='UP' and IP_ADDR='$_POST[txtIP]' and UPDATE_DATE='$_POST[txtDate]'")11.159.181.91
-                                ->where("a.PORT_TYPE=b.ID AND a.ID='$_POST[txtID]' AND a.PORT_STATE='UP' AND (a.UPDATE_DATE between '$_POST[txtDateStart]' - INTERVAL 6 HOUR AND '$_POST[txtDateEnd]' + INTERVAL 6 HOUR)")
-                                ->order('a.UPDATE_DATE asc')
-                                ->queryAll();
-                        echo CJSON::encode($row);
-        }
-        
-        
         
         public function actionServiceDropdownlists()
 	{

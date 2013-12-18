@@ -3,6 +3,7 @@ function TimeDifferenceCounter(datestart,dateend){ //in > 2013-11-03 00:00:01
         if(datestart=="-" || dateend=="-"){
             content="-";
         }else{
+            
             var DateTimeStart = datestart.split(' ');
             var DateStart = DateTimeStart[0].split('-');
             var DTS = DateStart[1]+"/"+DateStart[2]+"/"+DateStart[0]+" "+DateTimeStart[1];
@@ -37,19 +38,6 @@ function TimeDifferenceCounter(datestart,dateend){ //in > 2013-11-03 00:00:01
             if(content)content+=" "; content+=minutes+" min "+t+" sec";
         }
 	return content;
-        
-}
-  
-function formatDate(txtDate){ //in > 2013-11-03 00:00:01 , out > 05 Nov 2013 00:00:01
-	var txtDateFormate;
-	if(txtDate == "-"){
-		txtDateFormate=txtDate;
-	}else{
-		var DateTime = txtDate.split(' ');
-		var txtDateTime = new Date(DateTime[0]).toUTCString().split(' ');
-		txtDateFormate = txtDateTime[1]+" "+txtDateTime[2]+" "+txtDateTime[3]+" "+DateTime[1];
-	}
-	return txtDateFormate;
 }
   
 function CheckTextNull(txtNull){ 
