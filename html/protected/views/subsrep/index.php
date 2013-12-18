@@ -204,7 +204,7 @@ function onSearch(type){
 						if(nd!=data[i].node_name){
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'"></td>';
                                                     //node_name  **************************************แก้
-                                                    tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','','"+txtserv+"')\">"+data[i].node_ip+"</td>";
+                                                    tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','','"+txtserv+"')\">"+data[i].node_name+"</td>";
                                                     nd = data[i].node_name;
 						}else{						
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'"></td>';
