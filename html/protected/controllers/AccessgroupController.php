@@ -19,11 +19,6 @@ class ACCESSGROUPController extends Controller
 		);
 	}
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
 	public function accessRules()
 	{
 		return array(
@@ -66,13 +61,16 @@ class ACCESSGROUPController extends Controller
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="ADD";
+		$acc_n = $_POST['ACCESSNAME_ID'];
 		$name =$_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
 		if(isset($_POST['ACCESSGROUP']))
 		{
-			$model->attributes=$_POST['ACCESSGROUP'];
-			if($model->save())
-				Func::add_loglogmodify($user,$status,$action,$name); 
-				$this->redirect(array('view','id'=>$model->ID));
+			$connection3 = Yii::app()->db;
+				$sql3 = "INSERT INTO ACCESSGROUP (ACCESSGROUP_ID,ACCESSNAME_ID) VALUES ('{$name}','{$acc_n}')";
+				$command3 = $connection3->createCommand($sql3);
+				$dataReader3 = $command3->query();
+				Func::add_loglogmodify($user,$status,$action,$id); 
+				$this->redirect(array('admin'));
 					
 		}
 
@@ -88,14 +86,22 @@ class ACCESSGROUPController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		//print_r($_POST);
 		$model=$this->loadModel($id);
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="MODIFY";
+		$acc_n = $_POST['ACCESSNAME_ID'];
+		$acc_g = $_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
+		//$_POST['ACCESSGROUP']['ACCESSNAME_ID'] = $_POST['ACCESSNAME_ID'];
 		if(isset($_POST['ACCESSGROUP']))
 		{
-			$model->attributes=$_POST['ACCESSGROUP'];
-			if($model->save())
+			//$model->attributes=$_POST['ACCESSGROUP'];
+				$connection3 = Yii::app()->db;
+				$sql3 = "UPDATE ACCESSGROUP SET ACCESSNAME_ID = '{$acc_n}', ACCESSGROUP_ID = '{$acc_g}'
+							WHERE ID = '{$id}'";
+				$command3 = $connection3->createCommand($sql3);
+				$dataReader3 = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('view','id'=>$model->ID));
 				
@@ -117,10 +123,9 @@ class ACCESSGROUPController extends Controller
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="REMOVE";
-		
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		Func::add_loglogmodify($user,$status,$action,$id); 
 		if(!isset($_GET['ajax'])){
-			Func::add_loglogmodify($user,$status,$action,$id); 
+			
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 			}
 	}
@@ -141,14 +146,33 @@ class ACCESSGROUPController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new ACCESSGROUP('search');
+		//$model=new ACCESSGROUP('search');
+		$model=new ACCESSGROUP;
+		$model->group;
+		$model2=new ACCESSNAME;
 		$model->unsetAttributes();  // clear any default values
+		$sql = "SELECT * FROM GROUPNAME a JOIN ACCESSGROUP b ON ( a.`ACCESSGROUP_ID` = b.`ACCESSGROUP_ID` ) 
+				JOIN ACCESSNAME c ON ( b.`ACCESSNAME_ID` = c.`ID`)"; 
+		$dataProvider = new CSqlDataProvider($sql, array(    // เอา sql แปลงเป็น dataProvider
+		 /*  'pagination' => array(
+		  'pageSize' => 10,       
+		  ), */
+		  ));
 		if(isset($_GET['ACCESSGROUP']))
 			$model->attributes=$_GET['ACCESSGROUP'];
-
+		$sql = "SELECT a.NAME,c.STARTTIME,c.ENDTIME,c.DOW,b.ID FROM GROUPNAME a JOIN ACCESSGROUP b ON ( a.`ACCESSGROUP_ID` = b.`ACCESSGROUP_ID` ) 
+				JOIN ACCESSNAME c ON ( b.`ACCESSNAME_ID` = c.`ID`)"; 
+		$dataProvider = new CSqlDataProvider($sql, array(    // เอา sql แปลงเป็น dataProvider
+		 /*  'pagination' => array(
+		  'pageSize' => 10,       
+		  ), */
+		  ));
 		$this->render('admin',array(
 			'model'=>$model,
+			'model2'=>$model2,
+			'dataProvider' =>$dataProvider,
 		));
+		
 	}
 
 	/**

@@ -46,19 +46,22 @@ Func::add_loglogmodify($user,$status,$action,$url);
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'user-login-grid',
 	'dataProvider'=>$model->search(),
-	//'filter'=>$model,
+	'filter'=>$model,
 	'columns'=>array(
-		'ID',
+		//'ID',
 		'NAME',
 		'FULL_NAME',
-		'COMMENT',
+		//'COMMENT',
 		//'PASSWORD',
 		'EMAIL',
-		'GROUPNAME_ID',
+		array(
+            'name' => 'GROUPNAME_ID',
+			'value'=>'$data->group->NAME',
+            'header' => 'GROUPNAME_ID',
+        ),
 		'ACCESSGROUP_ID',
 		'LAST_LOGIN_DATE',
 		'LAST_LOGIN_IP',
-		
 		array(
 			'class'=>'CButtonColumn',
 			'template'=>'{update}  {delete}',
@@ -78,7 +81,6 @@ Func::add_loglogmodify($user,$status,$action,$url);
             'imageUrl'=>Yii::app()->request->baseUrl.'/images/del.png',
 		    'url'=>'Yii::app()->createUrl("edituser/deleted", array("id"=>$data->ID))',
 		   'click'=>'alert("Are You Sure?")',
-		
         ),
 		),
 		),

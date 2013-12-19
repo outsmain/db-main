@@ -54,7 +54,8 @@ class UserLogin extends CActiveRecord
 	{
 		
 		return array(
-		//'ACCESSGROUP'=>array(self::BELONGS_TO, 'ID', 'ACCESSGROUP_ID'),
+		'group'=>array(self::BELONGS_TO, 'GROUPNAME', 'GROUPNAME_ID'),
+		'acces'=>array(self::BELONGS_TO, 'ACCESSNAME', 'ID'),
 	//	'GROUPNAME'=>array(self::BELONGS_TO, 'ID', 'GROUPNAME_ID'),
 		);
 	}
@@ -107,7 +108,8 @@ class UserLogin extends CActiveRecord
 		$criteria->compare('ACCESSGROUP_ID',$this->ACCESSGROUP_ID,true);
 		$criteria->compare('LAST_LOGIN_DATE',$this->LAST_LOGIN_DATE,true);
 		$criteria->compare('LAST_LOGIN_IP',$this->LAST_LOGIN_IP,true);
-
+		$criteria->with=array('group');
+		$criteria->with=array('acces');
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

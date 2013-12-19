@@ -117,11 +117,12 @@ class Func {
 				$ed_time = $item['ENDTIME'];
 				$show=explode(",",$dow);
 
-					if(!(($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show)))){
-						$acc_time = "ok";
+					if(($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show))){
+						$acc_time = "no";
+						break;
 						}
 						else{
-						$acc_time = "no";
+						$acc_time = "ok";
 						}
 			}	
 			return $acc_time;

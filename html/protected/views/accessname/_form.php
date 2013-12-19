@@ -4,7 +4,6 @@
 /* @var $form CActiveForm */
 
 ?>
-</script>
 <div class="row clearfix">
 <div class="col_12">
 <div class="widget clearfix">
@@ -17,8 +16,6 @@
 	'id'=>'accessname-form',
 	'enableAjaxValidation'=>false,
 )); ?>
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="clearfix">
@@ -63,7 +60,7 @@
 		 <?php
 		   echo CHtml::checkBoxList('DOW',$dow,array('SUNDAY'=>'SUNDAY','MONDAY'=>'MONDAY','TUESDAY'=>'TUESDAY','WEDNESDAY'=>'WEDNESDAY',
 														'THURSDAY'=>'THURSDAY','FRIDAY'=>'FRIDAY','SATURDAY'=>'SATURDAY')
-													);
+									);
 		?>										
 		 
 		</div>
@@ -73,7 +70,15 @@
 	<div class="clearfix">
 		<?php echo $form->labelEx($model,'ALLOWIP'); ?>
 		<div class="input">	
-		<?php echo $form->textField($model,'ALLOWIP',array('size'=>15,'maxlength'=>15)); ?>
+			 <?php  /* Yii::import('application.extensions.maskedinput.maskedinput');
+			$this->widget('maskedinput', array(
+			'model' => $model,
+			'attribute' => 'ALLOWIP',
+			'mask' => '999.999.999.999',
+			'htmlOptions' => array('size' => 16)
+			));  */
+			?>
+		<?php echo $form->textField($model,'ALLOWIP'); ?>
 		</div>
 		<?php echo $form->error($model,'ALLOWIP'); ?>
 		

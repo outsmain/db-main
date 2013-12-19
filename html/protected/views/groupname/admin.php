@@ -44,33 +44,48 @@ Func::add_loglogmodify($user,$status,$action,$url);
 </div><!-- search-form -->
 
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php 
+$s = "ddd";
+$this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'groupname-grid',
 	'dataProvider'=>$model->search(),
 	//'filter'=>$model,
 	'columns'=>array(
-		'ID',
-		'NAME',
-		'COMMENT',
-		'ACCESSGROUP_ID',
-		'PLATFORM_ID',
+		 array(
+            'name'=>'NAME',
+            'header' => 'NAME',			
+        ),
+        array(
+            'name' => 'COMMENT',
+            'header' => 'COMMENT',
+        ),
+		array(
+            'name' => 'DOW',
+			'value'=>'$data->group->STARTTIME.",".$s.$data->group->ENDTIME.",".$data->group->DOW',
+            'header' => 'ACCESSGROUP',
+        ),
+		array(
+            'name' => 'NAME',
+			'value'=>'$data->platform->NAME',
+            'header' => 'PLATFORM',
+        ),
 		array(
 			'class'=>'CButtonColumn',
-			'template'=>'{edit}  {delete}',
+			'template'=>'{update}  {delete}',
 			// view,edit ,delete
 			'buttons'=>array
 		(
-        'edit' => array
+        'update' => array
         (
             'label'=>'EDIT',
-            'imageUrl'=>Yii::app()->request->baseUrl.'/images/edit.png',
+            //'imageUrl'=>Yii::app()->request->baseUrl.'/images/edit.png',
             'url'=>'Yii::app()->createUrl("groupname/update", array("id"=>$data->ID,"acc_id" =>$data->ACCESSGROUP_ID))',
         ),
 		'delete' => array
         (
             'label'=>'del',
 			 'visible'=>'1',
-            'imageUrl'=>Yii::app()->request->baseUrl.'/images/del.png',
+            //'imageUrl'=>Yii::app()->request->baseUrl.'/images/del.png',
             'url'=>'Yii::app()->createUrl("groupname/delete", array("id"=>$data->ID,"acc_id" =>$data->ACCESSGROUP_ID))',
 		   //'url'=>'Yii::app()->createUrl("#")',
 		   //'click'=>'alert("Are You Sure?")',

@@ -13,6 +13,7 @@ class ACCESSGROUP extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+	 public $DOW;
 	public function tableName()
 	{
 		return 'ACCESSGROUP';
@@ -42,7 +43,10 @@ class ACCESSGROUP extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+		  'group'=>array(self::BELONGS_TO, 'GROUPNAME', 'ACCESSGROUP_ID'),
+		  'acces'=>array(self::BELONGS_TO, 'ACCESSNAME', 'ACCESSNAME_ID'),
 		);
+		
 	}
 
 	/**
@@ -74,11 +78,11 @@ class ACCESSGROUP extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
 		$criteria->compare('ID',$this->ID,true);
 		$criteria->compare('ACCESSGROUP_ID',$this->ACCESSGROUP_ID,true);
 		$criteria->compare('ACCESSNAME_ID',$this->ACCESSNAME_ID,true);
-
+		$criteria->with=array('group');
+		$criteria->with=array('acces');
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -86,10 +90,21 @@ class ACCESSGROUP extends CActiveRecord
 	
 	public static function getDroupdown()
 	{  // show dropdown
-		return CHtml::listData(ACCESSGROUP::model()->findAll(),'ACCESSGROUP_ID','ACCESSGROUP_ID');  // ACCESSGROUP_ID คือฟิลที่ต้องการเรียกไปแสดงบน dropdown
+		return CHtml::listData(ACCESSGROUP::model()->with('acces')->findAll(),'ACCESSGROUP_ID','ACCESSGROUP_ID');  // ACCESSGROUP_ID คือฟิลที่ต้องการเรียกไปแสดงบน dropdown
 
 	}
+	public function getDropdown2()
+{
+    $values = array(
+        1 => 'value1',
+        2 => 'value2',
 
+    );
+    return CHtml::dropDownlist('$model',variable,$values, array(
+        'class'     => 'values',
+        'data-id'   => $this->id,
+    ));
+}
 
 	public static function model($className=__CLASS__)
 	{

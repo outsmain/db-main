@@ -71,14 +71,6 @@
 		</div>
 		<?php echo $form->error($model,'GROUPNAME_ID'); ?>
 	</div>
-
-	
-		<?php// echo $form->labelEx($model,'ACCESSGROUP_ID'); ?>
-		
-		<?php //echo $form->dropDownList($model,'ACCESSGROUP_ID',ACCESSGROUP::getDroupdown()); ?> 
-		
-		<?php //echo $form->error($model,'ACCESSGROUP_ID'); ?>
-	
 	<div class="clearfix">
 	<div class="input">	
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

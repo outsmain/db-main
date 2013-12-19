@@ -26,7 +26,7 @@
 	<div class="clearfix">
 		<?php echo $form->labelEx($model,'ACCESSGROUP_ID'); ?>
 		<div class="input">	
-		<?php echo $form->textField($model,'ACCESSGROUP_ID',array('readonly'=>true)); ?>
+		<?php echo $form->textField($model,'ACCESSGROUP_ID'); ?>
 		</div>
 		<?php echo $form->error($model,'ACCESSGROUP_ID'); ?>
 	</div>

@@ -2,28 +2,8 @@
 /* @var $this ACCESSGROUPController */
 /* @var $model ACCESSGROUP */
 
-$this->breadcrumbs=array(
-	'Accessgroups'=>array('index'),
-	'Manage',
-);
+//print_r($dataProvider); exit;
 
-$this->menu=array(
-	array('label'=>'List ACCESSGROUP', 'url'=>array('index')),
-	array('label'=>'Create ACCESSGROUP', 'url'=>array('create')),
-);
-
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$('#accessgroup-grid').yiiGridView('update', {
-		data: $(this).serialize()
-	});
-	return false;
-});
-");
 $url= $_SERVER['REQUEST_URI'];
 $user = Yii::app()->session['user'];
 $status ="ok";
@@ -45,9 +25,10 @@ Func::add_loglogmodify($user,$status,$action,$url);
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+  <?php 
+/*   $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'accessgroup-grid',
-	'dataProvider'=>$model->search(),
+	'dataProvider'=>$dataProvider,
 	'filter'=>$model,
 	'columns'=>array(
 		'ID',
@@ -58,7 +39,48 @@ Func::add_loglogmodify($user,$status,$action,$url);
 			'template'=>'{update}  {delete}',
 		),
 	),
-)); ?>
+)
+ 
+); */
+$this->widget('zii.widgets.grid.CGridView', array(
+    'id' =>'accessgroup-grid',   
+    //'dataProvider' =>$dataProvider,
+	'dataProvider'=>$model->search(),
+	//'filter'=>$model,
+	
+    'columns' => array(   
+        array(
+            'name'=>'NAME',
+			'value'=>'$data->group->NAME',
+            'header' => 'GROUPNAME',			
+        ),
+        array(
+            'name' => 'STARTTIME',
+			'value'=>'$data->acces->STARTTIME',
+            'header' => 'STARTTIME',
+        ),
+		array(
+            'name' => 'ENDTIME',
+			'value'=>'$data->acces->ENDTIME',
+            'header' => 'ENDTIME',
+        ),
+		 array(
+            'name' => 'DOW',
+			'value'=>'$data->acces->DOW',
+            'header' => 'DOW',
+        ),
+			array(
+			'class'=>'CButtonColumn',
+			'template'=>'{update}  {delete}',
+			// view,edit ,delete
+	
+		),
+    ),
+	
+)
+);
+
+ ?>
 <?php echo "<center>".CHtml::button('Create Accessgroup', array('onclick' => 'js:document.location.href="index.php?r=accessgroup/create"')); ?>
 </div>
 </div>

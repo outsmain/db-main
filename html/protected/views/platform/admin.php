@@ -52,7 +52,7 @@ Func::add_loglogmodify($user,$status,$action,$url);
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'platform-grid',
 	'dataProvider'=>$model->search(),
-	//'filter'=>$model,
+	'filter'=>$model,
 	'columns'=>array(
 		'ID',
 		'NAME',
@@ -66,7 +66,7 @@ Func::add_loglogmodify($user,$status,$action,$url);
 	),
 )); 
 ?>
-<?php echo "<center>".CHtml::button('Create New User', array('onclick' => 'js:document.location.href="index.php?r=platform/create"')); ?>
+<?php echo "<center>".CHtml::button('Create New Platform', array('onclick' => 'js:document.location.href="index.php?r=platform/create"')); ?>
 
 </div>
 </div>

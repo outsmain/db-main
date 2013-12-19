@@ -49,7 +49,7 @@ class PLATFORM extends CActiveRecord
 
 	public static function getflatformid()
 	{  // show dropdown
-		return CHtml::listData(PLATFORM::model()->findAll(),'ID','ID');  // ACCESSGROUP_ID คือฟิลที่ต้องการเรียกไปแสดงบน dropdown
+		return CHtml::listData(PLATFORM::model()->findAll(),'ID','NAME');  // ACCESSGROUP_ID คือฟิลที่ต้องการเรียกไปแสดงบน dropdown
 	}
 	public function attributeLabels()
 	{

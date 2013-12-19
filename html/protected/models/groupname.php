@@ -46,6 +46,8 @@ class GROUPNAME extends CActiveRecord
 	{
 	return array(
 		'PAGENAME'=>array(self::BELONGS_TO, 'ID', 'PAGENAME_ID'),
+		'group'=>array(self::BELONGS_TO, 'ACCESSNAME', 'ACCESSGROUP_ID'),
+		'platform'=>array(self::BELONGS_TO, 'PLATFORM', 'PLATFORM_ID'),
 		
 		
 		);
@@ -81,6 +83,8 @@ class GROUPNAME extends CActiveRecord
 		$criteria->compare('COMMENT',$this->COMMENT,true);
 		$criteria->compare('ACCESSGROUP_ID',$this->ACCESSGROUP_ID,true);
 		$criteria->compare('PLATFORM_ID',$this->PLATFORM_ID,true);
+		$criteria->with=array('group');
+		$criteria->with=array('platform');
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

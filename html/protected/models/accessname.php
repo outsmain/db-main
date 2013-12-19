@@ -58,12 +58,18 @@ class ACCESSNAME extends CActiveRecord
 			'ENDTIME' => 'Endtime',
 			'DOW' => 'Dow',
 			'ALLOWIP' => 'Allowip',
-			'SESSIONTIME_ID' => 'sessiontime_id',
 		);
 	}
-public static function getAccessid()
+	public static function getAccessid()
 	{  // show dropdown
-		return CHtml::listData(ACCESSNAME::model()->findAll(),'ID','ID');
+		$model=new ACCESSNAME;
+		$row=Yii::app()->db->createCommand("SELECT * FROM ACCESSNAME")->queryAll();
+		foreach($row as $item){
+		$id = $item['ID'];
+		$dow = $item['DOW'];
+		}
+		return CHtml::listData($model,$id,$dow);
+		//return "ddd";
 	}
 	public function search()
 	{
@@ -76,7 +82,6 @@ public static function getAccessid()
 		$criteria->compare('ENDTIME',$this->ENDTIME,true);
 		$criteria->compare('DOW',$this->DOW,true);
 		$criteria->compare('ALLOWIP',$this->ALLOWIP,true);
-
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -92,4 +97,5 @@ public static function getAccessid()
 	{
 		return parent::model($className);
 	}
+
 }
