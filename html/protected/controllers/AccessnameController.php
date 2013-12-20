@@ -96,6 +96,7 @@ class AccessnameController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		//print_r($_POST);
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="MODIFY";
@@ -111,6 +112,7 @@ class AccessnameController extends Controller
 		$end = $_POST['ACCESSNAME']['ENDTIME'];
 		$ip = $_POST['ACCESSNAME']['ALLOWIP']; 	
 		if(isset($_POST['ACCESSNAME']))
+			if ((preg_match('/^s*[0-9%]{0,3}.[0-9%]{0,3}\.[0-9%]{0,3}.[0-9%]{0,3}s*$/', $ip))||($ip == "%")){
 		{
 				foreach($_POST['DOW'] as $item_id){
 				$item_id1  = $item_id1.",".$item_id;
@@ -123,7 +125,10 @@ class AccessnameController extends Controller
 				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('admin'));
 			}
-		
+		}else {
+		//echo 'ssswer';
+		Yii::app()->clientScript->registerScript('uniqueid', 'alert("Please input IP Address Format");');
+		}
 
 		$this->render('update',array(
 			'model'=>$model,

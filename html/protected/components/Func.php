@@ -137,13 +137,15 @@ class Func {
 				foreach($row as $item){
 				$ip = $item['ALLOWIP'];			 	
 				$pattern ="'".str_replace('%','.',$ip)."'";
-				if(!(preg_match($pattern,$ip_address))) {
+				if(!(preg_match("'".str_replace('%','.',$ip)."'",$ip_address))) {
 				$re_ip  = "ok";
 				}else {
 				$re_ip = "no";
-				}
+				
 				if($re_ip == "no"){
 				$re_ip ="no";
+				break;
+				}
 				}
 			}
 			return $re_ip;
