@@ -141,7 +141,7 @@ Yii::import('application.extensions.multiselect.multiSelect');
     </div>
 </div>
 <div id="dialog" title="Node Detail Dialog"></div> 
-
+<div id="dialogGraphNoData" title="Service Graph"></div> 
 <div id="dialogs" title="Service Graph">
     <div id="ShowGraphHead" style="left: 10px; right: 10px; top: 5px;">
         <div id="ShowGraph" style="width: 100%; height: 100%; left: 10px; right: 10px; top: 5px;"></div>
@@ -204,20 +204,20 @@ function onSearch(type){
 						if(nd!=data[i].node_name){
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'"></td>';
                                                     //node_name  **************************************แก้
-                                                    tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','','"+txtserv+"')\">"+data[i].node_name+"</td>";
+                                                    tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','','"+txtserv+"')\">"+((data[i].start_date == null)?'-':data[i].node_name)+"</td>";
                                                     nd = data[i].node_name;
 						}else{						
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'"></td>';
                                                     tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">&nbsp;</td>';
 						}
 						
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].start_date)+'</td>';
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].end_date)+'</td>';
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+TimeDifferenceCounter(CheckTextNull(data[i].start_date_diff), CheckTextNull(data[i].end_date_diff))+'</td>';
-                                                tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','"+data[i].service+"','"+txtserv+"')\">"+CheckTextNull(data[i].service)+"</td>";
-                                                tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].prov_subs)+'</td>';
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].conn_subs)+'</td>';   
-						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+CheckTextNull(data[i].min_line)+'</td>'; 
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+((data[i].start_date == null)?'-':data[i].start_date)+'</td>';
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+((data[i].end_date == null)?'-':data[i].end_date)+'</td>';
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+TimeDifferenceCounter(data[i].start_date_diff, data[i].end_date_diff)+'</td>';
+                                                tmp += "<td OnClick=\"fnGraph('ShowGraph','"+data[i].node_ip+"','"+data[i].start_date_diff+"','"+data[i].end_date_diff+"','"+data[i].service+"','"+txtserv+"')\">"+((data[i].service == null)?'-':data[i].service)+"</td>";
+                                                tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+((data[i].prov_subs == null)?'-':data[i].prov_subs)+'</td>';
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+((data[i].conn_subs == null)?'-':data[i].conn_subs)+'</td>';   
+						tmp += '<td id="dt-'+((data[i].id == null)?'-':data[i].id)+'">'+((data[i].min_line == null)?'-':data[i].min_line)+'</td>'; 
                                        		tmp += '</tr>';
 					}
                                                 
@@ -327,8 +327,8 @@ function fnGraph(type,txtIP,txtDateStart,txtDateEnd,txtService,txtServType){
 				 }else{
                                     var tmp;
                                     tmp = 'No Data Found.';
-                                    $('#dialogs').html(tmp);
-                                    $('#dialogs').dialog('open');
+                                    $('#dialogGraphNoData').html(tmp);
+                                    $('#dialogGraphNoData').dialog('open');
                                 }
 			}
 	});
@@ -394,6 +394,7 @@ var data =  data1;
                     a++;
               }
     var AutoWidth = GraphDate.length * 110;
+
     $("#ShowGraphHead").css( {
         width: AutoWidth+"px",
         height: "100%"
@@ -457,6 +458,20 @@ var options = {
 
 $(function() {
   $('#dialogs').dialog({
+      autoOpen: false,
+      width: 700,
+      height: 550,
+      zIndex:1,
+      buttons: {
+                  "Close": function() {
+                  $(this).dialog("close");
+              }
+      },
+      modal: true
+  });
+});
+$(function() {
+  $('#dialogGraphNoData').dialog({
       autoOpen: false,
       width: 700,
       height: 550,
