@@ -109,18 +109,28 @@ WHILE LoopAmountIp < (@AmountIp) DO
 						
 			SELECT SUBSTRING_INDEX(@DateTimeStepStarts,' ',-1) INTO @TimeStart;
 			SELECT SUBSTRING_INDEX(@DateTimeStepEnds,' ',-1) INTO @TimeEnd;
-				
+								
+			SELECT a.name INTO @NodeName FROM NE_LIST a WHERE a.ip_addr=@IpAdd;
 
-			INSERT INTO NE_SUBSSTAT(
-				start_date,end_date,node_ip,node_name,prov_subs,conn_subs
-			)SELECT @DateStartSub,@DateEndSub,a.NODE_IP,a.NODE_NAME,
-			(SELECT MAX(tb1.SUBS_NUM) FROM SUBS_STAT_HIST tb1
+			SELECT MAX(tb1.SUBS_NUM) INTO @MaxSubs FROM SUBS_STAT_HIST tb1
 			WHERE tb1.NODE_IP=@IpAdd AND tb1.PORT_STATE='UP' AND 
-			tb1.SUM_TIME BETWEEN @TimeStart AND @TimeEnd AND tb1.SUM_DOW=@DayName) AS MaxSubs,a.SUBS_NUM
-			FROM SUBS_STAT_HIST a WHERE a.NODE_IP=@IpAdd AND a.PORT_STATE='UP'
-			AND a.SUM_TIME BETWEEN @TimeStart AND @TimeEnd AND a.SUM_DOW=@DayName;
+			tb1.SUM_TIME BETWEEN @TimeStart AND @TimeEnd AND tb1.SUM_DOW=@DayName;
+				
+	
+			INSERT INTO NE_SUBSSTAT(
+				start_date,end_date,node_ip,node_name,service,prov_subs,conn_subs
+			)SELECT @DateStartSub,@DateEndSub,a.NODE_IP,@NodeName,b.SERVICE_TYPE,@MaxSubs,a.SUBS_NUM
+			FROM SUBS_STAT_HIST a,SUBS_LOG_ARCH b WHERE a.NODE_IP=@IpAdd AND a.NODE_IP=b.IP_ADDR AND a.PORT_STATE='UP'
+			AND a.SUM_TIME BETWEEN @TimeStart AND @TimeEnd AND a.SUM_DOW=@DayName GROUP BY a.SUBS_NUM;
+			
+			
+			
+			
+			
+			
 			
 		END IF;
+		
 	END LOOP; 
 			
 END WHILE;
