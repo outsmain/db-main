@@ -201,15 +201,133 @@ function CheckStatus(t, val=0){
 	});
 }
 
+function OpenGraph(val,id){
+	var url = '';
+	switch(val){
+		case 'nodename' :
+			url = urlNodeName;
+		break;
+		case 'nodeip' :
+			url = urlNodeName;
+		break;
+		case 'success_rate' :
+			url = urlSuccessRate;
+		break;
+		case 'login_num' :
+			url = urlSuccessRate;
+		break;
+		case 'login_rate' :
+			url = urlLoginRate;
+		break;
+		case 'cmd_num' :
+			url = urlCmdRate;
+		break;
+		case 'cmd_rate' :
+			url = urlCmdRate;
+		break;
+	}
+	if(val === 'nodename') url = urlNodeName;
+	$.ajax({
+		url: url,
+		dataType: 'json',
+		cache: false,
+		type: 'post',
+		data: {'str':val,'id':id,'sum_type':$('#summary_type').val()},
+		success: function(data){
+			if(data != null){
+				var title = 'Node '+data[2][0]+' / '+data[2][1]+' Authentication Statistics';
+				if($('body').has('#dia-graph').length > 0){
+					$('#dia-graph').remove();				
+				}
+				$('body').append('<div id="dia-graph" title="'+title+'"><div class="flot-container"><div id="placeholder" class="flot-placeholder"></div></div></div>');
+				var container = $(".flot-container");
+				var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text(data[0][0]).appendTo(container); 
+				yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
+				var yaxisLabel_r = $("<div id='axisLabel-right' class='axisLabel-right yaxisLabel-right'></div>").text(data[0][1]).appendTo(container); 
+				yaxisLabel_r.css("margin-top", yaxisLabel_r.width() / 2 - 20);
+				if(val === 'nodeip' || val === 'nodename') $('#axisLabel-right').css('right','1px');
+				doPlot(data,"right");
+			}
+		}
+	});
+}
+
+function doPlot(data,position) {	 
+	var arrData = [];
+	var i = 0;
+	$.each(data[1],function(k,val){
+		$.each(val,function(key,item){
+			if(i > 0){
+				arrData.push({data:item, label:key, yaxis: 2});
+			}else{
+				arrData.push({data:item, label:key});
+			}
+		});
+		i++;
+	});
+	
+	$.plot("#placeholder", arrData, 
+		{
+			xaxes:[{ mode: "time"}] ,
+			grid: {
+				backgroundColor: '#ffffff',
+				hoverable: true, 
+				clickable: true
+			},
+			yaxes: [{ min: 0 },{
+			   alignTicksWithAxis: true,
+			   position: "right",
+			  
+			}],
+//			legend: { position: "sw" },
+			points: {
+				radius: 5,
+				symbol: "circle",
+				show: true
+			},
+			lines: {show: true},
+		}
+	);
+	
+	$('#dia-graph').dialog({
+		autoOpen: false,
+		width: 1000,
+		height: 700,
+		closeOnEscape: true,
+		buttons: {
+			"Close": function() {
+			$(this).dialog("close");
+			}
+		},
+		modal: true
+	});
+	$('#dia-graph').dialog('open');
+}
+
+function OpenDialogBox(ip){
+	$.ajax({
+		url: secondurl,
+		dataType: 'json',
+		cache: false,
+		type: 'post',
+		data: {'ip':ip},
+		success: function(data) {
+			ShowDialog(data);
+		}
+	});
+}
 $(function() {
-	$('#dialog').dialog({
-            autoOpen: false,
-            width: 600,
-            buttons: {
+	if($('body').has('#dialog').length > 0){
+		$('#dialog').dialog({
+			autoOpen: false,
+			width: 600,
+			closeOnEscape: true,
+			buttons: {
 				"Close": function() {
 				$(this).dialog("close");
-                }
-            },
-            modal: true
-	});
+				}
+			},
+			modal: true
+		});
+	}
 });

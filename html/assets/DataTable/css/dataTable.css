@@ -2,6 +2,8 @@
 .dataTables_wrapper {
     clear: both;
     position: relative;
+}
+.DataTables_sort_wrapper{
 	cursor:pointer;
 }
 .dataTables_processing {

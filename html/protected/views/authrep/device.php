@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.min.js");?>
+<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
 <div class="container" id="actualbody">
 <?php 
@@ -207,6 +208,10 @@ $form=$this->beginWidget('CActiveForm', array(
 <script type="text/javascript">
 	var secondurl = "<?php echo $this->createUrl('Detail')?>";
 	var urlExportData ="<?php echo $this->createUrl('CheckExportData')?>";
+	var urlNodeName = "<?php echo $this->createUrl('NodeName')?>";
+	var urlSuccessRate = "<?php echo $this->createUrl('SuccessRate')?>";
+	var urlLoginRate = "<?php echo $this->createUrl('LoginRate')?>";
+	var urlCmdRate = "<?php echo $this->createUrl('CmdRate')?>";
 	var cl = '<?=get_class($model)?>';
 	$(document).ready(function(){
 		var StartDate = $('#'+"<?=get_class($model)?>"+'_StartDate');
@@ -258,20 +263,10 @@ $form=$this->beginWidget('CActiveForm', array(
 				var txt = eval('('+oSettings.jqXHR.responseText+')');
 				$('#num_row').val(txt.iTotalRecords);
 				$('#tmpSQL').val(txt.tmpSQL);
-				$('#dataTable tbody tr').live('click', function () {
+				/*$('#dataTable tbody tr').live('click', function () {
 					var nTds = $('td', this);
 					var ip = $(nTds[3]).text();
-					$.ajax({
-						url: secondurl,
-						dataType: 'json',
-						cache: false,
-						type: 'post',
-						data: {'ip':ip},
-						success: function(data) {
-							ShowDialog(data);
-						}
-					});
-				});
+				});*/
 			}
 		});
 		$( "#rerun" ).button().next().button({

@@ -294,6 +294,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				var txt = eval('('+oSettings.jqXHR.responseText+')');
 				$('#num_row').val(txt.iTotalRecords);
 				$('#tmpSQL').val(txt.tmpSQL);
+				$('#dataTable').hover().css('cursor','pointer');
 				$('#dataTable tbody tr').live('click', function () {
 					var nTds = $('td', this);
 					var ip = $(nTds[2]).text();

@@ -245,7 +245,7 @@ class AuthrepController extends Controller
 		}
 
 		if((strtotime(date('d-m-Y')) == strtotime($_GET['start_date'])) && ($_GET['summary_type'] == 'DAILY') && empty($_GET['ne_name']) && $_GET['click'] === 'false'){
-			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a, (SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.last_login)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate,id AS DT_RowId FROM NE_AUTHSUM a, (SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.last_login)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
 			$strSQL .= $strEvent;
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
@@ -258,16 +258,27 @@ class AuthrepController extends Controller
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
-					if($j === 'success_rate') $v = number_format($v,2);
-					if($j === 'login_rate' || $j === 'cmd_rate') $v = number_format($v,3);
-					$aaData[$k][$i] = $v;
+					if($j === 'update_date') $v = "<a href=javascript:OpenDialogBox('".$row['node_ip']."');>".$v."</a>";
+					if($j === 'last_login') $v = "<a href=javascript:OpenDialogBox('".$row['node_ip']."');>".$v."</a>";
+					if($j === 'node_name') $v = "<a href=javascript:OpenGraph('nodename','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'node_ip') $v = "<a href=javascript:OpenGraph('nodeip','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'login_num') $v = "<a href=javascript:OpenGraph('login_num','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'success_rate') $v = "<a href=javascript:OpenGraph('success_rate','".$row['DT_RowId']."');>".number_format($v,2)."</a>";
+					if($j === 'login_rate')  $v = "<a href=javascript:OpenGraph('login_rate','".$row['DT_RowId']."');>".number_format($v,3)."</a>";
+					if($j === 'cmd_num')  $v = "<a href=javascript:OpenGraph('cmd_num','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'cmd_rate')  $v = "<a href=javascript:OpenGraph('cmd_rate','".$row['DT_RowId']."');>".number_format($v,3)."</a>";
+					if($i > 8){
+						$aaData[$k][$j] = $v;
+					}else{
+						$aaData[$k][$i] = $v;
+					}
 					$i++;
 				}
 			}
 			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
 			$n = count($query);
 		}else{
-			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate FROM NE_AUTHSUM a WHERE UNIX_TIMESTAMP(a.last_login) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate,id AS DT_RowId FROM NE_AUTHSUM a WHERE UNIX_TIMESTAMP(a.last_login) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.last_login) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp;
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
 			$tmpSQL = $strSQL;
@@ -279,9 +290,20 @@ class AuthrepController extends Controller
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
-					if($j === 'success_rate') $v = number_format($v,2);
-					if($j === 'login_rate' || $j === 'cmd_rate') $v = number_format($v,3);
-					$aaData[$k][$i] = $v;
+					if($j === 'update_date') $v = "<a href=javascript:OpenDialogBox('".$row['node_ip']."');>".$v."</a>";
+					if($j === 'last_login') $v = "<a href=javascript:OpenDialogBox('".$row['node_ip']."');>".$v."</a>";
+					if($j === 'node_name') $v = "<a href=javascript:OpenGraph('nodename','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'node_ip') $v = "<a href=javascript:OpenGraph('nodeip','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'login_num') $v = "<a href=javascript:OpenGraph('login_num','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'success_rate') $v = "<a href=javascript:OpenGraph('success_rate','".$row['DT_RowId']."');>".number_format($v,2)."</a>";
+					if($j === 'login_rate')  $v = "<a href=javascript:OpenGraph('login_rate','".$row['DT_RowId']."');>".number_format($v,3)."</a>";
+					if($j === 'cmd_num')  $v = "<a href=javascript:OpenGraph('cmd_num','".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'cmd_rate')  $v = "<a href=javascript:OpenGraph('cmd_rate','".$row['DT_RowId']."');>".number_format($v,3)."</a>";
+					if($i > 8){
+						$aaData[$k][$j] = $v;
+					}else{
+						$aaData[$k][$i] = $v;
+					}
 					$i++;
 				}
 			}
@@ -625,6 +647,60 @@ class AuthrepController extends Controller
 				}
 			}
 		}
-		
+	}
+
+	public function actionNodeName()
+	{
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.success_rate, a.accept_num, a.reject_num, a.cmd_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $item){
+			$time = strtotime($item['last_login'].' UTC')*1000;
+			$success_rate['success_rate'][] = array($time,$item['success_rate']);
+			$accept_num['accept_num'][] = array($time,$item['accept_num']);
+			$reject_num['reject_num'][] = array($time,$item['reject_num']);
+			$cmd_num['cmd_num'][] = array($time,$item['cmd_num']);
+		}
+		$result = array(array('% Success','Transaction #'),array($success_rate,$accept_num,$reject_num,$cmd_num),array($row[0]['node_name'],$row[0]['node_ip']));
+		echo CJSON::encode($result);
+	}
+
+	public function actionSuccessRate()
+	{
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.success_rate, a.accept_num, a.reject_num, a.cmd_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $item){
+			$time = strtotime($item['last_login'].' UTC')*1000;
+			$success_rate['success_rate'][] = array($time,$item['success_rate']);
+			$accept_num['accept_num'][] = array($time,$item['accept_num']);
+			$reject_num['reject_num'][] = array($time,$item['reject_num']);
+		}
+		$result = array(array('% Success','Login #'),array($success_rate,$accept_num,$reject_num),array($row[0]['node_name'],$row[0]['node_ip']));
+		echo CJSON::encode($result);
+	}
+
+	public function actionLoginRate()
+	{
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.login_rate, (a.accept_num+a.reject_num) AS login_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $item){
+			$time = strtotime($item['last_login'].' UTC')*1000;
+			$login_rate['login_rate'][] = array($time,number_format($item['login_rate'],3));
+			$login_num['login_num'][] = array($time,$item['login_num']);
+		}
+		$result = array(array('Login Req. /s'),array($login_rate,$login_num),array($row[0]['node_name'],$row[0]['node_ip']));
+		echo CJSON::encode($result);
+	}
+
+	public function actionCmdRate()
+	{
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login, cmd_rate, cmd_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $item){
+			$time = strtotime($item['last_login'].' UTC')*1000;
+			$cmd_rate['cmd_rate'][] = array($time,$item['cmd_rate']);
+			$cmd_num['cmd_num'][] = array($time,$item['cmd_num']);
+		}
+		$result = array(array('Cmd /s','Cmd #'),array($cmd_rate,$cmd_num),array($row[0]['node_name'],$row[0]['node_ip']));
+		echo CJSON::encode($result);
 	}
 }
