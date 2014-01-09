@@ -149,7 +149,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				<div class="col_2 last">
 					<label>&nbsp;</label>
                     <div class="input" style="padding:6 0 0 40px;">
-						<input type="submit" class="button blue" value="Submit"></input>
+						<input type="submit" class="button blue" value="Submit">
 					</div>
 				</div>
 			</div>
@@ -185,7 +185,7 @@ $form=$this->beginWidget('CActiveForm', array(
             </div>
 			<form name="frmExport" id="frmExport" method="post" action="" target="iframe_target" style="display:none;">
 				<iframe id="iframe_target" name="iframe_target" style="width:0;height:0;border:0px;"></iframe>
-				<input type="textarea" id="tmpSQL" name="tmpSQL" style="display:none;"></textarea>
+				<input type="textarea" id="tmpSQL" name="tmpSQL" style="display:none;">
 				<div style="padding-left:20px;">
 					<button id="rerun">Export data</button>
 					<button id="select">Select an action</button>

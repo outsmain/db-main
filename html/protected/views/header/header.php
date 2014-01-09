@@ -1,4 +1,4 @@
-<html lang="en-us">
+<!DOCTYPE html>
 <head>
 	<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.min.js"></script>
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
@@ -31,11 +31,11 @@
         
         <!-- Menu -->
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/superfish/superfish.css" type="text/css" media="screen" />
-        <script src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/superfish/superfish.js"></script>
+        <!-- <script src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/superfish/superfish.js"></script> -->
 		
 
         <!-- Js used in the theme -->
-        <script src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/muse.js"></script>
+        <!-- <script src="<?php echo Yii::app()->request->baseUrl; ?>/assets/scripts/muse.js"></script> -->
 
 </head>
 <body>

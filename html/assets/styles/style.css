@@ -593,7 +593,14 @@ footer {background: #ddd; padding-top: 20px}
 }
 
 .flot-container {
-	box-sizing: border-box;
+	background: linear-gradient(#F6F6F6 0px, #FFFFFF 50px) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 1px solid #DDDDDD;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    height: 480px;
+    margin: 15px auto 30px;
+    padding: 10px 5px 0 0;
+    width: 800px;
+	/*box-sizing: border-box;
 	width: 800px;
 	height: 480px;
 	padding: 20px 45px 15px 40px;
@@ -609,7 +616,7 @@ footer {background: #ddd; padding-top: 20px}
 	-o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 	-ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 	-moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-	-webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	-webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);*/
 }
 
 .flot-placeholder {
@@ -624,10 +631,17 @@ footer {background: #ddd; padding-top: 20px}
     text-align: center;
 }
 .yaxisLabel {
-    left: 64px;
-    top: 40%;
-    transform: rotate(-90deg);
-    transform-origin: 0 0 0;
+	top: 40%;
+	transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-webkit-transform:  rotate(-90deg);
+	transform-origin: 0 32px 0;
+	-o-transform-origin: 0 32px;
+	-ms-transform-origin: 0 32px;
+	-moz-transform-origin: 0 32px;
+	-webkit-transform-origin: 0 32px;
 }
 .ie7 .yaxisLabel, .ie8 .yaxisLabel {
     font-size: 36px;
@@ -640,11 +654,20 @@ footer {background: #ddd; padding-top: 20px}
     text-align: center;
 }
 .yaxisLabel-right {
-    right: 5%;
-    transform: rotate(-90deg);
-    transform-origin: 0 0 0;
-	float:right;
-	bottom:55%
+	top: 30%;
+	float: right;
+    left: 100%;
+	width: 100px;
+	transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-webkit-transform:  rotate(-90deg);
+	transform-origin: 46px 32px 0;
+	-o-transform-origin: 46px 32px;
+	-ms-transform-origin: 46px 32px;
+	-moz-transform-origin: 46px 32px;
+	-webkit-transform-origin: 46px 32px;
 }
 .ie7 .yaxisLabel-right, .ie8 .yaxisLabel-right {
     font-size: 36px;

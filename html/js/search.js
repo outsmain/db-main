@@ -178,7 +178,7 @@ function ShowDialog(data){
 	$('#dialog').dialog('open');	
 }
 
-function CheckStatus(t, val=0){
+function CheckStatus(t, val){
 	$.ajax({
 		url: urlExportData,
 		dataType: 'json',
@@ -240,12 +240,6 @@ function OpenGraph(val,id){
 					$('#dia-graph').remove();				
 				}
 				$('body').append('<div id="dia-graph" title="'+title+'"><div class="flot-container"><div id="placeholder" class="flot-placeholder"></div></div></div>');
-				var container = $(".flot-container");
-				var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text(data[0][0]).appendTo(container); 
-				yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
-				var yaxisLabel_r = $("<div id='axisLabel-right' class='axisLabel-right yaxisLabel-right'></div>").text(data[0][1]).appendTo(container); 
-				yaxisLabel_r.css("margin-top", yaxisLabel_r.width() / 2 - 20);
-				if(val === 'nodeip' || val === 'nodename') $('#axisLabel-right').css('right','1px');
 				doPlot(data,"right");
 			}
 		}
@@ -265,34 +259,35 @@ function doPlot(data,position) {
 		});
 		i++;
 	});
-	
-	$.plot("#placeholder", arrData, 
-		{
+
+	var plot =  $.plot("#placeholder", arrData, {
 			xaxes:[{ mode: "time"}] ,
 			grid: {
 				backgroundColor: '#ffffff',
 				hoverable: true, 
-				clickable: true
+				clickable: true,
 			},
 			yaxes: [{ min: 0 },{
 			   alignTicksWithAxis: true,
 			   position: "right",
-			  
 			}],
-//			legend: { position: "sw" },
 			points: {
 				radius: 5,
 				symbol: "circle",
 				show: true
 			},
-			lines: {show: true},
+			lines: {show: true}
 		}
 	);
-	
+	var container = $("#placeholder");
+	var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text(data[0][0]).appendTo(container); 
+	yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
+	var yaxisLabel_r = $("<div id='axisLabel-right' class='axisLabel-right yaxisLabel-right'></div>").text(data[0][1]).appendTo(container); 
+	yaxisLabel_r.css("margin-top", yaxisLabel_r.width() / 2 - 20);
 	$('#dia-graph').dialog({
 		autoOpen: false,
-		width: 1000,
-		height: 700,
+		width: 900,
+		height: 'auto',
 		closeOnEscape: true,
 		buttons: {
 			"Close": function() {
