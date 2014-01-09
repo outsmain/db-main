@@ -22,10 +22,10 @@ class AuthrepController extends Controller
 
 	public function actionLoadUser()
 	{
-		$ex = explode(' ',$_GET['start_date']);
+		$ex = explode(' ',$_POST['start_date']);
 		$exp = explode('-',$ex[0]);
 		$start_date = $exp[2].'-'.$exp[1].'-'.$exp[0].' '.$ex[1];
-		$ex = explode(' ',$_GET['end_date']);
+		$ex = explode(' ',$_POST['end_date']);
 		$exp = explode('-',$ex[0]);
 		$end_date = $exp[2].'-'.$exp[1].'-'.$exp[0].' '.$ex[1];
 		
@@ -34,8 +34,8 @@ class AuthrepController extends Controller
 		$strNodeName = '';
 		$strNodeIp = '';
 		$strDate = '';
-		if(!empty($_GET['username'])){
-			$user = explode(',',$_GET['username']);
+		if(!empty($_POST['username'])){
+			$user = explode(',',$_POST['username']);
 			$str = '';
 			foreach($user as $item){
 				$str .= "'".trim($item)."',";
@@ -43,11 +43,11 @@ class AuthrepController extends Controller
 			$str = '('.substr($str,0,-1).')';
 			$strUsername = 'AND a.user_name IN '.$str;
 		}
-		if(!empty($_GET['event'])){
-			$strEvent = "AND a.status LIKE '%".$_GET['event']."'";
+		if(!empty($_POST['event'])){
+			$strEvent = "AND a.status LIKE '%".$_POST['event']."'";
 		}
-		if(!empty($_GET['ne_name'])){
-			$ne_name = explode(',',$_GET['ne_name']);
+		if(!empty($_POST['ne_name'])){
+			$ne_name = explode(',',$_POST['ne_name']);
 			foreach($ne_name as $item){
 				$node = explode('xx#xx',$item);
 				foreach($node as $val){
@@ -72,10 +72,10 @@ class AuthrepController extends Controller
 		$aaData = array();
 		$aColumns = array('a.login_date','a.node_name','a.node_ip','a.user_name','a.user_ip','a.cmd');
 		$sWhere = "";
-		if(isset($_GET['sSearch']) && $_GET['sSearch'] != ""){
+		if(isset($_POST['sSearch']) && $_POST['sSearch'] != ""){
 			$sWhere = "AND (";
 			for ($i=0;$i<count($aColumns);$i++){
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_GET['sSearch'])."%' OR ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch'])."%' OR ";
 			}
 			$sWhere = substr_replace($sWhere, "", -3);
 			$sWhere .= ')';
@@ -83,22 +83,22 @@ class AuthrepController extends Controller
 		
 		/* Individual column filtering */
 		for($i=0;$i<count($aColumns);$i++){
-			if(isset($_GET['bSearchable_'.$i]) && $_GET['bSearchable_'.$i] == "true" && $_GET['sSearch_'.$i] != ''){
+			if(isset($_POST['bSearchable_'.$i]) && $_POST['bSearchable_'.$i] == "true" && $_POST['sSearch_'.$i] != ''){
 				if ($sWhere == ""){
 					$sWhere = "AND ";
 				}else{
 					$sWhere .= " AND ";
 				}
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_GET['sSearch_'.$i])."%' ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch_'.$i])."%' ";
 			}
 		}
 		
 		$sOrder = "";
-		if(isset( $_GET['iSortCol_0'])){
+		if(isset( $_POST['iSortCol_0'])){
 			$sOrder = "ORDER BY  ";
-			for($i=0;$i<intval($_GET['iSortingCols']);$i++){
-				if($_GET['bSortable_'.intval($_GET['iSortCol_'.$i])] == "true"){
-					$sOrder .= $aColumns[intval($_GET['iSortCol_'.$i])]." ".($_GET['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
+			for($i=0;$i<intval($_POST['iSortingCols']);$i++){
+				if($_POST['bSortable_'.intval($_POST['iSortCol_'.$i])] == "true"){
+					$sOrder .= $aColumns[intval($_POST['iSortCol_'.$i])]." ".($_POST['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
 				}
 			}
 			
@@ -109,14 +109,14 @@ class AuthrepController extends Controller
 			}
 		}
 
-		if((strtotime(date('d-m-Y')) == strtotime($_GET['start_date'])) && empty($_GET['username']) && empty($_GET['ne_name']) && empty($_GET['event']) && $_GET['click'] === 'false'){
+		if((strtotime(date('d-m-Y')) == strtotime($_POST['start_date'])) && empty($_POST['username']) && empty($_POST['ne_name']) && empty($_POST['event']) && $_POST['click'] === 'false'){
 			$strSQL = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a, (SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT) b WHERE UNIX_TIMESTAMP(DATE(a.login_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
 			$tmpSQL = $strSQL;
 
-			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+			if(isset($_POST['iDisplayStart']) && $_POST['iDisplayLength'] != '-1'){
+				$strSQL .= " LIMIT ".(intval($_POST['iDisplayStart']).", ".intval($_POST['iDisplayLength']));
 			}
 			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
@@ -136,8 +136,8 @@ class AuthrepController extends Controller
 			$strSQL .= $sOrder;
 			$tmpSQL = $strSQL;
 
-			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+			if(isset($_POST['iDisplayStart']) && $_POST['iDisplayLength'] != '-1'){
+				$strSQL .= " LIMIT ".(intval($_POST['iDisplayStart']).", ".intval($_POST['iDisplayLength']));
 			}
 			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
@@ -153,7 +153,7 @@ class AuthrepController extends Controller
 			$n = count($query);
 		}
 		
-		$arrData = array('sEcho'=>$_GET['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
+		$arrData = array('sEcho'=>$_POST['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
 		echo CJSON::encode($arrData);
 	}
 	
@@ -166,10 +166,10 @@ class AuthrepController extends Controller
 
 	public function actionLoadDevice()
 	{
-		$ex = explode(' ',$_GET['start_date']);
+		$ex = explode(' ',$_POST['start_date']);
 		$exp = explode('-',$ex[0]);
 		$start_date = $exp[2].'-'.$exp[1].'-'.$exp[0].' '.$ex[1];
-		$ex = explode(' ',$_GET['end_date']);
+		$ex = explode(' ',$_POST['end_date']);
 		$exp = explode('-',$ex[0]);
 		$end_date = $exp[2].'-'.$exp[1].'-'.$exp[0].' '.$ex[1];
 		
@@ -178,11 +178,11 @@ class AuthrepController extends Controller
 		$strNodeIp = '';
 		$strDate = '';
 
-		if(!empty($_GET['summary_type'])){
-			$strEvent = "AND a.sum_dur = '".$_GET['summary_type']."'";
+		if(!empty($_POST['summary_type'])){
+			$strEvent = "AND a.sum_dur = '".$_POST['summary_type']."'";
 		}
-		if(!empty($_GET['ne_name'])){
-			$ne_name = explode(',',$_GET['ne_name']);
+		if(!empty($_POST['ne_name'])){
+			$ne_name = explode(',',$_POST['ne_name']);
 			foreach($ne_name as $item){
 				$node = explode('xx#xx',$item);
 				foreach($node as $val){
@@ -207,10 +207,10 @@ class AuthrepController extends Controller
 		$aaData = array();
 		$aColumns = array('a.update_date','a.last_login','a.node_name','a.node_ip','a.accept_num','a.reject_num','a.success_rate','a.login_rate','a.cmd_num','a.cmd_rate');
 		$sWhere = "";
-		if(isset($_GET['sSearch']) && $_GET['sSearch'] != ""){
+		if(isset($_POST['sSearch']) && $_POST['sSearch'] != ""){
 			$sWhere = "AND (";
 			for ($i=0;$i<count($aColumns);$i++){
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_GET['sSearch'])."%' OR ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch'])."%' OR ";
 			}
 			$sWhere = substr_replace($sWhere, "", -3);
 			$sWhere .= ')';
@@ -218,22 +218,22 @@ class AuthrepController extends Controller
 		
 		/* Individual column filtering */
 		for($i=0;$i<count($aColumns);$i++){
-			if(isset($_GET['bSearchable_'.$i]) && $_GET['bSearchable_'.$i] == "true" && $_GET['sSearch_'.$i] != ''){
+			if(isset($_POST['bSearchable_'.$i]) && $_POST['bSearchable_'.$i] == "true" && $_POST['sSearch_'.$i] != ''){
 				if ($sWhere == ""){
 					$sWhere = "AND ";
 				}else{
 					$sWhere .= " AND ";
 				}
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_GET['sSearch_'.$i])."%' ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch_'.$i])."%' ";
 			}
 		}
 		
 		$sOrder = "";
-		if(isset( $_GET['iSortCol_0'])){
+		if(isset( $_POST['iSortCol_0'])){
 			$sOrder = "ORDER BY  ";
-			for($i=0;$i<intval($_GET['iSortingCols']);$i++){
-				if($_GET['bSortable_'.intval($_GET['iSortCol_'.$i])] == "true"){
-					$sOrder .= $aColumns[intval($_GET['iSortCol_'.$i])]." ".($_GET['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
+			for($i=0;$i<intval($_POST['iSortingCols']);$i++){
+				if($_POST['bSortable_'.intval($_POST['iSortCol_'.$i])] == "true"){
+					$sOrder .= $aColumns[intval($_POST['iSortCol_'.$i])]." ".($_POST['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
 				}
 			}
 			
@@ -244,15 +244,15 @@ class AuthrepController extends Controller
 			}
 		}
 
-		if((strtotime(date('d-m-Y')) == strtotime($_GET['start_date'])) && ($_GET['summary_type'] == 'DAILY') && empty($_GET['ne_name']) && $_GET['click'] === 'false'){
+		if((strtotime(date('d-m-Y')) == strtotime($_POST['start_date'])) && ($_POST['summary_type'] == 'DAILY') && empty($_POST['ne_name']) && $_POST['click'] === 'false'){
 			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate,id AS DT_RowId FROM NE_AUTHSUM a, (SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.last_login)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
 			$strSQL .= $strEvent;
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
 			$tmpSQL = $strSQL;
  
-			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+			if(isset($_POST['iDisplayStart']) && $_POST['iDisplayLength'] != '-1'){
+				$strSQL .= " LIMIT ".(intval($_POST['iDisplayStart']).", ".intval($_POST['iDisplayLength']));
 			}
 			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
@@ -283,15 +283,15 @@ class AuthrepController extends Controller
 			$strSQL .= $sOrder;
 			$tmpSQL = $strSQL;
 		
-			if(isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1'){
-				$strSQL .= " LIMIT ".(intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']));
+			if(isset($_POST['iDisplayStart']) && $_POST['iDisplayLength'] != '-1'){
+				$strSQL .= " LIMIT ".(intval($_POST['iDisplayStart']).", ".intval($_POST['iDisplayLength']));
 			}
 			$query = Yii::app()->db->createCommand($strSQL)->queryAll();
 			foreach ($query as $k=>$row) {
 				$i = 0;
 				foreach($row as $j=>$v){
-					if($j === 'update_date') $v = "<a href=javascript:OpenDialogBox('".$row['node_ip']."');>".$v."</a>";
-					if($j === 'last_login') $v = "<a href=javascript:OpenDialogBox('".$row['node_ip']."');>".$v."</a>";
+					if($j === 'update_date') $v = "<a href=javascript:OpenDialogBox('".$row['DT_RowId']."');>".$v."</a>";
+					if($j === 'last_login') $v = "<a href=javascript:OpenDialogBox('".$row['DT_RowId']."');>".$v."</a>";
 					if($j === 'node_name') $v = "<a href=javascript:OpenGraph('nodename','".$row['DT_RowId']."');>".$v."</a>";
 					if($j === 'node_ip') $v = "<a href=javascript:OpenGraph('nodeip','".$row['DT_RowId']."');>".$v."</a>";
 					if($j === 'login_num') $v = "<a href=javascript:OpenGraph('login_num','".$row['DT_RowId']."');>".$v."</a>";
@@ -311,7 +311,7 @@ class AuthrepController extends Controller
 			$n = count($query);
 		}
 		
-		$arrData = array('sEcho'=>$_GET['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
+		$arrData = array('sEcho'=>$_POST['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
 		echo CJSON::encode($arrData);
 	}
 
@@ -651,14 +651,42 @@ class AuthrepController extends Controller
 
 	public function actionNodeName()
 	{
-		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.success_rate, a.accept_num, a.reject_num, a.cmd_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		if(!empty($_POST['node_name'])){
+			$ne_name = explode(',',$_POST['node_name']);
+			foreach($ne_name as $item){
+				$node = explode('xx#xx',$item);
+				foreach($node as $val){
+					$long = ip2long(trim($val));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($val)."',";
+					}else{
+						$strNodeIp .= "'".trim($val)."',";
+					}
+				}
+			}
+			if(!empty($strNodeName)){
+				$strNodeName = '('.substr($strNodeName,0,-1).')';
+				$strNodeName = 'AND a.node_name IN '.$strNodeName;
+			}
+			if(!empty($strNodeIp)){
+				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
+				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
+			}
+		}else{
+			$strNodeName = '';
+			$strNodeIp = '';
+		}
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.success_rate, a.accept_num, a.reject_num, a.cmd_num FROM NE_AUTHSUM a,(SELECT last_login,IFNULL(node_name,'') AS node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE IF(b.node_name = '', 1=1 , a.node_name = b.node_name) AND a.sum_dur = '".$_POST['sum_type']."' AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ";
+		$strSQL .= $strNodeName;
+		$strSQL .= $strNodeIp;
+		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
 			$time = strtotime($item['last_login'].' UTC')*1000;
-			$success_rate['success_rate'][] = array($time,$item['success_rate']);
-			$accept_num['accept_num'][] = array($time,$item['accept_num']);
-			$reject_num['reject_num'][] = array($time,$item['reject_num']);
-			$cmd_num['cmd_num'][] = array($time,$item['cmd_num']);
+			$success_rate['Success Rate %'][] = array($time,number_format($item['success_rate'],2));
+			$accept_num['Login Num (Acp)'][] = array($time,$item['accept_num']);
+			$reject_num['Login Num (Rej)'][] = array($time,$item['reject_num']);
+			$cmd_num['Cmd Num'][] = array($time,$item['cmd_num']);
 		}
 		$result = array(array('% Success','Transaction #'),array($success_rate,$accept_num,$reject_num,$cmd_num),array($row[0]['node_name'],$row[0]['node_ip']));
 		echo CJSON::encode($result);
@@ -666,13 +694,41 @@ class AuthrepController extends Controller
 
 	public function actionSuccessRate()
 	{
-		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.success_rate, a.accept_num, a.reject_num, a.cmd_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		if(!empty($_POST['node_name'])){
+			$ne_name = explode(',',$_POST['node_name']);
+			foreach($ne_name as $item){
+				$node = explode('xx#xx',$item);
+				foreach($node as $val){
+					$long = ip2long(trim($val));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($val)."',";
+					}else{
+						$strNodeIp .= "'".trim($val)."',";
+					}
+				}
+			}
+			if(!empty($strNodeName)){
+				$strNodeName = '('.substr($strNodeName,0,-1).')';
+				$strNodeName = 'AND a.node_name IN '.$strNodeName;
+			}
+			if(!empty($strNodeIp)){
+				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
+				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
+			}
+		}else{
+			$strNodeName = '';
+			$strNodeIp = '';
+		}
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.success_rate, a.accept_num, a.reject_num, a.cmd_num FROM NE_AUTHSUM a,(SELECT last_login,IFNULL(node_name,'') AS node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE IF(b.node_name = '', 1=1 , a.node_name = b.node_name) AND a.sum_dur = '".$_POST['sum_type']."' AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ";
+		$strSQL .= $strNodeName;
+		$strSQL .= $strNodeIp;
+		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
 			$time = strtotime($item['last_login'].' UTC')*1000;
-			$success_rate['success_rate'][] = array($time,$item['success_rate']);
-			$accept_num['accept_num'][] = array($time,$item['accept_num']);
-			$reject_num['reject_num'][] = array($time,$item['reject_num']);
+			$success_rate['Success Rate %'][] = array($time,number_format($item['success_rate'],2));
+			$accept_num['Login Num (Acp)'][] = array($time,$item['accept_num']);
+			$reject_num['Login Num (Rej)'][] = array($time,$item['reject_num']);
 		}
 		$result = array(array('% Success','Login #'),array($success_rate,$accept_num,$reject_num),array($row[0]['node_name'],$row[0]['node_ip']));
 		echo CJSON::encode($result);
@@ -680,12 +736,40 @@ class AuthrepController extends Controller
 
 	public function actionLoginRate()
 	{
-		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.login_rate, (a.accept_num+a.reject_num) AS login_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		if(!empty($_POST['node_name'])){
+			$ne_name = explode(',',$_POST['node_name']);
+			foreach($ne_name as $item){
+				$node = explode('xx#xx',$item);
+				foreach($node as $val){
+					$long = ip2long(trim($val));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($val)."',";
+					}else{
+						$strNodeIp .= "'".trim($val)."',";
+					}
+				}
+			}
+			if(!empty($strNodeName)){
+				$strNodeName = '('.substr($strNodeName,0,-1).')';
+				$strNodeName = 'AND a.node_name IN '.$strNodeName;
+			}
+			if(!empty($strNodeIp)){
+				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
+				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
+			}
+		}else{
+			$strNodeName = '';
+			$strNodeIp = '';
+		}
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login,a.login_rate, (a.accept_num+a.reject_num) AS login_num FROM NE_AUTHSUM a,(SELECT last_login,IFNULL(node_name,'') AS node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE IF(b.node_name = '', 1=1 , a.node_name = b.node_name) AND a.sum_dur = '".$_POST['sum_type']."' AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ";
+		$strSQL .= $strNodeName;
+		$strSQL .= $strNodeIp;
+		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
 			$time = strtotime($item['last_login'].' UTC')*1000;
-			$login_rate['login_rate'][] = array($time,number_format($item['login_rate'],3));
-			$login_num['login_num'][] = array($time,$item['login_num']);
+			$login_rate['Login Req./s'][] = array($time,number_format($item['login_rate'],3));
+			$login_num['Login Num (Acp/Rej)'][] = array($time,$item['login_num']);
 		}
 		$result = array(array('Login Req. /s'),array($login_rate,$login_num),array($row[0]['node_name'],$row[0]['node_ip']));
 		echo CJSON::encode($result);
@@ -693,12 +777,40 @@ class AuthrepController extends Controller
 
 	public function actionCmdRate()
 	{
-		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login, cmd_rate, cmd_num FROM NE_AUTHSUM a,(SELECT last_login,node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE a.sum_dur = '".$_POST['sum_type']."' AND a.node_name = b.node_name AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ORDER BY a.last_login ASC";
+		if(!empty($_POST['node_name'])){
+			$ne_name = explode(',',$_POST['node_name']);
+			foreach($ne_name as $item){
+				$node = explode('xx#xx',$item);
+				foreach($node as $val){
+					$long = ip2long(trim($val));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($val)."',";
+					}else{
+						$strNodeIp .= "'".trim($val)."',";
+					}
+				}
+			}
+			if(!empty($strNodeName)){
+				$strNodeName = '('.substr($strNodeName,0,-1).')';
+				$strNodeName = 'AND a.node_name IN '.$strNodeName;
+			}
+			if(!empty($strNodeIp)){
+				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
+				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
+			}
+		}else{
+			$strNodeName = '';
+			$strNodeIp = '';
+		}
+		$strSQL = "SELECT a.node_name,a.node_ip,a.last_login, cmd_rate, cmd_num FROM NE_AUTHSUM a,(SELECT last_login,IFNULL(node_name,'') AS node_name FROM NE_AUTHSUM WHERE id = '".$_POST['id']."') b  WHERE IF(b.node_name = '', 1=1 , a.node_name = b.node_name) AND a.sum_dur = '".$_POST['sum_type']."' AND a.last_login BETWEEN b.last_login - INTERVAL 12 HOUR AND b.last_login + INTERVAL 12 HOUR ";
+		$strSQL .= $strNodeName;
+		$strSQL .= $strNodeIp;
+		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
 			$time = strtotime($item['last_login'].' UTC')*1000;
-			$cmd_rate['cmd_rate'][] = array($time,$item['cmd_rate']);
-			$cmd_num['cmd_num'][] = array($time,$item['cmd_num']);
+			$cmd_rate['Cmd /s'][] = array($time,number_format($item['cmd_rate'],3));
+			$cmd_num['Cmd Num'][] = array($time,$item['cmd_num']);
 		}
 		$result = array(array('Cmd /s','Cmd #'),array($cmd_rate,$cmd_num),array($row[0]['node_name'],$row[0]['node_ip']));
 		echo CJSON::encode($result);

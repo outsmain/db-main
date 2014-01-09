@@ -226,13 +226,25 @@ function OpenGraph(val,id){
 			url = urlCmdRate;
 		break;
 	}
-	if(val === 'nodename') url = urlNodeName;
+	var NodeName = $("#NodeName").val();
+	if(NodeName !== null){
+		NodeName = (NodeName.length == $("#NodeName option").length) ? "" : NodeName;
+		if(NodeName != ""){
+			var str = '';
+			$.each(NodeName,function(k,v){
+				str += v+',';
+			});
+			NodeName = str.substr(0,(str.length-1));
+		}
+	}else{
+		NodeName = "";
+	}
 	$.ajax({
 		url: url,
 		dataType: 'json',
 		cache: false,
 		type: 'post',
-		data: {'str':val,'id':id,'sum_type':$('#summary_type').val()},
+		data: {'str':val,'id':id,'sum_type':$('#summary_type').val(),'node_name':NodeName},
 		success: function(data){
 			if(data != null){
 				var title = 'Node '+data[2][0]+' / '+data[2][1]+' Authentication Statistics';
@@ -250,14 +262,16 @@ function doPlot(data,position) {
 	var arrData = [];
 	var i = 0;
 	$.each(data[1],function(k,val){
-		$.each(val,function(key,item){
-			if(i > 0){
-				arrData.push({data:item, label:key, yaxis: 2});
-			}else{
-				arrData.push({data:item, label:key});
-			}
-		});
-		i++;
+		if(val != null){
+			$.each(val,function(key,item){
+				if(i > 0){
+					arrData.push({data:item, label:key+' ('+data[0][1]+')', yaxis: 2, label2:key});
+				}else{
+					arrData.push({data:item, label:key+' ('+data[0][0]+')', label2:key});
+				}
+			});
+			i++;
+		}
 	});
 
 	var plot =  $.plot("#placeholder", arrData, {
@@ -284,6 +298,33 @@ function doPlot(data,position) {
 	yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
 	var yaxisLabel_r = $("<div id='axisLabel-right' class='axisLabel-right yaxisLabel-right'></div>").text(data[0][1]).appendTo(container); 
 	yaxisLabel_r.css("margin-top", yaxisLabel_r.width() / 2 - 20);
+	if($('body').has('#tooltip').length < 1){
+		$("<div id='tooltip'></div>").css({
+			position: "absolute",
+			display: "none",
+			border: "1px solid #fdd",
+			padding: "10px",
+			"font-size":"14px",
+			zIndex: 2000,
+			"background-color": "#fee",
+			opacity: 0.80
+		}).appendTo("body");
+	}
+	$("#placeholder").bind("plothover", function (event, pos, item) {
+		if (item) {
+			var y = item.datapoint[1];
+			if(item.series.label2 === 'Success Rate %') y = item.datapoint[1].toFixed(2);
+			if(item.series.label2 === 'Login Req./s') y = item.datapoint[1].toFixed(3);
+			if(item.series.label2 === 'Login Num (Acp/Rej)') y = item.datapoint[1].toFixed(3);
+			var str = item.series.label2+' = ('+y+')';
+			$("#tooltip").html(str)
+				.css({top: item.pageY+5, left: item.pageX+5})
+				.fadeIn(200);
+		} else {
+			$("#tooltip").hide();
+		}
+	});
+
 	$('#dia-graph').dialog({
 		autoOpen: false,
 		width: 900,

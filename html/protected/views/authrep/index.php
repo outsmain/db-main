@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.min.js");?>
+<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
 <div class="container" id="actualbody">
 <?php 
@@ -172,7 +172,7 @@ $form=$this->beginWidget('CActiveForm', array(
 					echo CHtml::activeTextField($model,'',array('id'=>'idTextField','width'=>100,'maxlength'=>100)); 
 					Yii::app()->clientScript->registerScript('yourScript', '$("#' . CHtml::activeId($model, 'start_date') . '");');
 					*/?>
-                    <div class="input" style="padding:6 0 0 40px;">
+                    <div class="input" style="padding:0 0 0 50px;">
 						<?php echo CHtml::submitButton('Submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));
 //							echo CHtml::button('submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));
 							/*echo CHtml::ajaxSubmitButton(

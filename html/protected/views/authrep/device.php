@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.min.js");?>
+<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
 <div class="container" id="actualbody">
@@ -58,6 +58,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				"bJQueryUI": true,
 				"bProcessing": true,
 				"bServerSide": true,
+				"sServerMethod": "POST",
 				"sAjaxSource": "'.$this->createUrl($serv).'",
 				"fnServerParams": function ( aoData ) {
 					aoData.push( {"name": "start_date", "value": $("#'.get_class($model).'_StartDate").val()} );
@@ -148,7 +149,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				</div>
 				<div class="col_2 last">
 					<label>&nbsp;</label>
-                    <div class="input" style="padding:6 0 0 40px;">
+                    <div class="input" style="padding:0 0 0 70px;">
 						<input type="submit" class="button blue" value="Submit">
 					</div>
 				</div>
