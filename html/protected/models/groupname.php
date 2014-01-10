@@ -13,6 +13,7 @@
 class GROUPNAME extends CActiveRecord
 {
 	public $PAGENAME_ID;
+	public $DOW;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -47,9 +48,7 @@ class GROUPNAME extends CActiveRecord
 	return array(
 		'PAGENAME'=>array(self::BELONGS_TO, 'ID', 'PAGENAME_ID'),
 		'group'=>array(self::BELONGS_TO, 'ACCESSNAME', 'ACCESSGROUP_ID'),
-		'platform'=>array(self::BELONGS_TO, 'PLATFORM', 'PLATFORM_ID'),
-		
-		
+		'platform'=>array(self::BELONGS_TO, 'PLATFORM', 'PLATFORM_ID'),	
 		);
 	}
 

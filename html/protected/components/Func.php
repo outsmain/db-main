@@ -119,13 +119,18 @@ class Func {
 
 					if(($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show))){
 						$acc_time = "no";
-						break;
 						}
 						else{
 						$acc_time = "ok";
 						}
+						if($acc_time == "no"){
+						$acc_time ="no";
+						//break;
+				
+						$sw = $acc_time.$acc_time;
+						}
 			}	
-			return $acc_time;
+			return $sw;
 		}
 		
 	public function checkAllowip($username){
@@ -150,5 +155,114 @@ class Func {
 			}
 			return $re_ip;
 		}
+		
+	public function checkWeek($asat){
+			$week = array(Mon,Tue,Wed,Thu,Fri,Sat,Sun);
+			if(in_array(MONDAY,$asat)){
+				$s_week[0] =1;
+			}else {
+				$s_week[0] =0;
+			}if(in_array(TUESDAY,$asat)){
+				$s_week[1] =1;
+			}else {
+				$s_week[1] =0;
+			}if(in_array(WEDNESDAY,$asat)){
+				$s_week[2] =1;
+			}else {
+				$s_week[2] =0;
+			}if(in_array(THURSDAY,$asat)){
+				$s_week[3] =1;
+			}else {
+				$s_week[3] =0;
+			}if(in_array(FRIDAY,$asat)){
+				$s_week[4] =1;
+			}else {
+				$s_week[4] =0;
+			}if(in_array(SATURDAY,$asat)){
+				$s_week[5] =1;
+			}else {
+				$s_week[5] =0;
+			}if(in_array(SUNDAY,$asat)){
+				$s_week[6] =1;
+			}else {
+				$s_week[6] =0;
+						}
+			$i = 0;
+			foreach($s_week as $key=>$value){
+				if($value == 1){
+					$arr[$i][] = $key;
+				}else{
+					$i++;
+				}
+			}
+			$str = '';
+			foreach($arr as $key=>$value){
+				if(count($arr[$key]) > 1){
+					$str .= $week[$arr[$key][0]].'-'.$week[$arr[$key][(count($arr[$key])-1)]].',';
+				}else{
+					$str .= $week[$arr[$key][0]].',';
+				}
+			}
+			$str = substr($str,0,-1);
+			return $str;
+		}
+		
+		public function addToarr($do,$i){
+	
+			$arr[$i] = $do;
+			return $re_ip;
+		}
+		
+	public function checkGrouptime($times){
+		
+		$combined = array();
+		$i = 0;
+		$combined[0] = array_shift($times);
+		foreach($times AS $time){
+			$pass = false;
+			if($combined[$i]['end']>=$time['start']){
+				$combined[$i]['end'] = $time['end'];
+				$pass = true;
+			}
+			if($combined[$i]['start']>=$time['start']){
+				$combined[$i]['start'] = $time['start'];
+				$pass = true;
+			}
+			if(!$pass){
+				$i++;
+				$combined[$i] = $time;
+			}
+		}
+
+		//print_r($combined);
+		$j=0;
+	//	echo $dd =  strtotime('23:00:00');
+		//echo date('H:i:s', $dd );
+	foreach($combined as $pri){
+		
+	
+	 if($j == 0){
+			$showtime .= date('H:i',$combined[$j]['start']).'-'.date('H:i',$combined[$j]['end']);
+		}else{
+		 $showtime .= ','.date('H:i',$combined[$j]['start']).'-'.date('H:i',$combined[$j]['end']);
+		 }
+		$j++;
+	}
+
+	return $showtime;
+			}
+		
+	public function creatArray($strtime,$edtime){
+	
+		$times = array();
+		$i=0;
+		foreach($strtime as $rs){
+	//	array_push($times,array('start'=>$strtime[$i],'end'=>$edtime[$i]));
+		array_push($times,array('start'=>strtotime($strtime[$i]),'end'=>strtotime($edtime[$i])));
+			$i++;
+		}
+
+	return $times;
+			}	
 }
 ?>
