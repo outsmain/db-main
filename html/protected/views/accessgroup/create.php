@@ -20,4 +20,4 @@ Func::add_loglogmodify($user,$status,$action,$url);
 
 <h2>Create ACCESSGROUP</h2>
 
-<?php $this->renderPartial('_form2', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model,'acc_id'=>$acc_id)); ?>

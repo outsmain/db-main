@@ -26,8 +26,8 @@
 					'model'=>$model, //Model object
 					'attribute'=>'STARTTIME', //attribute name
 					'mode'=>'time', //use "time","date" or "datetime" (default)
-					'options'=>array('timeFormat'=>'hh:mm:ss',
-									'showSecond'=>true), // jquery plugin options
+					'options'=>array('timeFormat'=>'hh:mm',
+									'showSecond'=>false), // jquery plugin options
 					'language' => ''
 				));
 			?>
@@ -45,8 +45,8 @@
 					'model'=>$model, //Model object
 					'attribute'=>'ENDTIME', //attribute name
 					'mode'=>'time', //use "time","date" or "datetime" (default)
-					'options'=>array('timeFormat'=>'hh:mm:ss',
-									'showSecond'=>true), // jquery plugin options
+					'options'=>array('timeFormat'=>'hh:mm',
+									'showSecond'=>false), // jquery plugin options
 					'language' => ''
 				));
 			?>
@@ -70,14 +70,6 @@
 	<div class="clearfix">
 		<?php echo $form->labelEx($model,'ALLOWIP'); ?>
 		<div class="input">	
-			 <?php  /* Yii::import('application.extensions.maskedinput.maskedinput');
-			$this->widget('maskedinput', array(
-			'model' => $model,
-			'attribute' => 'ALLOWIP',
-			'mask' => '999.999.999.999',
-			'htmlOptions' => array('size' => 16)
-			));  */
-			?>
 		<?php echo $form->textField($model,'ALLOWIP'); ?>
 		</div>
 		<?php echo $form->error($model,'ALLOWIP'); ?>

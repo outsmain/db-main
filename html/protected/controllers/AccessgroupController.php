@@ -2,15 +2,9 @@
 
 class ACCESSGROUPController extends Controller
 {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
+
 	public $layout='//layouts/column2';
 
-	/**
-	 * @return array action filters
-	 */
 	public function filters()
 	{
 		return array(
@@ -40,10 +34,6 @@ class ACCESSGROUPController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
 	public function actionView($id)
 	{
 		$this->render('view',array(
@@ -51,72 +41,72 @@ class ACCESSGROUPController extends Controller
 		));
 	}
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
 	public function actionCreate()
 	{
+		$row=Yii::app()->db->createCommand("SELECT MAX(ACCESSGROUP_ID) FROM ACCESSGROUP ")->queryAll();
+			foreach($row as $item){
+				$acc_i = $item['MAX(ACCESSGROUP_ID)'];
+				$acc_id = ($acc_i+1);
+			}
+			
+		//print_r($_POST);
 		$model=new ACCESSGROUP;
+		$model->ACCESSGROUP_ID = $acc_id;
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="ADD";
 		$acc_n = $_POST['ACCESSNAME_ID'];
+		$selectid = $_POST['selectto'];
 		$name =$_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
-		if(isset($_POST['ACCESSGROUP']))
-		{
-			$connection3 = Yii::app()->db;
-				$sql3 = "INSERT INTO ACCESSGROUP (ACCESSGROUP_ID,ACCESSNAME_ID) VALUES ('{$name}','{$acc_n}')";
-				$command3 = $connection3->createCommand($sql3);
-				$dataReader3 = $command3->query();
+		if(isset($_POST['selectto']))
+			
+			{   
+				foreach($selectid as $sid){
+				$sql3 = "INSERT INTO ACCESSGROUP (ACCESSGROUP_ID,ACCESSNAME_ID) VALUES ('{$acc_id}','{$sid}')";
+				$command3 = Yii::app()->db->createCommand($sql3);
+				$dataReader = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$id); 
+				}
 				$this->redirect(array('admin'));
-					
-		}
+			}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'acc_id'=>$acc_id,
 		));
 	}
 
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
 	public function actionUpdate($id)
 	{
-		//print_r($_POST);
+		//print_r($_POST['selectto']);
 		$model=$this->loadModel($id);
+		$selectid = $_POST['selectto'];
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="MODIFY";
 		$acc_n = $_POST['ACCESSNAME_ID'];
 		$acc_g = $_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
-		//$_POST['ACCESSGROUP']['ACCESSNAME_ID'] = $_POST['ACCESSNAME_ID'];
-		if(isset($_POST['ACCESSGROUP']))
-		{
-			//$model->attributes=$_POST['ACCESSGROUP'];
-				$connection3 = Yii::app()->db;
-				$sql3 = "UPDATE ACCESSGROUP SET ACCESSNAME_ID = '{$acc_n}', ACCESSGROUP_ID = '{$acc_g}'
-							WHERE ID = '{$id}'";
-				$command3 = $connection3->createCommand($sql3);
+		if(isset($_POST['selectto']))
+		{		
+				$sql3 = "DELETE FROM ACCESSGROUP WHERE ACCESSGROUP_ID = '{$model->ACCESSGROUP_ID}'";
+				$command3 = Yii::app()->db->createCommand($sql3);
 				$dataReader3 = $command3->query();
+				foreach(($_POST['selectto']) as $seid){
+				$sql = "INSERT INTO ACCESSGROUP (ACCESSGROUP_ID,ACCESSNAME_ID) VALUES ('{$acc_g}','{$seid}')";
+				$command = Yii::app()->db->createCommand($sql);
+				$dataReader = $command->query();
+				}
 				Func::add_loglogmodify($user,$status,$action,$id); 
-				$this->redirect(array('view','id'=>$model->ID));
-				
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'id5'=>$id,
+			
 		));
 	}
 
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
 	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
@@ -124,15 +114,13 @@ class ACCESSGROUPController extends Controller
 		$status ="OK";
 		$action ="REMOVE";
 		Func::add_loglogmodify($user,$status,$action,$id); 
-		if(!isset($_GET['ajax'])){
+		if(!isset($_GET['ajax']))
+			{
 			
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 			}
 	}
 
-	/**
-	 * Lists all models.
-	 */
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('ACCESSGROUP');
@@ -141,9 +129,6 @@ class ACCESSGROUPController extends Controller
 		));
 	}
 
-	/**
-	 * Manages all models.
-	 */
 	public function actionAdmin()
 	{
 		//$model=new ACCESSGROUP('search');
@@ -153,7 +138,7 @@ class ACCESSGROUPController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		$sql = "SELECT * FROM GROUPNAME a JOIN ACCESSGROUP b ON ( a.`ACCESSGROUP_ID` = b.`ACCESSGROUP_ID` ) 
 				JOIN ACCESSNAME c ON ( b.`ACCESSNAME_ID` = c.`ID`)"; 
-		$dataProvider = new CSqlDataProvider($sql, array(    // เอา sql แปลงเป็น dataProvider
+		$dataProvider = new CSqlDataProvider($sql, array(   
 		 /*  'pagination' => array(
 		  'pageSize' => 10,       
 		  ), */
@@ -162,7 +147,7 @@ class ACCESSGROUPController extends Controller
 			$model->attributes=$_GET['ACCESSGROUP'];
 		$sql = "SELECT a.NAME,c.STARTTIME,c.ENDTIME,c.DOW,b.ID FROM GROUPNAME a JOIN ACCESSGROUP b ON ( a.`ACCESSGROUP_ID` = b.`ACCESSGROUP_ID` ) 
 				JOIN ACCESSNAME c ON ( b.`ACCESSNAME_ID` = c.`ID`)"; 
-		$dataProvider = new CSqlDataProvider($sql, array(    // เอา sql แปลงเป็น dataProvider
+		$dataProvider = new CSqlDataProvider($sql, array(    
 		 /*  'pagination' => array(
 		  'pageSize' => 10,       
 		  ), */
@@ -175,13 +160,6 @@ class ACCESSGROUPController extends Controller
 		
 	}
 
-	/**
-	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer $id the ID of the model to be loaded
-	 * @return ACCESSGROUP the loaded model
-	 * @throws CHttpException
-	 */
 	public function loadModel($id)
 	{
 		$model=ACCESSGROUP::model()->findByPk($id);
@@ -190,10 +168,6 @@ class ACCESSGROUPController extends Controller
 		return $model;
 	}
 
-	/**
-	 * Performs the AJAX validation.
-	 * @param ACCESSGROUP $model the model to be validated
-	 */
 	protected function performAjaxValidation($model)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='accessgroup-form')

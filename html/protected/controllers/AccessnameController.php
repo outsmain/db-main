@@ -19,11 +19,6 @@ class AccessnameController extends Controller
 		);
 	}
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
 	public function accessRules()
 	{
 		return array(
@@ -45,10 +40,6 @@ class AccessnameController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
 	public function actionView($id)
 	{
 		$this->render('view',array(
@@ -56,44 +47,50 @@ class AccessnameController extends Controller
 		));
 	}
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
 	public function actionCreate()
 	{
+		//print_r($_POST);
 		$model=new ACCESSNAME;
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="ADD";
 		$name =$_POST['ACCESSNAME']['ID'];
-		$start = $_POST['ACCESSNAME']['STARTTIME'];
-		$end = $_POST['ACCESSNAME']['ENDTIME'];
+		$start1 = $_POST['ACCESSNAME']['STARTTIME'];
+		$start = $start1.':59';
+		$end1 = $_POST['ACCESSNAME']['ENDTIME'];
+		$end = $end1.':59';
 		$ip = $_POST['ACCESSNAME']['ALLOWIP']; 	
+		
 		if(isset($_POST['ACCESSNAME']))
 		{
-			foreach($_POST['DOW'] as $item_id){
+		//	if($model->save()){	
+				if (!((preg_match('/^s*[0-9%]{0,3}.[0-9%]{0,3}\.[0-9%]{0,3}.[0-9%]{0,3}s*$/', $ip))||($ip == "%"))){
+
+					Yii::app()->clientScript->registerScript('uniqueid', 'alert("Please input IP Address Format");');
+				}
+				else {
+				foreach($_POST['DOW'] as $item_id){
 				$item_id1  = $item_id1.",".$item_id;
 				}
+		
 				$connection3 = Yii::app()->db;
 				$sql3 = "INSERT INTO ACCESSNAME (STARTTIME ,ENDTIME ,DOW ,ALLOWIP)
 				VALUES ('{$start}','{$end}','{$item_id1}','{$ip}')";
 				$command3 = $connection3->createCommand($sql3);
+		
 				$dataReader3 = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$name); 
 				$this->redirect(array('admin'));
-		}
-
+			}	
+				}
+			
+	
 		$this->render('create',array(
 			'model'=>$model,
 		));
-	}
+	
+			}
 
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
 	public function actionUpdate($id)
 	{
 		//print_r($_POST);
@@ -108,8 +105,10 @@ class AccessnameController extends Controller
 		
 		$model=$this->loadModel($id);
 		//print_r($_POST);
-		$start = $_POST['ACCESSNAME']['STARTTIME'];
-		$end = $_POST['ACCESSNAME']['ENDTIME'];
+		$start1 = $_POST['ACCESSNAME']['STARTTIME'];
+		$start = $start1.':59';
+		$end1 = $_POST['ACCESSNAME']['ENDTIME'];
+		$end = $end1.':59';
 		$ip = $_POST['ACCESSNAME']['ALLOWIP']; 	
 		if(isset($_POST['ACCESSNAME']))
 			if ((preg_match('/^s*[0-9%]{0,3}.[0-9%]{0,3}\.[0-9%]{0,3}.[0-9%]{0,3}s*$/', $ip))||($ip == "%")){
@@ -118,15 +117,14 @@ class AccessnameController extends Controller
 				$item_id1  = $item_id1.",".$item_id;
 				}
 
-				$connection3 = Yii::app()->db;
-				$sql3 = "UPDATE   ACCESSNAME  SET STARTTIME = '{$start}' ,ENDTIME ='{$end}' ,DOW = '{$item_id1}',ALLOWIP ='{$ip}' WHERE ID = '{$id}'";
-				$command3 = $connection3->createCommand($sql3);
-				$dataReader3 = $command3->query();
-				Func::add_loglogmodify($user,$status,$action,$id); 
-				$this->redirect(array('admin'));
+				// $connection3 = Yii::app()->db;
+				// $sql3 = "UPDATE   ACCESSNAME  SET STARTTIME = '{$start}' ,ENDTIME ='{$end}' ,DOW = '{$item_id1}',ALLOWIP ='{$ip}' WHERE ID = '{$id}'";
+				// $command3 = $connection3->createCommand($sql3);
+				// $dataReader3 = $command3->query();
+				// Func::add_loglogmodify($user,$status,$action,$id); 
+				// $this->redirect(array('admin'));
 			}
 		}else {
-		//echo 'ssswer';
 		Yii::app()->clientScript->registerScript('uniqueid', 'alert("Please input IP Address Format");');
 		}
 
@@ -149,7 +147,7 @@ class AccessnameController extends Controller
 		$action ="REMOVE";
 		
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
+	
 			Func::add_loglogmodify($user,$status,$action,$id); 
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 			
