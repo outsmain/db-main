@@ -105,7 +105,7 @@ class AuthrepController extends Controller
 			$sOrder = substr_replace( $sOrder, "", -2 );
 			if ( $sOrder == "ORDER BY" )
 			{
-				$sOrder = "ORDER BY UNIX_TIMESTAMP(a.login_date) desc";
+				$sOrder = "ORDER BY UNIX_TIMESTAMP(a.login_date) asc";
 			}
 		}
 
@@ -205,7 +205,7 @@ class AuthrepController extends Controller
 		}
 		
 		$aaData = array();
-		$aColumns = array('a.update_date','a.last_login','a.node_name','a.node_ip','a.accept_num','a.reject_num','a.success_rate','a.login_rate','a.cmd_num','a.cmd_rate');
+		$aColumns = array('a.last_login','a.update_date','a.node_name','a.node_ip','a.accept_num','a.reject_num','a.success_rate','a.login_rate','a.cmd_num','a.cmd_rate');
 		$sWhere = "";
 		if(isset($_POST['sSearch']) && $_POST['sSearch'] != ""){
 			$sWhere = "AND (";
@@ -240,7 +240,7 @@ class AuthrepController extends Controller
 			$sOrder = substr_replace( $sOrder, "", -2 );
 			if ( $sOrder == "ORDER BY" )
 			{
-				$sOrder = "ORDER BY UNIX_TIMESTAMP(a.id) desc";
+				$sOrder = "ORDER BY UNIX_TIMESTAMP(a.last_login) asc";
 			}
 		}
 
@@ -682,7 +682,7 @@ class AuthrepController extends Controller
 		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
-			$time = strtotime($item['last_login'].' UTC')*1000;
+			$time = strtotime($item['last_login'])*1000;
 			$success_rate['Success Rate %'][] = array($time,number_format($item['success_rate'],2));
 			$accept_num['Login Num (Acp)'][] = array($time,$item['accept_num']);
 			$reject_num['Login Num (Rej)'][] = array($time,$item['reject_num']);
@@ -725,7 +725,7 @@ class AuthrepController extends Controller
 		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
-			$time = strtotime($item['last_login'].' UTC')*1000;
+			$time = strtotime($item['last_login'])*1000;
 			$success_rate['Success Rate %'][] = array($time,number_format($item['success_rate'],2));
 			$accept_num['Login Num (Acp)'][] = array($time,$item['accept_num']);
 			$reject_num['Login Num (Rej)'][] = array($time,$item['reject_num']);
@@ -767,7 +767,7 @@ class AuthrepController extends Controller
 		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
-			$time = strtotime($item['last_login'].' UTC')*1000;
+			$time = strtotime($item['last_login'])*1000;
 			$login_rate['Login Req./s'][] = array($time,number_format($item['login_rate'],3));
 			$login_num['Login Num (Acp/Rej)'][] = array($time,$item['login_num']);
 		}
@@ -808,7 +808,7 @@ class AuthrepController extends Controller
 		$strSQL .= "ORDER BY a.last_login ASC";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
-			$time = strtotime($item['last_login'].' UTC')*1000;
+			$time = strtotime($item['last_login'])*1000;
 			$cmd_rate['Cmd /s'][] = array($time,number_format($item['cmd_rate'],3));
 			$cmd_num['Cmd Num'][] = array($time,$item['cmd_num']);
 		}

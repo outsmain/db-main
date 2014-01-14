@@ -19,6 +19,8 @@ API.txt for details.
 		}
 	};
 
+	var chkDate = true;
+	var DateSame;
 	// round to nearby lower multiple of base
 
 	function floorInBase(n, base) {
@@ -99,8 +101,17 @@ API.txt for details.
 				}
 			}
 		}
+		r = r.join("");
+		if(chkDate == true){
+			DateSame = leftPad(d.getDate())+monthNames[d.getMonth()]+leftPad(d.getFullYear() % 100);
+			chkDate = false;
+		}
 
-		return r.join("");
+		if(DateSame != leftPad(d.getDate())+monthNames[d.getMonth()]+leftPad(d.getFullYear() % 100)){
+			r = leftPad(d.getDate())+"-"+monthNames[d.getMonth()]+"-"+leftPad(d.getFullYear() % 100)+"<br>"+r;
+			chkDate = true;
+		}
+		return r;
 	}
 
 	// To have a consistent view of time-based data independent of which time

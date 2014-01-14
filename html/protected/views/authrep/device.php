@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.js");?>
+<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.time.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
 <div class="container" id="actualbody">
 <?php 

@@ -263,19 +263,27 @@ function doPlot(data,position) {
 	var i = 0;
 	$.each(data[1],function(k,val){
 		if(val != null){
+			var j = 0;
 			$.each(val,function(key,item){
 				if(i > 0){
 					arrData.push({data:item, label:key+' ('+data[0][1]+')', yaxis: 2, label2:key});
 				}else{
 					arrData.push({data:item, label:key+' ('+data[0][0]+')', label2:key});
 				}
+				j++;
 			});
 			i++;
 		}
 	});
 
 	var plot =  $.plot("#placeholder", arrData, {
-			xaxes:[{ mode: "time"}] ,
+			xaxes:[{ 
+				mode: "time",
+				timezone: null,		
+				timeformat: "%H:%I:%S",	
+				twelveHourClock: true,	
+				monthNames: null	
+			}] ,
 			grid: {
 				backgroundColor: '#ffffff',
 				hoverable: true, 
