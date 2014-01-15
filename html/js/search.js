@@ -280,7 +280,7 @@ function doPlot(data,position) {
 			xaxes:[{ 
 				mode: "time",
 				timezone: null,		
-				timeformat: "%H:%I:%S",	
+				timeformat: "%H:%M:%S",	
 				twelveHourClock: true,	
 				monthNames: null	
 			}] ,
