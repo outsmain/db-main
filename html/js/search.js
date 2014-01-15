@@ -311,7 +311,7 @@ function doPlot(data,position) {
 			position: "absolute",
 			display: "none",
 			border: "1px solid #fdd",
-			padding: "10px",
+			padding: "8px",
 			"font-size":"14px",
 			zIndex: 2000,
 			"background-color": "#fee",
@@ -320,11 +320,15 @@ function doPlot(data,position) {
 	}
 	$("#placeholder").bind("plothover", function (event, pos, item) {
 		if (item) {
+			var d = new Date(item.series.data[item.dataIndex][0]);
+			var e = d.toUTCString().split(' ');
+			var t = d.toTimeString().split(' ');
+			var strDate = '<b>'+e[1]+' '+e[2]+'  '+e[3]+' '+t[0]+'</b>';
 			var y = item.datapoint[1];
 			if(item.series.label2 === 'Success Rate %') y = item.datapoint[1].toFixed(2);
 			if(item.series.label2 === 'Login Req./s') y = item.datapoint[1].toFixed(3);
 			if(item.series.label2 === 'Login Num (Acp/Rej)') y = item.datapoint[1].toFixed(3);
-			var str = item.series.label2+' = ('+y+')';
+			var str = strDate+'<p style="margin-top:5px;">'+item.series.label2+' = '+y+'</p>';
 			$("#tooltip").html(str)
 				.css({top: item.pageY+5, left: item.pageX+5})
 				.fadeIn(200);
