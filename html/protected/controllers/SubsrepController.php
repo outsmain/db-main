@@ -101,8 +101,10 @@ class SubsrepController extends Controller
 	{
                         if($_POST[txtService]!=""){
                             $sqlService = "b.NAME='$_POST[txtService]' AND";
+                            $sqlService2 = "service='$_POST[txtService]' AND";
                         }else{
                             $sqlService = "";
+                            $sqlService2 = "";
                         }
                         
                         
@@ -120,11 +122,15 @@ class SubsrepController extends Controller
                         
                         
                         $row = Yii::app()->db->createCommand()
-                                ->select("a.IP_ADDR,a.NE_TYPE,DATE_FORMAT(a.UPDATE_DATE,'%d %b %Y %H:%i:%s') AS UPDATE_DATE,b.NAME,a.SUBS_NUM,HIST_SUBS_NUM")
-                                ->from('SUBS_LOG_ARCH a,PORT_TYPE_MAP b')
-                                //->where("PORT_STATE='UP' and IP_ADDR='$_POST[txtIP]' and UPDATE_DATE='$_POST[txtDate]'")11.159.181.91
-                                ->where("$sqlService $sqlServiceType a.PORT_TYPE=b.ID AND a.PORT_STATE='UP' and a.IP_ADDR='$_POST[txtIP]' and (a.UPDATE_DATE between '$_POST[txtDateStart]' - INTERVAL 6 HOUR and '$_POST[txtDateEnd]' + INTERVAL 6 HOUR)")
-                                ->order('a.UPDATE_DATE asc')
+                                
+                                
+                                ->select("a.IP_ADDR AS txtIp,DATE_FORMAT(a.UPDATE_DATE,'%d %b %Y %H:%i:%s') AS txtDate,b.NAME AS txtService,a.SUBS_NUM AS txtNums,'circle' AS txtSymbol")
+                                ->FROM("SUBS_LOG_ARCH a, PORT_TYPE_MAP b")
+                                ->WHERE("$sqlService $sqlServiceType a.PORT_TYPE=b.ID AND a.PORT_STATE='UP' AND a.IP_ADDR='$_POST[txtIP]' AND (a.UPDATE_DATE BETWEEN '$_POST[txtDateStart]' - INTERVAL 6 HOUR AND '$_POST[txtDateEnd]' + INTERVAL 6 HOUR)")
+                                ->union("SELECT node_ip AS txtIp,DATE_FORMAT(start_date,'%d %b %Y %H:%i:%s') AS txtDate,service AS txtService,conn_subs AS txtNums,'cross' AS txtSymbol FROM NE_SUBSSTAT WHERE $sqlService2 node_ip='$_POST[txtIP]' AND start_date>='$_POST[txtDateStart]' - INTERVAL 6 HOUR AND end_date<='$_POST[txtDateEnd]' + INTERVAL 6 HOUR")
+                                ->union("SELECT node_ip AS txtIp,DATE_FORMAT(end_date,'%d %b %Y %H:%i:%s') AS txtDate,service AS txtService,conn_subs AS txtNums,'cross' AS txtSymbol FROM NE_SUBSSTAT WHERE $sqlService2 node_ip='$_POST[txtIP]' AND start_date>='$_POST[txtDateStart]' - INTERVAL 6 HOUR AND end_date<='$_POST[txtDateEnd]' + INTERVAL 6 HOUR")
+                                
+                                ->ORDER("txtDate ASC,txtService ASC")
                                 //->text;
                                 ->queryAll();
                        echo CJSON::encode($row);

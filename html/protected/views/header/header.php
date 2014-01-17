@@ -1,7 +1,7 @@
 <html lang="en-us">
 
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" >
 	<meta charset="utf-8" />
 
         <link rel="apple-touch-con" href="" />

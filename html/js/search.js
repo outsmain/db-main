@@ -42,11 +42,12 @@ function TimeDifferenceCounter(datestart,dateend){ //in > 2013-11-03 00:00:01
   
 function CheckTextNull(txtNull){ 
 	var txtValue;
-	if(txtNull == "" || txtNull.toUpperCase() == "NULL"){
+	if(txtNull == "" || txtNull.toUpperCase() == "NULL" || txtNull == "null"){
 		txtValue = "-";
 	}else{
 		txtValue=txtNull;
 	}
+        
 	return txtValue;
 }
   
@@ -172,3 +173,77 @@ $(function() {
             modal: true
 	});
 });
+
+
+
+
+//****Start Export Data subsrep ****//
+window.ExcellentExport = (function() {
+                                
+    var uri = 'data:application/vnd.ms-excel;base64,';
+    // template = '<html><body><table>{table}</table></body></html>';
+    var template = '{table}'
+    var base64 = function(s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+    };
+    var format = function(s, c) {
+        return s.replace(/{(\w+)}/g, function(m, p) {
+            return c[p];
+        });
+    };
+
+    var ee = {
+        excel: function(anchor, table, name) {
+            if (!table.nodeType) {
+                table = document.getElementById(table);
+            }
+            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML};
+            var hrefvalue = uri + base64(format(template, ctx));
+            console.log(hrefvalue);
+            anchor.href = hrefvalue;
+            // Return true to allow the link to work
+            return true;
+        }
+    };
+
+    return ee;
+}());
+//****Start Export Data subsrep ****//
+window.TextentExport = (function() {
+    
+    var uri = 'data:text/plain;base64,';
+    // template = '<html><body><table>{table}</table></body></html>';
+    var template = '{table}'
+    var base64 = function(s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+    };
+    var format = function(s, c) {
+        return s.replace(/{(\w+)}/g, function(m, p) {
+            return c[p];
+        });
+    };
+
+    var ee = {
+        text: function(anchor, table, name) {
+            if (!table.nodeType) {
+                table = document.getElementById(table);
+            }
+            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML};
+            var hrefvalue = uri + base64(format(template, ctx));
+            console.log(hrefvalue);
+            anchor.href = hrefvalue;
+            // Return true to allow the link to work
+            return true;
+        }
+    };
+
+    return ee;
+    
+}());
+//ตัวเก่า
+//onclick="return btninputclick()
+// function btninputclick() {
+//     window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#req_result').html())
+// );
+// }
+//****End Export Data subsrep ****//

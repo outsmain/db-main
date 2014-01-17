@@ -1,5 +1,5 @@
 <?php
-
+//Yii::setPathOfAlias('chartjs', dirname(__FILE__).'/../extensions/yii-chartjs'); 
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 // Yii::setPathOfAlias('bootstrap',dirname(__FILE__).'/../extensions/bootstrap');
@@ -7,19 +7,26 @@
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
+        
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'My Web Application',
 //	'theme'=>'bootstrap',
 	// preloading 'log' component
-	'preload'=>array('log'),
-
+	//'preload'=>array('log','chartjs'),
+        'preload'=>array('log'),
+    
+    
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
 		'application.extensions.*',
+               // 'application.extensions.jqBarGraph.*',
 	),
 
+    
+    
+    
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
 		
@@ -41,6 +48,15 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
+            
+            
+//                'chartjs' => array(
+//                        'class' => 'chartjs.components.ChartJs'
+//                ),
+            
+            
+            
+            
 		/*'bootstrap'=>array(
             'class'=>'bootstrap.components.Bootstrap',
         ),*/
