@@ -9,7 +9,21 @@
 <div class="widget_inside">
 
 <div class="form">
+<style>
+.checkboxgroup {
+    overflow:auto;
+}
 
+.checkboxgroup div {
+	width: 230px;
+	float:left;
+}
+span.checkbox-columns {
+    float:left;
+    width: 40%;
+	overflow:auto;
+}
+</style>
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'groupname-form',
 	'enableAjaxValidation'=>false,
