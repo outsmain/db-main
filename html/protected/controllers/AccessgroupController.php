@@ -51,18 +51,22 @@ class ACCESSGROUPController extends Controller
 			
 		//print_r($_POST);
 		$model=new ACCESSGROUP;
-		$model->ACCESSGROUP_ID = $acc_id;
+		//$model->ACCESSGROUP_ID = $acc_id;
+		$name =$_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
+			if($name == ''){
+				$name = $acc_id;
+			}
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="ADD";
 		$acc_n = $_POST['ACCESSNAME_ID'];
 		$selectid = $_POST['selectto'];
-		$name =$_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
+		
 		if(isset($_POST['selectto']))
 			
 			{   
 				foreach($selectid as $sid){
-				$sql3 = "INSERT INTO ACCESSGROUP (ACCESSGROUP_ID,ACCESSNAME_ID) VALUES ('{$acc_id}','{$sid}')";
+				$sql3 = "INSERT INTO ACCESSGROUP (ACCESSGROUP_ID,ACCESSNAME_ID) VALUES ('{$name}','{$sid}')";
 				$command3 = Yii::app()->db->createCommand($sql3);
 				$dataReader = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$id); 
@@ -78,14 +82,22 @@ class ACCESSGROUPController extends Controller
 
 	public function actionUpdate($id)
 	{
-		//print_r($_POST['selectto']);
+		$row=Yii::app()->db->createCommand("SELECT MAX(ACCESSGROUP_ID) FROM ACCESSGROUP ")->queryAll();
+		foreach($row as $item){
+			$acc_i = $item['MAX(ACCESSGROUP_ID)'];
+			$acc_id = ($acc_i+1);
+		}
+		$acc_g = $_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
+			if($acc_g == ''){
+				$acc_g = $acc_id;
+			}
 		$model=$this->loadModel($id);
 		$selectid = $_POST['selectto'];
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="MODIFY";
 		$acc_n = $_POST['ACCESSNAME_ID'];
-		$acc_g = $_POST['ACCESSGROUP']['ACCESSGROUP_ID'];
+		
 		if(isset($_POST['selectto']))
 		{		
 				$sql3 = "DELETE FROM ACCESSGROUP WHERE ACCESSGROUP_ID = '{$model->ACCESSGROUP_ID}'";

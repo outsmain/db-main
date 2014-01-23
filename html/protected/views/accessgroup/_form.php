@@ -39,7 +39,7 @@ $(document).ready(function() {
 	<div class="clearfix">
 		<?php echo $form->labelEx($model,'ACCESSGROUP_ID'); ?>
 		<div class="input">	
-		<?php echo $form->textField($model,'ACCESSGROUP_ID'); ?>
+		<?php echo $form->dropDownList($model,'ACCESSGROUP_ID',GROUPNAME::getDroupdownid(),array('empty'=>'None')); ?>
 		</div>
 		<?php echo $form->error($model,'ACCESSGROUP_ID'); ?>
 	</div>
