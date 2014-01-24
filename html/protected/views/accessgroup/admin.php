@@ -42,7 +42,40 @@ Func::add_loglogmodify($user,$status,$action,$url);
 )
  
 ); */
-$this->widget('zii.widgets.grid.CGridView', array(
+$this->widget('ext.groupgridview.GroupGridView', array(
+	'dataProvider'=>$model->search(),
+	'mergeColumns' => array('NAME'),  
+	'columns' => array(   
+        array(
+            'name'=>'NAME',
+			'value'=>'$data->group->NAME',
+            'header' => 'GROUPNAME',			
+        ),
+        array(
+            'name' => 'STARTTIME',
+			'value'=>'$data->acces->STARTTIME',
+            'header' => 'STARTTIME',
+        ),
+		array(
+            'name' => 'ENDTIME',
+			'value'=>'$data->acces->ENDTIME',
+            'header' => 'ENDTIME',
+        ),
+		 array(
+            'name' => 'DOW',
+			'value'=>'$data->acces->DOW',
+            'header' => 'DOW',
+        ),
+			array(
+			'class'=>'CButtonColumn',
+			'template'=>'{update}  {delete}',
+			// view,edit ,delete
+	
+		),
+    ),
+ 
+    ));
+/* $this->widget('zii.widgets.grid.CGridView', array(
     'id' =>'accessgroup-grid',   
     //'dataProvider' =>$dataProvider,
 	'dataProvider'=>$model->search(),
@@ -77,8 +110,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		),
     ),
 	
-)
-);
+) */
+//);
 
  ?>
 <?php echo "<center>".CHtml::button('Create Accessgroup', array('onclick' => 'js:document.location.href="index.php?r=accessgroup/create"')); ?>

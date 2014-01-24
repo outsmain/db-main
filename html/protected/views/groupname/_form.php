@@ -10,18 +10,18 @@
 
 <div class="form">
 <style>
-.checkboxgroup {
-    overflow:auto;
-}
-
-.checkboxgroup div {
-	width: 230px;
-	float:left;
-}
 span.checkbox-columns {
-    float:left;
-    width: 40%;
-	overflow:auto;
+float:left;
+width: 30%;
+overflow:auto;
+	}
+@media (max-width:800px) {
+span.checkbox-columns {
+clear:both;
+display:block;
+float:none;
+width:80%;
+	}
 }
 </style>
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -48,22 +48,25 @@ span.checkbox-columns {
 		</div>
 		<?php echo $form->error($model,'COMMENT'); ?>
 	</div>
-	
-	
-		<?php //echo $form->labelEx($model2,'PAGENAME_ID'); ?>	
-		<div class="input" style="padding-left:90;">	
+	<div class="input" style="padding-left:80px;">	
 		<label>Page Allow</label>
-		</div>
+	</div>
 		<div class="input" style="padding-left:180px;">	
-		 <?php $listData = CHtml::listData(PAGENAME::model()->findAll(), 'ID', 'NAME'); ?>
-		<?php echo CHtml::checkBoxList('PAGENAME_ID',$pag,$listData,array('ID'=>'checklist')); ?>
+		<?php $listData = CHtml::listData(PAGENAME::model()->findAll(), 'ID', 'NAME'); ?>
+		<?php echo CHtml::checkBoxList('PAGENAME_ID',$pag,$listData,array('ID'=>'checklist','separator'=>'',
+			 'template'=>'<span class="checkbox-columns">{input} {label}</span>')); ?>	
+			 <?php// echo CHtml::checkBoxList('PAGENAME_ID',$pag,$listData,array('ID'=>'checklist')); ?>
 		</div>
 		<?php echo $form->error($model2,'PAGENAME_ID'); ?>
+		<div class="clearfix">
+		<div class="input">	
+		</div>
+		</div>
 
 		<div class="clearfix">
 		<?php echo $form->labelEx($model,'ACCESSGROUP_ID'); ?>
 		<div class="input">	
-		<select name="ACCESSGROUP_ID" class="input">
+		<select name="ACCESSGROUP_ID" class="input"> 
 		 <?php 
 		
 		$row=Yii::app()->db->createCommand(" SELECT * FROM ACCESSGROUP a
@@ -101,13 +104,10 @@ span.checkbox-columns {
 			$result_arr =  Func::creatArray($strtime,$edtime);
 			$result_time =  Func::checkGrouptime($result_arr);
 			
-			print_r($result_arr);
-			
-		
-			
-			
+		//	print_r($result_arr);		
 		?>
-		 <option value="<?php echo $id; ?>"><?php  echo $result_day.'@'.$result_time; foreach($sdow as $starttime){ } foreach($sdow as $tim2){ } foreach($sdow as $endtime){ }?></option>
+		<option value="<?php echo $id; ?>"><?php  echo $result_day.'@'.$result_time; foreach($sdow as $starttime){ } foreach($sdow as $tim2){ } foreach($sdow as $endtime){ }?></option>
+		 
 		 <?php
 		}
 			
@@ -125,9 +125,7 @@ span.checkbox-columns {
 	</div>
 	<div class="clearfix">
 	<div class="input">	
-	
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-
 		</div>
 	</div>
 
