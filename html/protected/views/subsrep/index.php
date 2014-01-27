@@ -36,7 +36,7 @@ $form=$this->beginWidget('CActiveForm', array(
 	'enableClientValidation'=>true,
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
-		'afterValidate' => 'js:function(){onSearch("Search"),ExportFile("Search");}'
+		'afterValidate' => 'js:function(){onSearch("Search");}'
 	),
 	'htmlOptions' => array(
         'onsubmit' => "return false;",
@@ -163,7 +163,7 @@ Yii::import('application.extensions.multiselect.multiSelect');
 
                 </div>
                 <div class="col_12" id="fileExport" style="display: none;">
-
+                    
                 </div>
             </div>
         </div>
@@ -214,16 +214,11 @@ Yii::import('application.extensions.multiselect.multiSelect');
 						.hide()
 						.menu();
 	});
-        
 	</script>   
-
-
-                                    
-                                    
-                                    
+                         
         <div>
             <div>
-                <button id="rerun">Export data</button>
+                <a id="rerun">Export data</a>
                 <button id="select">Select an action</button>
             </div>
             <ul style="z-index:500;">
@@ -237,8 +232,8 @@ Yii::import('application.extensions.multiselect.multiSelect');
     <br><br>
     
 </div>
-<div id="dialog" title="Node Detail Dialog"></div> 
-<div id="dialogsExportFile">Export data...</div> 
+<div id="dialog" title="Node Detail Dialog"></div>
+<div id="dialogsExportFile">Export data...</div>
 <div id="dialogGraphNoData" title="Service Graph"></div> 
 <div id="dialogs" title="Service Graph">
     <div id="ShowGraphHead" style="left: 10px; right: 10px; top: 5px;">
@@ -247,9 +242,6 @@ Yii::import('application.extensions.multiselect.multiSelect');
 </div> 
 
 <?php $this->endWidget(); ?>
-
-
-
 
 
 <script type="text/javascript">
@@ -262,6 +254,7 @@ var txtserv = "<?=$txtservs; ?>";
 
 
 function onSearch(type){
+    var result2 = $('#fileExport');
     var result = $('#req_result');
 	result.html("<img src='<?=Yii::app()->request->baseUrl;?>/images/loading.gif'>");
 	$.ajax({
@@ -315,9 +308,41 @@ function onSearch(type){
 					tmp += '</tbody>';
 					tmp += '</table>';
                                         
+                                        
+                                        
+                                        var tmp2 = '';
+                                        var nd2 = "";
+                                        tmp2 += 'Node Name'+"&#09;";
+                                        tmp2 += 'Start Date'+"&#09;";
+                                        tmp2 += 'End Date'+"&#09;";
+                                        tmp2 += 'Duration'+"&#09;";
+                                        tmp2 += 'Service'+"&#09;";
+                                        tmp2 += 'Prov. Subs.'+"&#09;";
+                                        tmp2 += 'Conn. Subs.'+"&#09;";
+                                        tmp2 += 'Min./Line';
+                                        tmp2 += "&#x0D;&#x0A;";
+                                        for(var i=0;i<data.length;++i){
+
+                                            if(nd2!=data[i].node_name){
+                                                tmp2 += ((data[i].start_date == null)?'-':data[i].node_name)+"&#09;";
+                                                nd2 = data[i].node_name;
+                                            }else{			
+                                                tmp2 += ' '+"&#09;";
+                                            }
+                                            tmp2 += ((data[i].start_date == null)?'-':data[i].start_date)+"&#09;";
+                                            tmp2 += ((data[i].end_date == null)?'-':data[i].end_date)+"&#09;";
+                                            tmp2 += TimeDifferenceCounter(data[i].start_date_diff, data[i].end_date_diff)+"&#09;";
+                                            tmp2 += ((data[i].service == null)?'-':data[i].service)+"&#09;";
+                                            tmp2 += ((data[i].prov_subs == null)?'-':data[i].prov_subs)+"&#09;";
+                                            tmp2 += ((data[i].conn_subs == null)?'-':data[i].conn_subs)+"&#09;";   
+                                            tmp2 += ((data[i].min_line == null)?'-':data[i].min_line); 
+                                            tmp2 += "&#x0D;&#x0A;";
+                                        }
 				 }else{
 					tmp = 'No Data Found.';
+					tmp2 = 'No Data Found.';
 				 }
+                                result2.html(tmp2);
 				result.html(tmp);
 				$('.dataTable').dataTable({
 					"sPaginationType": "full_numbers",
@@ -331,112 +356,108 @@ function onSearch(type){
 
 function ExportFile(type){
     
-  //  $('#dialogsExportFile').dialog('open')
+$('#dialogsExportFile').dialog('open')
     
-    var result2 = $('#fileExport');
-	$.ajax({
-			url: "<?php echo $this->createUrl('"+type+"')?>",
-			dataType: 'json',
-			cache: false,
-			type: 'post',
-			data: {'start_date':$('#'+"<?=get_class($model)?>"+'_StartDate').val(),'end_date':$('#'+"<?=get_class($model)?>"+'_EndDate').val(),'OnlineService':$('#OnlineService').val(),'note_name':$('#NodeName').val(),'CountList':$('#CountList').val()},
-			success: function(data) {
-                                
-				if(data.length > 0){
+    $.ajax({
+        url: "<?php echo $this->createUrl('"+type+"')?>",
+        dataType: 'json',
+        cache: false,
+        type: 'post',
+        data: {'start_date':$('#'+"<?=get_class($model)?>"+'_StartDate').val(),'end_date':$('#'+"<?=get_class($model)?>"+'_EndDate').val(),'OnlineService':$('#OnlineService').val(),'note_name':$('#NodeName').val(),'CountList':$('#CountList').val()},
+        success: function(data) {
+
+            if(data.length > 0){
+ 
+
                                         var tmp2 = '';
-					var nd2 = "";
-					tmp2 += 'Node Name'+"&#09;";
-					tmp2 += 'Start Date'+"&#09;";
-					tmp2 += 'End Date'+"&#09;";
-					tmp2 += 'Duration'+"&#09;";
-					tmp2 += 'Service'+"&#09;";
-					tmp2 += 'Prov. Subs.'+"&#09;";
-					tmp2 += 'Conn. Subs.'+"&#09;";
-					tmp2 += 'Min./Line';
-					tmp2 += "&#x0D;&#x0A;";
-                                        
-					for(var i=0;i<data.length;++i){
-                                                
-						if(nd2!=data[i].node_name){
-                                                    tmp2 += ((data[i].start_date == null)?'-':data[i].node_name)+"&#09;";
-                                                    nd2 = data[i].node_name;
-						}else{			
-                                                    tmp2 += ' '+"&#09;";
-						}
-						
-						tmp2 += ((data[i].start_date == null)?'-':data[i].start_date)+"&#09;";
-						tmp2 += ((data[i].end_date == null)?'-':data[i].end_date)+"&#09;";
-						tmp2 += TimeDifferenceCounter(data[i].start_date_diff, data[i].end_date_diff)+"&#09;";
-                                                tmp2 += ((data[i].service == null)?'-':data[i].service)+"&#09;";
-                                                tmp2 += ((data[i].prov_subs == null)?'-':data[i].prov_subs)+"&#09;";
-						tmp2 += ((data[i].conn_subs == null)?'-':data[i].conn_subs)+"&#09;";   
-						tmp2 += ((data[i].min_line == null)?'-':data[i].min_line); 
-                                       		tmp2 += "&#x0D;&#x0A;";
-					}
+                                        var nd2 = "";
+                                        tmp2 += 'Node Name'+"&#09;";
+                                        tmp2 += 'Start Date'+"&#09;";
+                                        tmp2 += 'End Date'+"&#09;";
+                                        tmp2 += 'Duration'+"&#09;";
+                                        tmp2 += 'Service'+"&#09;";
+                                        tmp2 += 'Prov. Subs.'+"&#09;";
+                                        tmp2 += 'Conn. Subs.'+"&#09;";
+                                        tmp2 += 'Min./Line';
+                                        tmp2 += "&#x0D;&#x0A;";
+                                        for(var i=0;i<data.length;++i){
 
-                                       // $('#dialogsExportFile').dialog("close");
-                                    
-				 }else{
-					tmp2 = 'No Data Found.';
-				 }
-				result2.html(tmp2);
+                                            if(nd2!=data[i].node_name){
+                                                tmp2 += ((data[i].start_date == null)?'-':data[i].node_name)+"&#09;";
+                                                nd2 = data[i].node_name;
+                                            }else{			
+                                                tmp2 += ' '+"&#09;";
+                                            }
+                                            tmp2 += ((data[i].start_date == null)?'-':data[i].start_date)+"&#09;";
+                                            tmp2 += ((data[i].end_date == null)?'-':data[i].end_date)+"&#09;";
+                                            tmp2 += TimeDifferenceCounter(data[i].start_date_diff, data[i].end_date_diff)+"&#09;";
+                                            tmp2 += ((data[i].service == null)?'-':data[i].service)+"&#09;";
+                                            tmp2 += ((data[i].prov_subs == null)?'-':data[i].prov_subs)+"&#09;";
+                                            tmp2 += ((data[i].conn_subs == null)?'-':data[i].conn_subs)+"&#09;";   
+                                            tmp2 += ((data[i].min_line == null)?'-':data[i].min_line); 
+                                            tmp2 += "&#x0D;&#x0A;";
+                                        }
 
-			}
-	});
+             }else{
+                tmp2 = 'No Data Found.';
+             }
+            $('#dialogsExportFile').dialog("close");
+        }
+    });
 }
 
 
 function SplitDialogs(url){
-	$('#detail > tr > td    ').click(function(){
+    $('#detail > tr > td    ').click(function(){
 	var id = this.id.split('-');
         if(this.id!=""){
             $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    cache: false,
-                    type: 'post',
-                    data: {'id':id[1]},
-                    success: function(data){
-                            var tmp = '';
-                            if(data.length > 0){
-                                    $.each(data,function(i, val){
-                                            switch(val.is_use){
-                                                    case 'null' :
-                                                            var use = '-';
-                                                            break;
-                                                    case '0' :
-                                                            var use = 'Not Active';
-                                                            break;
-                                                    case '1' :
-                                                            var use = 'Active';
-                                                            break;
-                                                    case '2' :
-                                                            var use = 'Disable';
-                                                            break;
-                                            }
-                                            tmp += '<p>Add Date : '+((val.add_date == null)?'-':val.add_date)+'</p>';
-                                            tmp += '<p>Update Date : '+((val.update_date == null)?'-':val.update_date)+'</p>';
-                                            tmp += '<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>';
-                                            tmp += '<p>Name : '+((val.name == null)?'-':val.name)+'</p>';
-                                            tmp += '<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>';
-                                            tmp += '<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>';
-                                            tmp += '<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>';
-                                            tmp += '<p>Model : '+((val.model == null)?'-':val.model)+'</p>';
-                                            tmp += '<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>';
-                                            tmp += '<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>';
-                                            tmp += '<p>Level : '+((val.level == null)?'-':val.level)+'</p>';
-                                            tmp += '<p>Status Mapped Values : '+use+'</p>';
-                                            tmp += (i > 0)?'<p></p>':'';
-                                    });
-                            }else{
-                                    tmp = 'No Data Found.';
+                url: url,
+                dataType: 'json',
+                cache: false,
+                type: 'post',
+                data: {'id':id[1]},
+                success: function(data){
+                    var tmp = '';
+                    if(data.length > 0){
+                        $.each(data,function(i, val){
+                            switch(val.is_use){
+                                case 'null' :
+                                    var use = '-';
+                                    break;
+                                case '0' :
+                                    var use = 'Not Active';
+                                    break;
+                                case '1' :
+                                    var use = 'Active';
+                                    break;
+                                case '2' :
+                                    var use = 'Disable';
+                                    break;
                             }
-                            $('#dialog').html(tmp);
-                            $('#dialog').dialog('open');						 
+                            tmp += '<p>Add Date : '+((val.add_date == null)?'-':val.add_date)+'</p>';
+                            tmp += '<p>Update Date : '+((val.update_date == null)?'-':val.update_date)+'</p>';
+                            tmp += '<p>IP Address : '+((val.ip_addr == null)?'-':val.ip_addr)+'</p>';
+                            tmp += '<p>Name : '+((val.name == null)?'-':val.name)+'</p>';
+                            tmp += '<p>Comment : '+((val.comment == null)?'-':val.comment)+'</p>';
+                            tmp += '<p>Site Name : '+((val.site_name == null)?'-':val.site_name)+'</p>';
+                            tmp += '<p>Brand : '+((val.brand == null)?'-':val.brand)+'</p>';
+                            tmp += '<p>Model : '+((val.model == null)?'-':val.model)+'</p>';
+                            tmp += '<p>Software : '+((val.sw_ver == null)?'-':val.sw_ver)+'</p>';
+                            tmp += '<p>Type : '+((val.ne_type == null)?'-':val.ne_type)+'</p>';
+                            tmp += '<p>Level : '+((val.level == null)?'-':val.level)+'</p>';
+                            tmp += '<p>Status Mapped Values : '+use+'</p>';
+                            tmp += (i > 0)?'<p></p>':'';
+                        });
+                    }else{
+                        tmp = 'No Data Found.';
                     }
+                    $('#dialog').html(tmp);
+                    $('#dialog').dialog('open');						 
+                }
             });	
         }
-});
+    });
 }
 
 onSearch('ShowAll');
@@ -513,53 +534,104 @@ for(var i = 0;i<=NodeGraphSubsNum.length-1;i+=txtNumLoop){  //แปลงค่
     }
 }
 
-    
-    
-
-
-
 var data1 = Array();
-              
-
-              
-              
+             
 for(var i = 0;i<txtNumLoop;i++){
-
 var GenColor = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';
-
+var txtSymbolTwo = Array();
+   txtSymbolTwo=txtSymbolOne[i].split(',');
 var txtNumTwo = Array();
 txtNumTwo[i] = txtNumOne[i].split(',');
 var txtNumThree = Array();
 var txtSymbolVaule = "";
-var txtSymbolTwo = Array();
-   txtSymbolTwo=txtSymbolOne[i].split(',');
 var txtCircle = 0;
 var txtCross = 0;
+var txtRadius = 0;
+var labelTooltip = "";
+   
+var txtLoopNum = "";
+var txtAmounts = 2;
+var txtCircles = 0;
+var txtCrosss = 0;
 
+var txtNumThreess1 = Array();
+var txtNumThreess2 = Array();
+var txtNumThreess3 = Array();
+var txtNumThreess4 = Array();
+var txtNumThreess5 = Array();
+
+//////////////////เส้นที่หายไป//////////////////
+        for(var rr = 0;rr<=txtSymbolTwo.length;rr++){
+             if(txtLoopNum==""){
+                 txtLoopNum = txtSymbolTwo[rr];
+             }
+             if(txtLoopNum!=txtSymbolTwo[rr]){
+
+                 if(txtNumTwo[i][rr-1]!=0){
+                    txtNumThreess1.push(txtNumTwo[i][rr-1]);
+                    txtNumThreess3.push(txtAmounts-1) 
+                 }
+                 if(txtNumTwo[i][rr]!=0){
+                    txtNumThreess2.push(txtNumTwo[i][rr]);
+                    txtNumThreess4.push(txtAmounts) 
+                 }
+                 if(txtLoopNum=="circle"){
+                     txtCircles=txtCircles+1;
+                 }
+                 if(txtLoopNum=="cross"){
+                     txtCrosss=txtCrosss+1;
+                 }
+
+                 txtLoopNum = txtSymbolTwo[rr];
+             }
+             txtAmounts++;
+        }
+        for(var ii = 0;ii<txtNumThreess4.length-1;ii++){
+            txtNumThreess5.push([txtNumThreess3[ii], parseInt(txtNumThreess1[ii])]);
+            txtNumThreess5.push([txtNumThreess4[ii], parseInt(txtNumThreess2[ii])]);
+
+            data1.push({data: txtNumThreess5,color: GenColor,points: { radius: 0, fillColor: GenColor }});
+            txtNumThreess5=[];
+        }
+//////////////////เส้นที่หายไป//////////////////
 
 txtNumThree.push([1, null]);
 
     var txtAmount = 2;
-    for(var r = 0;r<txtSymbolTwo.length;r++){   
+    
+    for(var r = 0;r<=txtSymbolTwo.length;r++){
          if(txtSymbolVaule==""){
              txtSymbolVaule = txtSymbolTwo[r]
          }
                   
          if(txtSymbolVaule==txtSymbolTwo[r]){
              txtNumThree.push([txtAmount, parseInt(txtNumTwo[i][r])]);
+             
+             
          }else if(txtSymbolVaule!=txtSymbolTwo[r]){
-             txtNumThree.push([txtAmount, parseInt(txtNumTwo[i][r])]);
              
-             
+            
              if(txtCircle==0 || txtCross==0){
                  if(txtCircle==0){
-                     data1.push({label: NodeGraphName[i]+" Active", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
+                     if(txtSymbolVaule=="circle"){
+                        labelTooltip = NodeGraphName[i]+" Active";
+                     }else{
+                        labelTooltip = NodeGraphName[i]+" Loss";
+                     }
+                     data1.push({labelTooltip: labelTooltip, label: NodeGraphName[i]+" Active", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, radius: 3, fillColor: GenColor }});
                  }else if(txtCross==0){
-                     data1.push({label: NodeGraphName[i]+" Loss", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
+                     data1.push({labelTooltip: labelTooltip, label: NodeGraphName[i]+" Loss", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, radius: 5, fillColor: GenColor }});
                  }
-                 
+                 labelTooltip = "";
              }else{
-                 data1.push({data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
+                 if(txtSymbolVaule=="circle"){
+                     labelTooltip = NodeGraphName[i]+" Active";
+                     txtRadius = 3;
+                 }else{
+                     labelTooltip = NodeGraphName[i]+" Loss";
+                     txtRadius = 5;
+                 }
+                 data1.push({labelTooltip: labelTooltip, data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, radius: txtRadius, fillColor: GenColor }});
              }
              
              if(txtSymbolVaule=="circle"){
@@ -568,36 +640,17 @@ txtNumThree.push([1, null]);
              if(txtSymbolVaule=="cross"){
                  txtCross=txtCross+1;
              }
+             
              txtSymbolVaule = txtSymbolTwo[r];
              txtNumThree = [];
              txtNumThree.push([txtAmount, parseInt(txtNumTwo[i][r])]);
          }
-       
-         if(r==txtSymbolTwo.length-1){
-            
-             if(txtCircle==0 || txtCross==0){
-                 if(txtCircle==0){
-                     data1.push({label: NodeGraphName[i]+" Active", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
-                 }else if(txtCross==0){
-                     data1.push({label: NodeGraphName[i]+" Loss", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
-                 }
-                 
-             }else{
-                 data1.push({data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
-             }
-             
-             if(txtSymbolVaule=="circle"){
-                 txtCircle=txtCircle+1;
-             }
-             if(txtSymbolVaule=="cross"){
-                 txtCross=txtCross+1;
-             }
-         }
          txtAmount++;
     }
     
-
-    txtNumThree.push([txtSymbolTwo.length+2, null]);
+    txtNumThree.push([txtAmount-1, null]);
+    data1.push({data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, fillColor: GenColor }});
+             
 }
 
     var data =  data1;
@@ -613,41 +666,40 @@ txtNumThree.push([1, null]);
           a++;
     }
                
-    var AutoWidth = 16 * 110;
+    var AutoWidth = GraphDate.length * 150;
 
     $("#ShowGraphHead").css( {
         width: AutoWidth+"px",
         height: "100%"
     });  
                       
-                var options = {
-                    lines: {show: true},
-                    points: {show: true},
-                    //yaxis: {tickDecimals: 0, min: 0, max: 5000, autoscaleMargin: null},
-                    xaxis: {
-                        ticks: GraphDate,
-                        axisLabelColor: "red",
-                        axisLabel: "Date",
-                        axisLabelUseCanvas: true,
-                        axisLabelFontSizePixels: 12,
-                        axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
-                        axisLabelPadding: 5
-                    },
-                    yaxis: {
-                        axisLabel: "Subscribers",
-                        axisLabelUseCanvas: true,
-                        axisLabelFontSizePixels: 12,
-                        axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
-                        axisLabelPadding: 5
-                    },
-                    grid: {
-                        backgroundColor: '#ffffff',
-                        hoverable: true, 
-                        clickable: true
-                    }
-               };
-               $.plot($('#ShowGraph'), data, options);
-
+    var options = {
+        lines: {show: true},
+        points: {show: true},
+        //yaxis: {tickDecimals: 0, min: 0, max: 5000, autoscaleMargin: null},
+        xaxis: {
+            ticks: GraphDate,
+            axisLabelColor: "red",
+            axisLabel: "Date",
+            axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+            axisLabelPadding: 5
+        },
+        yaxis: {
+            axisLabel: "Subscribers",
+            axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 12,
+            axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+            axisLabelPadding: 5
+        },
+        grid: {
+            backgroundColor: '#ffffff',
+            hoverable: true, 
+            clickable: true
+        }
+    };
+    $.plot($('#ShowGraph'), data, options);
 
 
 
@@ -681,7 +733,7 @@ txtNumThree.push([1, null]);
                         y = item.datapoint[1].toFixed(0);
                                               
                     showTooltip(item.pageX, item.pageY,
-                                item.series.label + " of " + GraphTooltip[x-2] + " = " + y);
+                                item.series.labelTooltip + " of " + GraphTooltip[x-2] + " = " + y);
                 }
             }
             else {
@@ -699,9 +751,9 @@ $(function() {
       height: 550,
       zIndex:1,
       buttons: {
-                  "Close": function() {
-                  $(this).dialog("close");
-              }
+        "Close": function() {
+            $(this).dialog("close");
+        }
       },
       modal: true
   });
@@ -724,9 +776,9 @@ $(function() {
       height: 550,
       zIndex:1,
       buttons: {
-                  "Close": function() {
-                  $(this).dialog("close");
-              }
+        "Close": function() {
+            $(this).dialog("close");
+        }
       },
       modal: true
   });
