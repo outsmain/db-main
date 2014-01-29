@@ -2,6 +2,7 @@
 
 class AuthrepController extends Controller
 {
+	public $arrRealtime = array();
 	public function filters()
 	{
 		return array('ajaxOnly + field');
@@ -635,6 +636,9 @@ class AuthrepController extends Controller
 		if(is_file("assets/chkexcel_".Yii::app()->session->sessionID.".tmp")){
 			unlink("assets/chkexcel_".Yii::app()->session->sessionID.".tmp");
 		}
+		if(is_file("assets/xxx.txt")){
+			unlink("assets/xxx.txt");
+		}
 		$dir = scandir("assets");
 		foreach($dir as $item){
 			
@@ -814,5 +818,29 @@ class AuthrepController extends Controller
 		}
 		$result = array(array('Cmd /s','Cmd #'),array($cmd_rate,$cmd_num),array($row[0]['node_name'],$row[0]['node_ip']));
 		echo CJSON::encode($result);
+	}
+
+	public function actionOpenRealtime(){
+		ini_set('user_agent','MSIE 4\.0b2;'); 
+		set_time_limit(0);
+		$dh = fopen("http://webuser:passweb@10.12.3.12/stream/cmdlog.php",'r'); 
+		$result = fread($dh,8192);  
+		$c = str_replace(chr(10),"",$result);
+		$d = explode("data: ",$c);
+		$i = 0;
+		$arrData = array();
+		foreach($d as $e){
+			if(!empty($e)){
+				$arrTrue = CJSON::decode($e);
+				$arrData2[$i][0] = date('d M Y H:i:s', $arrTrue['cmd']['start_date']);
+				$arrData2[$i][1] = $arrTrue['cmd']['node_name'];
+				$arrData2[$i][2] = $arrTrue['cmd']['node_ip'];
+				$arrData2[$i][3] = $arrTrue['cmd']['user'];
+				$arrData2[$i][4] = $arrTrue['cmd']['user_ip'];
+				$arrData2[$i][5] = $arrTrue['cmd']['cmd'];
+				++$i;
+			}
+		}
+		echo  CJSON::encode($arrData2);
 	}
 }

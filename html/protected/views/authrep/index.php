@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/modal.css" type="text/css" media="screen" />
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
+<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/modal.js");?>
+
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
 <div class="container" id="actualbody">
 <?php 
@@ -52,7 +55,7 @@ $form=$this->beginWidget('CActiveForm', array(
 			}else{
 				NodeName = "";
 			}
-				$("#dataTable").dataTable({
+			$("#dataTable").dataTable({
 				"sPaginationType": "full_numbers",
 				"bJQueryUI": true,
 				"bProcessing": true,
@@ -103,7 +106,7 @@ $form=$this->beginWidget('CActiveForm', array(
                         </div>
                     </div>
 				</div>
-				<div class="col_2">
+				<div style="width:150px;float: left;margin-right: 1%;position: relative;">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'EndDate');?></div>
                     <div class="input">
 					   <?php
@@ -115,6 +118,12 @@ $form=$this->beginWidget('CActiveForm', array(
 						));?>
 						<?php echo $form->error($model,'EndDate'); ?>
                     </div>
+                </div>
+				<div style="width:50px;float: left;margin-right: 2%;margin-left: 1%;position: relative;">
+                    <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'realtime');?></div>
+                    <div style="padding:0 5px 0 5px;">
+					<? echo CHtml::checkBox("realtime",false,array("id"=>"realtime", "onclick"=>"OpenRealtime();"));?>
+					</div>
                 </div>
 				<div class="col_2">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'Event');?></div>
@@ -133,7 +142,7 @@ $form=$this->beginWidget('CActiveForm', array(
 						?>
                     </div>
                 </div>
-
+				
 				<div class="col_2">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'UserName');?></div>
                     <div class="input">
@@ -172,8 +181,8 @@ $form=$this->beginWidget('CActiveForm', array(
 					echo CHtml::activeTextField($model,'',array('id'=>'idTextField','width'=>100,'maxlength'=>100)); 
 					Yii::app()->clientScript->registerScript('yourScript', '$("#' . CHtml::activeId($model, 'start_date') . '");');
 					*/?>
-                    <div class="input" style="padding:0 0 0 50px;">
-						<?php echo CHtml::submitButton('Submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));
+                    <div class="input">
+						<?php echo CHtml::submitButton('Submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue','style'=>'cursor:pointer;'));
 //							echo CHtml::button('submit',array('id'=>'submit','value'=>'Submit','class'=>'button blue',));
 							/*echo CHtml::ajaxSubmitButton(
 								'Submit',
@@ -218,7 +227,7 @@ $form=$this->beginWidget('CActiveForm', array(
             </div>
 			<form name="frmExport" id="frmExport" method="post" action="" target="iframe_target" style="display:none;">
 				<iframe id="iframe_target" name="iframe_target" style="width:0;height:0;border:0px;"></iframe>
-				<input type="textarea" id="tmpSQL" name="tmpSQL" style="display:none;"></textarea>
+				<input type="textarea" id="tmpSQL" name="tmpSQL" style="display:none;">
 				<div style="padding-left:20px;">
 					<button id="rerun">Export data</button>
 					<button id="select">Select an action</button>
@@ -237,11 +246,13 @@ $form=$this->beginWidget('CActiveForm', array(
         </div><!--container -->
     </div>
 </div>
-
+<div id="loading" style="display:none;"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/loading-real.png"></div>
 <div id="hide-sql" style="display:none;"></div>
 <script type="text/javascript">
+	var urlServ = "<?php echo $this->createUrl($serv)?>";
 	var secondurl = "<?php echo $this->createUrl('Detail')?>";
 	var urlExportData ="<?php echo $this->createUrl('CheckExportData')?>";
+	var urlLoadRealtime ="<?php echo $this->createUrl('OpenRealtime')?>";
 	var cl = '<?=get_class($model)?>';
 	$(document).ready(function(){
 		var StartDate = $('#'+"<?=get_class($model)?>"+'_StartDate');
@@ -338,5 +349,5 @@ $form=$this->beginWidget('CActiveForm', array(
 			}).parent().buttonset().next().hide().menu();
 	});
 </script>
-<div id="dialog" title="Node Detail Dialog"></div>
-<div id="dia-exp" title="">Export data...</div>
+<div id="dialog" title="Node Detail Dialog" style="display:none;"></div>
+<div id="dia-exp" title="" style="display:none;">Export data...</div>

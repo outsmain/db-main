@@ -153,7 +153,7 @@ h2, .widget .ui-tabs-nav li.ui-state-active h2  {
     display:inline; border: 1px solid #BCBCBC;
 }
 
-.widget_inside {padding: 10px 20px}
+.widget_inside {padding: 10px 10px;}
 
 .widget_inside .col_12 {margin-bottom: 40px}
 .widget_inside .col_12:last-child {margin-bottom: 20px}
@@ -549,12 +549,12 @@ footer {background: #ddd; padding-top: 20px}
     clear: both;
     display: block;
     font-size: 12px;
-    margin: 0px auto 20px 0;
+    margin: 0px auto 20px auto;
     max-width: 1120px;
     padding: 7px 7px 12px;
     position: relative;
     width: 100%;
-    left: 85px;
+    /*left: 85px;*/
 }
 .errorMessage{
 	color: red;
