@@ -91,7 +91,7 @@ $form=$this->beginWidget('CActiveForm', array(
 		<div class="widget clearfix">
         <h2>Filter</h2>
 			<div class="widget_inside">				
-				<div class="col_2">
+				<div class="col_2" style="margin-right:20px;width:auto;margin-left:0;">
                     <div class="clearfix">
                         <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'StartDate');?></div>
                         <div class="input">
@@ -125,7 +125,7 @@ $form=$this->beginWidget('CActiveForm', array(
 					<? echo CHtml::checkBox("realtime",false,array("id"=>"realtime", "onclick"=>"OpenRealtime();"));?>
 					</div>
                 </div>
-				<div class="col_2">
+				<div class="col_2" style="margin-right:20px;width:auto;margin-left:0;">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'Event');?></div>
                     <div class="input">
 						<? //echo CHtml::dropDownList('Event','',CHtml::listData(TblAuthacct::model()->findAll(), 'status', 'status'),array('empty' => 'All'));
@@ -143,7 +143,7 @@ $form=$this->beginWidget('CActiveForm', array(
                     </div>
                 </div>
 				
-				<div class="col_2">
+				<div class="col_2" style="margin-right:20px;width:auto;margin-left:0;">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'UserName');?></div>
                     <div class="input">
 					   <?php
@@ -154,7 +154,7 @@ $form=$this->beginWidget('CActiveForm', array(
 					   <?php //echo $form->error($model,'UserName'); ?>
                     </div>
                 </div>
-				<div class="col_2">
+				<div class="col_2" style="margin-right:20px;width:auto;margin-left:0;">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'NodeName');?></div>
                     <div class="input"> 
 						<?php
@@ -173,7 +173,7 @@ $form=$this->beginWidget('CActiveForm', array(
 						<?php //echo $form->error($model,'NodeName'); ?>
 					</div>
 				</div>
-				<div class="col_2 last">
+				<div class="col_2 last" style="margin-right:20px;width:auto;margin-left:0;">
 					<label>&nbsp;</label>
 					<? 
 					/*Yii::app()->clientScript->registerScript('alert("ok");');
