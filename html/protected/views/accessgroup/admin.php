@@ -42,18 +42,20 @@ Func::add_loglogmodify($user,$status,$action,$url);
 )
  
 ); */
+$bank ="-";
 $this->widget('ext.groupgridview.GroupGridView', array(
 	'dataProvider'=>$model->search(),
 	'mergeColumns' => array('NAME'),  
 	'columns' => array(   
         array(
             'name'=>'NAME',
-			'value'=>'$data->group->NAME',
+			'value'=>'$data->group->NAME==null ?"-" :$data->group->NAME',
             'header' => 'GROUPNAME',			
         ),
         array(
             'name' => 'STARTTIME',
 			'value'=>'$data->acces->STARTTIME',
+			//'value'=>'$data->action==null ? '' : $data->action->name',
             'header' => 'STARTTIME',
         ),
 		array(
