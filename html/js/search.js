@@ -471,8 +471,8 @@ function LoadRealtime() {
 					});				
 				}
 				var nNodes = realtime.oTable.fnGetNodes().length;
-				if((nNodes+data.length) > 100){
-					var cnt = (nNodes+data.length)-100;
+				if((nNodes+data.length) > 500){
+					var cnt = (nNodes+data.length)-500;
 					for(var i=0; i<cnt;i++){
 						realtime.oTable.fnDeleteRow(i);
 					}
