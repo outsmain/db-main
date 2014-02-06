@@ -1,9 +1,5 @@
+
 <?php
-/* @var $this ACCESSGROUPController */
-/* @var $model ACCESSGROUP */
-
-//print_r($dataProvider); exit;
-
 $url= $_SERVER['REQUEST_URI'];
 $user = Yii::app()->session['user'];
 $status ="ok";
@@ -16,7 +12,6 @@ Func::add_loglogmodify($user,$status,$action,$url);
 <div class="widget clearfix">
 <h2>Manage Access Group</h2>
 <div class="widget_inside">
-
 
 <?php // echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
@@ -42,15 +37,18 @@ Func::add_loglogmodify($user,$status,$action,$url);
 )
  
 ); */
-$bank ="-";
 $this->widget('ext.groupgridview.GroupGridView', array(
 	'dataProvider'=>$model->search(),
-	'mergeColumns' => array('NAME'),  
+	'mergeColumns' => array('NAME'),
+	'mergeCellCss' => 'text-align: center; vertical-align: top',
 	'columns' => array(   
         array(
             'name'=>'NAME',
 			'value'=>'$data->group->NAME==null ?"-" :$data->group->NAME',
-            'header' => 'GROUPNAME',			
+            'header' => 'GROUPNAME',	
+			'htmlOptions' => array(
+			'style' => 'width: 100px; text-align: top;',
+    ),
         ),
         array(
             'name' => 'STARTTIME',

@@ -26,9 +26,12 @@ for(i=lstIn.length-1;i>=0;i--){
 lstIn.options[i].selected=true;
 }
 }
-
-
 </script>
+<style>
+.box { width: 200px;}
+.btnadd {width:50; height:30;font-size:6;position:absolute}
+.btnre {width:50; height:30;font-size:6;}
+</style>
 <div class="row clearfix">
 <div class="col_12">
 <div class="widget clearfix">
@@ -56,7 +59,7 @@ lstIn.options[i].selected=true;
 		<?php echo $form->labelEx($model,'ACCESSNAME_ID'); ?>
 		<div class="input">	
 		<!-- <select name="ACCESSNAME_ID" class="input">-->
-		 <select name="select-from[]" size="5" multiple id="select-from">
+		 <select name="select-from[]" size="5" multiple id="select-from" class ="box">
 		 <?php 
 		 $row3=Yii::app()->db->createCommand("SELECT  DISTINCT a.ID, STARTTIME, ENDTIME, DOW  FROM ACCESSNAME a JOIN  ACCESSGROUP b ON(b.ACCESSNAME_ID =a.ID) WHERE b.ACCESSGROUP_ID ='{$id5}'") ->queryAll();
 			foreach($row3 as $item_id3){
@@ -94,9 +97,9 @@ lstIn.options[i].selected=true;
 			}
 			?>
 		</select>
-		<a href="JavaScript:void(0);" id="btn-add" align ="top">Add &raquo;</a>
-		<a href="JavaScript:void(0);" id="btn-remove">&laquo; Remove</a>
-		<select name="selectto[]"  multiple size="5" id="select-to" selected>
+		<input type="button"  id="btn-add" value="Add" class ="btnadd">
+		<input type="button"  id="btn-remove" value="Remove" class ="btnre">
+		<select name="selectto[]" id="select-to" multiple size="5" class ="box" selected> 
 		 <?php 
 		$row2=Yii::app()->db->createCommand("SELECT  DISTINCT a.ID, STARTTIME, ENDTIME, DOW  FROM ACCESSNAME a JOIN  ACCESSGROUP b ON(b.ACCESSNAME_ID =a.ID) WHERE b.ACCESSGROUP_ID ='{$id5}'") ->queryAll();
 			foreach($row2 as $item_id2){

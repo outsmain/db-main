@@ -19,8 +19,19 @@ $(document).ready(function() {
             $(this).remove();
         });
     });
+	selectBox = document.getElementById("select-to");
+
+        for (var i = 0; i < selectBox.options.length; i++) 
+        { 
+             selectBox.options[i].selected = true; 
+        } 
 });
 </script>
+<style>
+.box { width: 200px;}
+.btnadd {width:50; height:30;font-size:6;position:absolute}
+.btnre {width:50; height:30;font-size:6;}
+</style>
 <div class="row clearfix">
 <div class="col_12">
 <div class="widget clearfix">
@@ -32,12 +43,11 @@ $(document).ready(function() {
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="clearfix">
-		<?php echo $form->labelEx($model,'ACCESSGROUP_ID'); ?>
+		<?php //echo $form->labelEx($model,'ACCESSGROUP_ID'); ?>
+		<label> Access Group </label>
 		<div class="input">	
 		<?php echo $form->dropDownList($model,'ACCESSGROUP_ID',GROUPNAME::getDroupdownid(),array('empty'=>'None')); ?>
 		</div>
@@ -45,10 +55,9 @@ $(document).ready(function() {
 	</div>
 
 	<div class="clearfix">
-		<?php echo $form->labelEx($model,'ACCESSNAME_ID'); ?>
+		<label> Date/Time </label>
 		<div class="input">	
-		<!-- <select name="ACCESSNAME_ID" class="input">-->
-		 <select name="select-from[]" size="5" multiple id="select-from">
+		 <select name="select-from[]" size="5" multiple id="select-from" class ="box">
 		 <?php 
 		$row=Yii::app()->db->createCommand("SELECT * FROM ACCESSNAME")->queryAll();
 		//print_r($row['ID']);
@@ -56,8 +65,7 @@ $(document).ready(function() {
 			$id = $item_id['ID'];
 			$bst2 = $item_id['ENDTIME'];
 			$do2 = substr($bst2,0,5);	
-			$bst = $item_id['STARTTIME'];
-			//$do = substr($bst,0,5);		
+			$bst = $item_id['STARTTIME'];		
 			$arrst = explode(",",$do);
 			$tim = $do.','.$do2.','.$tim;	
 			$bdow = $item_id['DOW'];	
@@ -72,20 +80,20 @@ $(document).ready(function() {
 			array_pop($edtime);
 			$result_day =  Func::checkWeek($asat);
 			$result_arr =  Func::creatArray($strtime,$edtime);
-			$result_time =  Func::checkGrouptime($result_arr);
+			$result_time = Func::checkGrouptime($result_arr);
 
 		?>
 		 <option value="<?php echo $id; ?>"><?php  echo $result_day.'@'.$result_time; foreach($sdow as $starttime){ } foreach($sdow as $tim2){ } foreach($sdow as $endtime){ }?></option>
 			<?php 
-			}
-				?>
+				}
+			?>
 		</select>
-		<a href="JavaScript:void(0);" id="btn-add" align ="top">Add &raquo;</a>
-		<a href="JavaScript:void(0);" id="btn-remove">&laquo; Remove</a>
-		<select name="selectto[]" id="select-to" multiple size="5" selected>
+		<input type="button"  id="btn-add" value="Add" class ="btnadd">
+		<input type="button"  id="btn-remove" value="Remove" class ="btnre">
+		<select name="selectto[]" id="select-to" multiple size="5" class ="box" selected> 
 		</select>
 		<?php echo $form->hiddenField($model,'ACCESSNAME_ID',array('type'=>"hidden")); ?>
-			</div>
+		</div>
 			<?php echo $form->error($model,'ACCESSNAME_ID'); ?>
 		</div>
 		<div class="clearfix">
