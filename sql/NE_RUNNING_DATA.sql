@@ -1,6 +1,6 @@
 ﻿USE nerepdb;
 
-CREATE TABLE `NE_RUNING_DATA` (
+CREATE TABLE `NE_RUN_DATA` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `UPDATE_DATE` datetime NOT NULL,
   `IP_ADDR` varchar(64) NOT NULL,
