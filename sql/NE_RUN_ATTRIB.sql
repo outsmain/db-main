@@ -1,0 +1,15 @@
+﻿USE nerepdb;
+
+CREATE TABLE `NE_RUN_ATTRIB` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `UPDATE_DATE` datetime DEFAULT NULL,
+  `IP_ADDR` varchar(64) DEFAULT NULL,
+  `ENTRY_ID` int(11) DEFAULT NULL,
+  `PARENT_GROUP_ID` int(10) unsigned DEFAULT NULL,
+  `GROUP_ID` int(10) unsigned DEFAULT NULL,
+  `ATTRIB_KEY_ID` int(10) unsigned DEFAULT NULL,
+  `ATTRIB_VALUE` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
