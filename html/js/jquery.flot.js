@@ -329,6 +329,7 @@
                 a = a.n;
             if (typeof a != "number")
                 a = 1; // default to first axis
+            
             return a;
         }
 
@@ -2193,9 +2194,23 @@
                 if (lf)
                     label = lf(label, s);
                 
+                
+                
+//                fragments.push('<td class="legendColorBox"><div style="border:1px solid ' + options.legend.labelBoxBorderColor + ';padding:1px"><div style="width:13px;height:13px;overflow:hidden"><img src="https://www.gravatar.com/avatar/ca750d893de130cd49c64eb27271b12f?s=32&d=identicon&r=PG"/></div></div></td>' +
+//                    '<td class="legendLabel">' + label + '</td>');
+                
+                var txtImg = ""
+                if(label.search("Active")>=0){
+                    txtImg = "<img src='../images/bg-symbol-o.png'>";
+                }else{
+                    txtImg = "<img src='../images/bg-symbol-x.png'>";
+                }
+                
                 fragments.push(
-                    '<td class="legendColorBox"><div style="border:1px solid ' + options.legend.labelBoxBorderColor + ';padding:1px"><div style="width:4px;height:0;border:5px solid ' + s.color + ';overflow:hidden"></div></div></td>' +
-                    '<td class="legendLabel">' + label + '</td>');
+                    '<td class="legendColorBox"><div style="background-color: ' + s.color + ';">'+ txtImg +'</div></td>' +
+                    '<td class="legendLabel">'+ label + '</td>');
+                
+                
             }
             if (rowStarted)
                 fragments.push('</tr>');

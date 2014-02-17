@@ -18,6 +18,7 @@ class SubsrepController extends Controller
 		echo CJSON::encode($model);
  	}
 
+           
 	public function actionSearch()
 	{
             
@@ -77,13 +78,14 @@ class SubsrepController extends Controller
                                 //->where("$txtDateStart $txtDateEnd $txtService $txtNode ")
                                 ->where(array('and', $txtDateStart, $txtDateEnd, $txtService, $strNodeName, $strNodeIp))
                                 ->order('a.node_name asc')
-                                //->text;
                                 ->queryAll();
+                                //->text;
                                 //print_r($row);
                 echo CJSON::encode($row);
                 
 	}
-         
+        
+                
 	public function actionShowAll()
 	{
                         $row = Yii::app()->db->createCommand()
@@ -95,7 +97,225 @@ class SubsrepController extends Controller
                                 ->queryAll();
                         echo CJSON::encode($row);
         }
-        
+                 
+	public function actionDataTableLazy()
+	{
+            
+            
+
+            $sLimit = "";
+            $sLimits = "";
+            
+                if ( isset( $_POST['iDisplayStart'] ) && $_POST['iDisplayLength'] != '-1' )
+                {
+                        $sLimit = mysql_real_escape_string( $_POST['iDisplayLength'] );
+                        $sLimits = mysql_real_escape_string( $_POST['iDisplayStart'] );
+                }
+                
+                
+                $aColumns1 = array( '', 'tb2.node_name', 'tbSub.start_dates', 'tbSub.end_dates', 'tbSub.Durations', 'service', 'tb2.prov_subs', 'tb2.conn_subs', 'min_line' );
+                /*
+                 * Ordering
+                 */
+                $sOrder = "";
+                if ( isset( $_POST['iSortCol_0'] ) )
+                {
+                        for ( $i=0 ; $i<intval( $_POST['iSortingCols'] ) ; $i++ )
+                        {
+                                if ( $_POST[ 'bSortable_'.intval($_POST['iSortCol_'.$i]) ] == "true" )
+                                {
+                                        $sOrder .= $aColumns1[ intval( $_POST['iSortCol_'.$i] ) ]."
+                                                ".mysql_real_escape_string( $_POST['sSortDir_'.$i] ) .", ";
+                                }
+                        }
+                        $sOrder = substr_replace( $sOrder, "", -2 );
+                        if ( $sOrder == "" )
+                        {
+                                $sOrder = "tb2.node_name ASC";
+                        }
+                }
+                
+                
+                $aColumns = array( 'tb2.node_name', 'start_dates', 'end_dates', 'tbSub.Durations', 'service', 'tb2.prov_subs', 'tb2.conn_subs', 'min_line' );
+                $sWhere = "";
+                if ( $_POST['sSearch'] != "" )
+                {
+                        $sWhere = " (";
+                        for ( $i=0 ; $i<count($aColumns) ; $i++ )
+                        {
+                                $sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string( $_POST['sSearch'] )."%' OR ";
+                        }
+                        $sWhere = substr_replace( $sWhere, "", -3 );
+                        $sWhere .= ')';
+                }
+
+                /* Individual column filtering */
+                for ( $i=0 ; $i<count($aColumns) ; $i++ )
+                {
+                        if ( $_POST['bSearchable_'.$i] == "true" && $_POST['sSearch_'.$i] != '' )
+                        {
+                                if ( $sWhere == "" )
+                                {
+                                        $sWhere = " ";
+                                }
+                                else
+                                {
+                                        $sWhere .= " AND ";
+                                }
+                                $sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_GET['sSearch_'.$i])."%' ";
+                        }
+                }
+                
+                if($sOrder=="\n                                                asc" or $sOrder=="\n                                                desc" or $sOrder==""){
+                    $sOrder = "tb2.node_name ASC, tb2.id ASC";
+                }
+                
+                
+                if($_POST["start_date"]!="" or $sWhere!=""){
+                    $and1 = "and";
+                }
+                
+                if($_POST["start_date"]!="" and $sWhere!=""){
+                    $and = "and";
+                }
+                
+                
+                //Search
+                if($_POST["start_date"]!=""){
+                    
+                    if($_POST[OnlineService]!=""){
+                        $txtServiceReplace=str_replace(" ", "_", $_POST[OnlineService]);
+                        $txtService="and tb2.service='$txtServiceReplace'";
+                    }else{
+                        $txtService = "";
+                    }
+                    $strNodeName = "";
+                    $strNodeIp = "";
+                            
+                    if(!empty($_POST[note_name])){
+                            $nodeip = explode(',',$_POST[note_name]);
+                            foreach($nodeip as $item){
+                                $node = explode('xx#xx',$item);
+                                foreach($node as $val){
+                                    if(!empty($val)){
+                                        $long = ip2long(trim($val));
+                                        if ($long == -1 || $long === FALSE) {
+                                                $strNodeName .= "(tb2.node_name = '".trim($val)."') or ";
+                                        }else{
+                                                $strNodeIp .= "(tb2.node_ip = '".trim($val)."') or ";
+                                        }
+                                    }
+                                }
+                            }
+                            if(!empty($strNodeName)){
+                                $strNodeName = '('.substr($strNodeName,0,-4).')';
+                                $strNodeName = 'and '.$strNodeName;
+                            }
+                            if(!empty($strNodeIp)){
+                                $strNodeIp = '('.substr($strNodeIp,0,-4).')';
+                                $strNodeIp = 'and '.$strNodeIp;
+                            }
+                    }
+
+                    $txtAll1 = explode(" ", $_POST[start_date]);
+                    $txtDate1 =explode("-", $txtAll1[0]);
+                    $txtDate1[0] = $txtDate1[0];
+                    $txtDate1 = "$txtDate1[2]-$txtDate1[1]-$txtDate1[0]";
+                    $txtDateStart = "tb2.start_date>='$txtDate1 $txtAll1[1]'";
+
+                    $txtAll2 = explode(" ", $_POST[end_date]);
+                    $txtDate2 =explode("-", $txtAll2[0]);
+                    $txtDate2[0] = $txtDate2[0];
+                    $txtDate2 = "$txtDate2[2]-$txtDate2[1]-$txtDate2[0]";
+                    $txtDateEnd = "and tb2.end_date<='$txtDate2 $txtAll2[1]'";
+                    $filter = "$txtDateStart $txtDateEnd $txtService $strNodeName $strNodeIp";
+                    
+                }
+                
+                $sql1 = "SELECT 
+                            tb2.id,tb2.node_name,tb2.node_ip,tb2.start_date,tb2.end_date,tbSub.Durations,tbSub.start_dates,tbSub.end_dates,
+                        REPLACE(tb2.service,'_', ' ') AS service,tb2.prov_subs,tb2.conn_subs,
+                        CASE WHEN tb2.min_line <> NULL THEN ROUND(tb2.min_line,3) ELSE '-' END AS min_line
+                        FROM NE_SUBSSTAT AS tb2,(SELECT id,CONCAT(
+                            CASE WHEN MOD(TIMESTAMPDIFF(DAY,start_date,end_date), 30) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(DAY,start_date,end_date), 30),'d ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(MONTH,start_date,end_date), 12) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(MONTH,start_date,end_date), 12),'m ') ELSE '' END,
+                            CASE WHEN TIMESTAMPDIFF(YEAR,start_date,end_date) <> 0 THEN CONCAT(TIMESTAMPDIFF(YEAR,start_date,end_date),'y ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(HOUR,start_date,end_date), 24) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(HOUR,start_date,end_date), 24),'hrs ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(MINUTE,start_date,end_date), 60) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(MINUTE,start_date,end_date), 60),'min ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(SECOND,start_date,end_date), 60) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(SECOND,start_date,end_date), 60),'sec ') ELSE '' END
+                        ) AS Durations,
+                        DATE_FORMAT(start_date,'%d %b %Y %H:%i:%s') AS start_dates,
+                        DATE_FORMAT(end_date,'%d %b %Y %H:%i:%s') AS end_dates
+                        FROM NE_SUBSSTAT)  AS tbSub
+                        WHERE tb2.id=tbSub.id $and1 $filter $and $sWhere
+                        ORDER BY $sOrder LIMIT $sLimits,$sLimit";
+                
+                
+                
+                $query1 = Yii::app()->db->createCommand($sql1)->queryAll();
+//                                ->text;
+//                                print_r($row1);
+                
+                $row2 = Yii::app()->db->createCommand()
+                    ->select("COUNT(tb2.id) AS Sumid")
+                    ->from('NE_SUBSSTAT AS tb2')
+                    ->queryAll();
+                $iTotal = (int)$row2[0]["Sumid"];
+                
+                
+                $sql3 = "SELECT COUNT(tb2.id) AS FilteredTotal
+                        FROM NE_SUBSSTAT AS tb2,(SELECT id,CONCAT(
+                            CASE WHEN MOD(TIMESTAMPDIFF(DAY,start_date,end_date), 30) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(DAY,start_date,end_date), 30),'d ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(MONTH,start_date,end_date), 12) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(MONTH,start_date,end_date), 12),'m ') ELSE '' END,
+                            CASE WHEN TIMESTAMPDIFF(YEAR,start_date,end_date) <> 0 THEN CONCAT(TIMESTAMPDIFF(YEAR,start_date,end_date),'y ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(HOUR,start_date,end_date), 24) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(HOUR,start_date,end_date), 24),'hrs ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(MINUTE,start_date,end_date), 60) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(MINUTE,start_date,end_date), 60),'min ') ELSE '' END,
+                            CASE WHEN MOD(TIMESTAMPDIFF(SECOND,start_date,end_date), 60) <> 0 THEN CONCAT(MOD(TIMESTAMPDIFF(SECOND,start_date,end_date), 60),'sec ') ELSE '' END
+                        ) AS Durations,
+                        DATE_FORMAT(start_date,'%d %b %Y %H:%i:%s') AS start_dates,
+                        DATE_FORMAT(end_date,'%d %b %Y %H:%i:%s') AS end_dates
+                        FROM NE_SUBSSTAT)  AS tbSub
+                        WHERE tb2.id=tbSub.id $and1 $filter $and $sWhere";
+                $query3 = Yii::app()->db->createCommand($sql3)->queryAll();
+                
+                $iFilteredTotal = (int)$query3[0]["FilteredTotal"];
+                
+                $output = array(
+                        "sEcho" => intval($_POST['sEcho']),
+                        "iTotalRecords" => $iTotal,
+                        "iTotalDisplayRecords" => $iFilteredTotal,
+                        "aaData" => array()
+                );
+
+                
+               $row22 = array();
+               $nd = "";
+               for ( $i=0 ; $i<count($query1) ; $i++ ) {
+
+                   
+                   
+                   
+                if($nd != $query1[$i]["node_name"]){
+                   $row22[0] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>&nbsp;</td></div>";
+                   $row22[1] = "<div onclick=\"fnGraph('ShowGraph','".$query1[$i]["node_ip"]."','".$query1[$i]["start_date"]."','".$query1[$i]["end_date"]."','')\">".$query1[$i]["node_name"]."</div>";
+                    $nd = $query1[$i]["node_name"];
+                }else{						
+                   $row22[0] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>&nbsp;</td></div>";
+                   $row22[1] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>&nbsp;</td></div>";
+                }
+                   $row22[2] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>".$query1[$i]["start_dates"]."</td></div>";
+                   $row22[3] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>".$query1[$i]["end_dates"]."</td></div>";
+                   $row22[4] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>".$query1[$i]["Durations"]."</td></div>";
+                   $row22[5] = "<div onclick=\"fnGraph('ShowGraph','".$query1[$i]["node_ip"]."','".$query1[$i]["start_date"]."','".$query1[$i]["end_date"]."','".$query1[$i]["service"]."')\">".$query1[$i]["service"]."</div>";
+                   $row22[6] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>".$query1[$i]["prov_subs"]."</td></div>";
+                   $row22[7] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td>".$query1[$i]["conn_subs"]."</td></div>";
+                   $row22[8] = "<div onclick=\"SplitDialogs('".$query1[$i]["id"]."')\"><td onclick=''>".$query1[$i]["min_line"]."</td></div>";
+                   
+                   $output['aaData'][]=$row22;
+                   
+               }
+                echo CJSON::encode($output);
+        }
         
         public function actionShowGraph()
 	{

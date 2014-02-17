@@ -174,76 +174,38 @@ $(function() {
 	});
 });
 
+var tableToExcel = (function () {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+    //var uri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
+      , template = '{table}'
+      , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+    return function (table, name, filename) {
+        if (!table.nodeType) {
 
-
-
-//****Start Export Data subsrep ****//
-window.ExcellentExport = (function() {
-                                
-    var uri = 'data:application/vnd.ms-excel;base64,';
-    // template = '<html><body><table>{table}</table></body></html>';
-    var template = '{table}'
-    var base64 = function(s) {
-        return window.btoa(unescape(encodeURIComponent(s)));
-    };
-    var format = function(s, c) {
-        return s.replace(/{(\w+)}/g, function(m, p) {
-            return c[p];
-        });
-    };
-
-    var ee = {
-        excel: function(anchor, table, name) {
-            if (!table.nodeType) {
-                table = document.getElementById(table);
-            }
-            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML};
-            var hrefvalue = uri + base64(format(template, ctx));
-            console.log(hrefvalue);
-            anchor.href = hrefvalue;
-            // Return true to allow the link to work
-            return true;
+            table = document.getElementById(table);
         }
-    };
+        var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+        document.getElementById("TmpaExportTable").href = uri + base64(format(template, ctx));
+        document.getElementById("TmpaExportTable").download = filename;
+        document.getElementById("TmpaExportTable").click();
+    }
+})();
 
-    return ee;
-}());
-//****Start Export Data subsrep ****//
-window.TextentExport = (function() {
-    
-    var uri = 'data:text/plain;base64,';
-    // template = '<html><body><table>{table}</table></body></html>';
-    var template = '{table}'
-    var base64 = function(s) {
-        return window.btoa(unescape(encodeURIComponent(s)));
-    };
-    var format = function(s, c) {
-        return s.replace(/{(\w+)}/g, function(m, p) {
-            return c[p];
-        });
-    };
+var tableToText = (function () {
+    var uri = 'data:text/plain;base64,'
+      , template = '{table}'
+      , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+    return function (table, name, filename) {
+        if (!table.nodeType) {
 
-    var ee = {
-        text: function(anchor, table, name) {
-            if (!table.nodeType) {
-                table = document.getElementById(table);
-            }
-            var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML};
-            var hrefvalue = uri + base64(format(template, ctx));
-            console.log(hrefvalue);
-            anchor.href = hrefvalue;
-            // Return true to allow the link to work
-            return true;
+            table = document.getElementById(table);
         }
-    };
-
-    return ee;
-    
-}());
-//ตัวเก่า
-//onclick="return btninputclick()
-// function btninputclick() {
-//     window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#req_result').html())
-// );
-// }
-//****End Export Data subsrep ****//
+        var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+        document.getElementById("TmpaExportTable").href = uri + base64(format(template, ctx));
+        document.getElementById("TmpaExportTable").download = filename;
+        document.getElementById("TmpaExportTable").click();
+    }
+})();
+ 
