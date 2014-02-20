@@ -29,7 +29,7 @@ class RunlogCommand extends CConsoleCommand
 			 }
 		}
 		
-		$strSQL = "SELECT b.brand, b.model,b.sw_ver,a.* FROM NE_RUN_DATA a, NE_LIST b WHERE a.UPDATE_DATE BETWEEN '".$start."' AND '".$end."' AND b.ip_addr = a.IP_ADDR";
+		$strSQL = "SELECT b.brand,b.model,b.sw_ver,a.* FROM NE_RUN_DATA a JOIN NE_LIST b ON a.UPDATE_DATE BETWEEN '".$start."' AND '".$end."' AND b.ip_addr = a.IP_ADDR JOIN NE_RUN_TYPE c ON a.NE_RUN_TYPE_ID = c.ID";
 		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($row as $item){
 			$arrAttList = array();
@@ -150,7 +150,7 @@ class RunlogCommand extends CConsoleCommand
 										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE NAME = '".$val4['key']."' LIMIT 1")->queryAll();
 										$strChk = $item['UPDATE_DATE'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID[0]['ID'].'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val4['value'];
 										if(!in_array($strChk, $arrchkDup)){
-											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,IP_ADDR,ENTRY_ID,PARENT_GROUP_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['IP_ADDR']."','".$Entry_id."','".$ParrentID[0]['ID']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val4['value']."')";
+											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,PARENT_GROUP_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$ParrentID[0]['ID']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val4['value']."')";
 											Yii::app()->db->createCommand($strSQL)->query();
 											array_push($arrchkDup, $strChk);
 										}
