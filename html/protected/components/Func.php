@@ -106,31 +106,32 @@ class Func {
 			$date_ow1 = date('l');
 			$time_now = date('H:i:s');
 			$date_ow = strtoupper($date_ow1);
-		
+			$ip_address=$_SERVER['REMOTE_ADDR'];
 			$row=Yii::app()->db->createCommand("SELECT DISTINCT  c.* FROM username a JOIN ACCESSGROUP b ON (a.`ACCESSGROUP_ID`=b.`ACCESSGROUP_ID`) 
 												JOIN ACCESSNAME c ON (b.`ACCESSNAME_ID`=c.`ID`) WHERE a.`NAME` ='{$username}'")->queryAll();
-			//print_r($row);
 			foreach($row as $item){
 				$dow = $item['DOW'];
 				$ip = $item['ALLOWIP'];			 	
 				$st_time = $item['STARTTIME'];
 				$ed_time = $item['ENDTIME'];
+				$ip = $item['ALLOWIP'];			 	
+				$pattern ="'".str_replace('%','.',$ip)."'";
 				$show=explode(",",$dow);
-
-					if(($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show))){
+					if((($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show)))&&(preg_match("'".str_replace('%','.',$ip)."'",$ip_address))){
 						$acc_time = "no";
-						}
-						else{
-						$acc_time = "ok";
-						}
+						}else if(!(($time_now >= $st_time)&&($time_now <= $ed_time)&&(in_array($date_ow,$show)))){
+								$acc_time = "ok";
+							}	
+						else if(!(preg_match("'".str_replace('%','.',$ip)."'",$ip_address))){
+								$acc_time = "ip";
+							}
 						if($acc_time == "no"){
-						$acc_time ="no";
-						//break;
-				
-						$sw = $acc_time.$acc_time;
-						}
+							$acc_time ="no";
+							break;
+				}
+					
 			}	
-			return $sw;
+			return $acc_time;
 		}
 		
 	public function checkAllowip($username){
@@ -143,12 +144,12 @@ class Func {
 				$ip = $item['ALLOWIP'];			 	
 				$pattern ="'".str_replace('%','.',$ip)."'";
 				if(!(preg_match("'".str_replace('%','.',$ip)."'",$ip_address))) {
-				$re_ip  = "ok";
+					$re_ip  = "ok";
 				}else {
 				$re_ip = "no";
 				
 				if($re_ip == "no"){
-				$re_ip ="no";
+					$re_ip ="no";
 				break;
 				}
 				}
@@ -264,5 +265,44 @@ class Func {
 
 	return $times;
 			}	
+			
+			
+	public function ssss($id){
+
+		$row_id =Yii::app()->db->createCommand(" SELECT * FROM ACCESSGROUP a
+		LEFT JOIN ACCESSNAME b ON ( a.ACCESSNAME_ID = b.ID ) WHERE ACCESSGROUP_ID = '{$id}'")->queryAll();
+		
+			foreach($row_id as $item_id){
+			
+			$bst2 = $item_id['ENDTIME'];
+			$do2 = substr($bst2,0,5);	
+			$bst = $item_id['STARTTIME'];
+			//$do = substr($bst,0,5);		
+			$arrst = explode(",",$do);
+			
+			$tim = $do.','.$do2.','.$tim;	
+
+			$bdow = $item_id['DOW'];	
+			$sdow = explode(",",$edow);
+			//$ssdow = explode(",",$bdow);
+
+			$tim2 = $bdow.','.$tim2;	
+			$starttime .= $bst.',';
+			$endtime .= $bst2.',';
+			$asat = explode(",",$tim2);			
+			$strtime = explode(",",$starttime);
+			$edtime = explode(",",$endtime);
+		}
+			array_pop($strtime);
+			array_pop($edtime);
+			$result_day =  Func::checkWeek($asat);
+			$result_arr =  Func::creatArray($strtime,$edtime);
+			$result_time =  Func::checkGrouptime($result_arr);
+			
+			return $result_day.'@'.$result_time;
+	
+	}
+	
+	
 }
 ?>

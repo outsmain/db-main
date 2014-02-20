@@ -48,7 +48,6 @@ class ACCESSGROUPController extends Controller
 				$acc_i = $item['MAX(ACCESSGROUP_ID)'];
 				$acc_id = ($acc_i+1);
 			}
-			
 		//print_r($_POST);
 		$model=new ACCESSGROUP;
 		//$model->ACCESSGROUP_ID = $acc_id;
@@ -61,7 +60,6 @@ class ACCESSGROUPController extends Controller
 		$action ="ADD";
 		$acc_n = $_POST['ACCESSNAME_ID'];
 		$selectid = $_POST['selectto'];
-		
 		if(isset($_POST['selectto']))
 			
 			{   
@@ -121,15 +119,23 @@ class ACCESSGROUPController extends Controller
 
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
+		$id_row=Yii::app()->db->createCommand("SELECT ACCESSGROUP_ID FROM ACCESSGROUP WHERE ID = '{$id}' ")->queryAll();
+			foreach($id_row as $itm){
+				$ac_id = $itm['ACCESSGROUP_ID'];
+			}
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="REMOVE";
 		Func::add_loglogmodify($user,$status,$action,$id); 
+		$this->loadModel($id)->delete();
+		$row=Yii::app()->db->createCommand("SELECT ACCESSGROUP_ID FROM ACCESSGROUP WHERE ACCESSGROUP_ID = '{$ac_id}' ")->queryAll();
+		$row_name=Yii::app()->db->createCommand("SELECT ACCESSGROUP_ID FROM GROUPNAME WHERE ACCESSGROUP_ID = '{$ac_id}' ")->queryAll();
+			if((!$row)&&($row_name)){
+				$row2=Yii::app()->db->createCommand("UPDATE GROUPNAME SET ACCESSGROUP_ID = null WHERE ACCESSGROUP_ID = '{$ac_id}'")->queryAll();
+			}
 		if(!isset($_GET['ajax']))
 			{
-			
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			//$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 			}
 	}
 
@@ -140,7 +146,6 @@ class ACCESSGROUPController extends Controller
 			'dataProvider'=>$dataProvider,
 		));
 	}
-
 	public function actionAdmin()
 	{
 		//$model=new ACCESSGROUP('search');
@@ -169,7 +174,6 @@ class ACCESSGROUPController extends Controller
 			'model2'=>$model2,
 			'dataProvider' =>$dataProvider,
 		));
-		
 	}
 
 	public function loadModel($id)

@@ -25,18 +25,18 @@ class UserIdentity extends CUserIdentity
 		Func::add_loglogin($username,$status,$action); 
 		
     }
-	else if(!$user->validatePassword($this->password)){ // !== Password
+	else if(!$user->validatePassword($this->password)){ 
          $this->errorCode = self::ERROR_PASSWORD_INVALID;
 		 $status ="LOGIN_FAILED";
 		 Func::add_loglogin($username,$status,$action); 
 		}
 	else if($result_time == 'ok'){
-		$this->errorCode=self::ERROR_TIME_INVALID;	
+		$this->errorCode=self::ERROR_USERNAME_INVALID;	
 		 $status ="INVALID_TIME";
 		Func::add_loglogin($username,$status,$action); 		
 		}
-	else if($result_ip == 'ok'){
-		$this->errorCode=self::ERROR_CLIENT_INVALID;	
+	else if($result_time == 'ip'){
+		$this->errorCode=self::ERROR_USERNAME_INVALID;	
 		 $status ="INVALID_CLIENT";
 		Func::add_loglogin($username,$status,$action); 		
 		}

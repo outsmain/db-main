@@ -46,33 +46,29 @@ class GROUPNAMEController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$sql = "SELECT *
+			FROM GROUPNAME "; 
+		$dataProvider = new CSqlDataProvider($sql, array(    // เอา sql แปลงเป็น dataProvider
+		 /*  'pagination' => array(
+		  'pageSize' => 10,       
+		  ), */
+		  ));
+          $this->render('view', array('dataProvider' => $dataProvider));   
 	}
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
 	public function actionCreate()
 	{
+		//print_r($_POST);
 		$model=new GROUPNAME;
 		$model2=new GROUPAUTHORIZE;
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="ADD";
-		
 		if(isset($_POST['GROUPNAME'])|| isset($_POST['GROUPNAME']))
-		{
-		
-		// get last id 
+			{
+	
 		$connection = Yii::app()->db;
 		$sql = "SELECT * FROM GROUPNAME ORDER BY ID DESC LIMIT 1";
 		$command = $connection->createCommand($sql);
@@ -84,7 +80,7 @@ class GROUPNAMEController extends Controller
 		$model2->attributes=$_POST['GROUPAUTHORIZE'];
 		$name =$_POST['GROUPNAME']['NAME'];
 		$comment =$_POST['GROUPNAME']['COMMENT'];
-		$acc_id =$_POST['GROUPNAME']['ACCESSGROUP_ID'];
+		$acc_id =$_POST['ACCESSGROUP_ID'];
 		$plat =$_POST['GROUPNAME']['PLATFORM_ID'];
 		//insert table groupname
 		$connection3 = Yii::app()->db;
@@ -106,7 +102,7 @@ class GROUPNAMEController extends Controller
 			Func::add_loglogmodify($user,$status,$action,$name); 	
 			$this->redirect(array('admin'));
 		
-		}
+			}
 
 		$this->render('create',array(
 			'model'=>$model,
@@ -116,14 +112,44 @@ class GROUPNAMEController extends Controller
 	
 	public function actionUpdate($id,$acc_id)
 	{
-	//print_r($_POST);
+		//print_r($_POST);
 		$model=new GROUPNAME;
 		$model2=new GROUPAUTHORIZE;
 		$model=$this->loadModel($id);
 		$user = Yii::app()->session['user'];
 		$status ="OK";
 		$action ="MODIFY";
+		$name2 =$_POST['GROUPNAME']['NAME'];
+		$comment2 =$_POST['GROUPNAME']['COMMENT'];
+		$acc_id2 =$_POST['ACCESSGROUP_ID'];
+		$plat2 =$_POST['GROUPNAME']['PLATFORM_ID'];	
+		
+		if($acc_id == null){
+		
+			if(isset($_POST['GROUPNAME']))
+			{ 
+				$commanddel =  Yii::app()->db->createCommand("DELETE FROM GROUPAUTHORIZE WHERE GROUPNAME_ID='{$id}' AND ACCESSGROUP_ID ='{$acc_id2}'");
+				$dataReaderdel = $commanddel->query();
+				$commandn =Yii::app()->db->createCommand("UPDATE GROUPNAME SET NAME = '{$name2}', COMMENT = '{$comment2}',ACCESSGROUP_ID ='{$acc_id2}',PLATFORM_ID ='{$plat2}'
+						WHERE ID = '{$id}'");
+				$dataReadern = $commandn->query();
+			 foreach($_POST['PAGENAME_ID'] as $item_idn){
+	
+				$command3n = Yii::app()->db->createCommand("INSERT INTO GROUPAUTHORIZE (GROUPNAME_ID ,PAGENAME_ID ,ACCESSGROUP_ID)
+				VALUES ('{$id}' ,'{$item_idn}','{$acc_id2}')");
+				$dataReader3n = $command3n->query();
+				} 
+				$this->redirect(array('admin'));
+			}		
+				$this->render('update',array(
+				'model'=>$model,
+				'model2'=>$model2,
+				'pag'=>$pag,
+				));
+			}
+		else{
 		$row=Yii::app()->db->createCommand("SELECT PAGENAME_ID FROM GROUPAUTHORIZE WHERE GROUPNAME_ID='{$id}' AND ACCESSGROUP_ID ='{$acc_id}'")->queryAll();
+		
 		foreach($row as $item){
 			$pag[] = $item['PAGENAME_ID'];
 		}
@@ -131,7 +157,7 @@ class GROUPNAMEController extends Controller
 		//print_r($pag);
 		$name =$_POST['GROUPNAME']['NAME'];
 		$comment =$_POST['GROUPNAME']['COMMENT'];
-		$acc_id =$_POST['GROUPNAME']['ACCESSGROUP_ID'];
+		$acc_id =$_POST['ACCESSGROUP_ID'];
 		$plat =$_POST['GROUPNAME']['PLATFORM_ID'];
 		//print_r($_POST);
 		 if(isset($_POST['GROUPNAME']))
@@ -160,22 +186,18 @@ class GROUPNAMEController extends Controller
 				} 
 				Func::add_loglogmodify($user,$status,$action,$id); 
 				$this->redirect(array('admin'));
-					}	
-
-		$this->render('update',array(
+					}	 
+			$this->render('update',array(
 			'model'=>$model,
 			'model2'=>$model2,
 			'pag'=>$pag,
 		));
 		
+		}
+		
 	
 	}
 
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
 	public function actionDelete($id,$acc_id)
 	{	
 			$this->loadModel($id)->delete();
@@ -190,7 +212,7 @@ class GROUPNAMEController extends Controller
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax'])){
 
-$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 			}
 		
 			
@@ -214,9 +236,6 @@ $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'
 			
 	}
 
-	/**
-	 * Lists all models.
-	 */
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('GROUPNAME');
@@ -225,9 +244,6 @@ $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'
 		));
 	}
 
-	/**
-	 * Manages all models.
-	 */
 	public function actionAdmin()
 	{
 		$model=new GROUPNAME('search');
@@ -240,13 +256,6 @@ $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'
 		));
 	}
 
-	/**
-	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer $id the ID of the model to be loaded
-	 * @return GROUPNAME the loaded model
-	 * @throws CHttpException
-	 */
 	public function loadModel($id)
 	{
 		$model=GROUPNAME::model()->findByPk($id);
