@@ -1,0 +1,17 @@
+﻿USE nerepdb;
+
+CREATE TABLE `NE_LINK_LOG` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `UPDATE_DATE` datetime DEFAULT NULL,
+  `SRC_IP_ADDR` varchar(32) DEFAULT NULL,
+  `SRC_GROUP_ID` int(10) unsigned DEFAULT NULL,
+  `SRC_ENT_ID` int(10) unsigned DEFAULT NULL,
+  `SRC_ATTRIB_KEY_ID` int(10) unsigned DEFAULT NULL,
+  `DEST_IP_ADDR` varchar(32) DEFAULT NULL,
+  `DEST_GROUP_ID` int(10) unsigned DEFAULT NULL,
+  `DEST_ENT_ID` int(10) unsigned DEFAULT NULL,
+  `DEST_ATTRIB_KEY_ID` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
