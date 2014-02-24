@@ -254,11 +254,24 @@ Yii::import('application.extensions.multiselect.multiSelect');
 <div id="dialogsExportFile">Export data...</div>
 <div id="dialogGraphNoData" title="Service Graph"></div> 
 <div id="dialogs" title="Service Graph">
-    <div id="ShowGraphHead" style="left: 10px; right: 10px; top: 5px;">
+        <div id="legendContainer"></div>    
+        <div id="ShowGraph" style="width: 100%; height: 90%; left: 10px; right: 10px; top: 5px;"></div>  
+
+<!--    <div id="ShowGraphHead" style="width: 500px; left: 10px; right: 10px; top: 5px;">
         <div id="ShowGraph" style="width: 100%; height: 100%; left: 10px; right: 10px; top: 5px;"></div>
-    </div>
+    </div>-->
 </div> 
     
+<style type="text/css">
+#legendContainer {
+    background-color: #fff;
+    border: 1px solid #E6E6E6;
+    display: inline-block;
+}
+ 
+</style>
+ 
+ 
 
 <?php $this->endWidget(); ?>
 
@@ -457,14 +470,19 @@ function fnGraph(type,txtIP,txtDateStart,txtDateEnd,txtService){
                                         var GraphName = new Array()
                                         var GraphSubsNum = new Array()
                                         var GraphSymbol = new Array()
-                                        var txtDate = ""
+                                        var GraphPointStatus = new Array()
+                                        var txtDatePoint = ""
                                         var a = 0
+                                        
+                                        //     
+                                        
 					for(var i=0;i<data.length;++i){
                                                 GraphName[i]=data[i].txtService;
                                                 
-                                                if(txtDate!=data[i].txtDate){
-                                                    GraphDate[a] = data[i].txtDate;
-                                                    txtDate = data[i].txtDate;
+                                                if(txtDatePoint!=data[i].txtDatePoint){
+                                                    GraphDate[a] = data[i].txtDatePoint;
+                                                    txtDatePoint = data[i].txtDatePoint;
+                                                    GraphPointStatus[a] = data[i].txtPointStatus;
                                                     a = a+1
 						}
                                                 
@@ -472,7 +490,7 @@ function fnGraph(type,txtIP,txtDateStart,txtDateEnd,txtService){
                                                 GraphSymbol[i] = data[i].txtSymbol;
                                                 
                                         }
-                                            ServiceGraph(data[0].txtIp,GraphDate,GraphName,GraphSubsNum,GraphSymbol);
+                                            ServiceGraph(data[0].txtIp,GraphDate,GraphName,GraphSubsNum,GraphSymbol,GraphPointStatus);
 				 }else{
                                     var tmp;
                                     tmp = 'No Data Found.';
@@ -483,8 +501,9 @@ function fnGraph(type,txtIP,txtDateStart,txtDateEnd,txtService){
 	});
 }
 
-      
-function ServiceGraph(NodeGraphIP,NodeGraphDate,NodeGraphName,NodeGraphSubsNum,NodeGraphSymbol){
+
+
+function ServiceGraph(NodeGraphIP,NodeGraphDate,NodeGraphName,NodeGraphSubsNum,NodeGraphSymbol,NodeGraphPointStatus){
 
     $('#dialogs').dialog('open');
 
@@ -515,7 +534,6 @@ for(var i = 0;i<=NodeGraphSubsNum.length-1;i+=txtNumLoop){  //แปลงค่
 }
 
 var data1 = Array();
-
 
 for(var i = 0;i<txtNumLoop;i++){
 var GenColor = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';
@@ -585,18 +603,18 @@ txtNumThree.push([1, null]);
              txtSymbolVaule = txtSymbolTwo[r]
          }
                   
+            
          if(txtSymbolVaule==txtSymbolTwo[r]){
              txtNumThree.push([txtAmount, parseInt(txtNumTwo[i][r])]);
-             
+
              
          }else if(txtSymbolVaule!=txtSymbolTwo[r]){
              
-            
              if(txtCircle==0 || txtCross==0){
-                 if(txtCircle==0){
+                 if(txtCircle==0 && txtSymbolVaule=="circle"){
                      labelTooltip = NodeGraphName[i]+" Active";
                      data1.push({labelTooltip: labelTooltip, label: NodeGraphName[i]+" Active", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, radius: 3, fillColor: GenColor }});
-                 }else if(txtCross==0){
+                 }else if(txtCross==0 && txtSymbolVaule=="cross"){
                      labelTooltip = NodeGraphName[i]+" History";
                      data1.push({labelTooltip: labelTooltip, label: NodeGraphName[i]+" History", data: txtNumThree,color: GenColor,points: { symbol: txtSymbolVaule, radius: 5, fillColor: GenColor }});
                  }
@@ -614,6 +632,7 @@ txtNumThree.push([1, null]);
              
              if(txtSymbolVaule=="circle"){
                  txtCircle=txtCircle+1;
+                 
              }
              if(txtSymbolVaule=="cross"){
                  txtCross=txtCross+1;
@@ -631,6 +650,9 @@ txtNumThree.push([1, null]);
             
 }
 
+
+    
+    
     var data =  data1;
 
     var GraphDate = Array();
@@ -639,26 +661,32 @@ txtNumThree.push([1, null]);
     for(var i = 0;i<NodeGraphDate.length;i++){
           var bb = "";
           bb = NodeGraphDate[i].split(' ');
-          GraphDate.push([a, bb[0]+" "+bb[1]+" "+bb[2]+'<br>'+bb[3]]);
+              //alert(NodeGraphPointStatus[i]);
+          if(NodeGraphPointStatus[i]=='1'){
+              GraphDate.push([a, " "]);
+          }else{
+              GraphDate.push([a, bb[0]+" "+bb[1]+" "+bb[2]+'<br>'+bb[3]]);
+          }
+          
+          
           GraphTooltip.push(bb[0]+" "+bb[1]+" "+bb[2]+" "+bb[3]);
           a++;
     }
                
-    var AutoWidth = GraphDate.length * 150;
-
-    $("#ShowGraphHead").css( {
-        width: AutoWidth+"px",
-        height: "100%"
-    });  
+//    var AutoWidth = GraphDate.length * 150;
+//    $("#ShowGraphHead").css( {
+//        width: AutoWidth+"px",
+//        height: "100%"
+//    });  
                       
     var options = {
         lines: {show: true},
         points: {show: true},
         //yaxis: {tickDecimals: 0, min: 0, max: 5000, autoscaleMargin: null},
-
-        
-        
-        
+        legend:{         
+            container:$("#legendContainer"),            
+            noColumns: 0
+        },
         xaxis: {
             ticks: GraphDate,
             axisLabelColor: "red",
@@ -757,8 +785,8 @@ txtNumThree.push([1, null]);
 $(function() {
   $('#dialogs').dialog({
       autoOpen: false,
-      width: 700,
-      height: 550,
+      width: 800,
+      height: 600,
       zIndex:1,
       buttons: {
         "Close": function() {
