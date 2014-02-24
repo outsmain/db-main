@@ -6,7 +6,7 @@ CREATE TABLE `ATTRIB_LIST` (
   `NAME` varchar(128) DEFAULT NULL,
   `DESCRIPTION` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 
 insert into `ATTRIB_LIST`(`ID`,`ATTRIB_TYPE_ID`,`NAME`,`DESCRIPTION`) values (1,2,'IP Addr/mask',null);
@@ -23,3 +23,4 @@ insert into `ATTRIB_LIST`(`ID`,`ATTRIB_TYPE_ID`,`NAME`,`DESCRIPTION`) values (12
 insert into `ATTRIB_LIST`(`ID`,`ATTRIB_TYPE_ID`,`NAME`,`DESCRIPTION`) values (13,5,'Lsp',null);
 insert into `ATTRIB_LIST`(`ID`,`ATTRIB_TYPE_ID`,`NAME`,`DESCRIPTION`) values (14,2,'Internet Address is',null);
 insert into `ATTRIB_LIST`(`ID`,`ATTRIB_TYPE_ID`,`NAME`,`DESCRIPTION`) values (15,3,'Hardware address is',null);
+insert into `ATTRIB_LIST`(`ID`,`ATTRIB_TYPE_ID`,`NAME`,`DESCRIPTION`) values (16,3,'MAC',null);
