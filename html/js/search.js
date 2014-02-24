@@ -241,10 +241,10 @@ function OpenGraph(val,id){
 	var NodeName = $("#NodeName").val();
 	if(NodeName !== null){
 		NodeName = (NodeName.length == $("#NodeName option").length) ? "" : NodeName;
-		if(NodeName != ""){
+		if(NodeName.length > 0){
 			var str = '';
 			$.each(NodeName,function(k,v){
-				str += v+',';
+				if(v != '') str += v+',';
 			});
 			NodeName = str.substr(0,(str.length-1));
 		}
