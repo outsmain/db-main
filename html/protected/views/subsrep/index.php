@@ -1,5 +1,5 @@
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search.js");?>
+<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search_subsrep.js");?>
 <!--[if lt IE 8]><? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/excanvas.min.js");?><![endif]--> 
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/jquery.flot.js");?>
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/jquery.flot.symbol.js");?>
