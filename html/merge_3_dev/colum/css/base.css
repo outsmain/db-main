@@ -1,0 +1,12 @@
+@charset "utf-8";
+/* CSS Document */
+body{ margin:0; padding:0; background-color:#FFFF00;}
+.clear{ clear:both;}
+#container{ width:98%; max-width:1500px; margin:1% auto 0 auto; background-color:#CCCCCC;} 
+#intro{ padding:0 3% 0 3%;}
+h1{ text-align:center; margin:0; padding:2% 0 0 0;}
+h2{ margin:0; padding:0;}
+
+#left{  margin:0 0.5% 0 0.5%;}
+#mid{   margin:0 0.5% 0 0.5%;}
+#right{  margin:0 0.5% 0 0.5%;}

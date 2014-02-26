@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+
+
+<script src="jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+	    $(document).ready(function(){
+			resizeWindow();
+	        $(window).bind("resize", resizeWindow);
+	        function resizeWindow(){    
+	          	var newWindowWidth = $(window).width();
+				$('#trace').text(newWindowWidth);
+				if(newWindowWidth < 801){                
+					//$('link[rel=stylesheet]').attr({href : "css/mobile.css"});              
+					$('#cssDevice').attr({href : "css/mobile.css"});              
+				}else{
+					//$('link[rel=stylesheet]').attr({href : "css/style.css"});
+					$('#cssDevice').attr({href : "css/style.css"});
+				}
+	        }
+	    });
+</script>
+<link href="css/style.css" rel="stylesheet" type="text/css" id="cssDevice" />
+<link href="css/base.css" rel="stylesheet"  type="text/css" />
+</head>
+
+<body>
+	<div id="container">
+    	<h1>Flexible Site (custom layout)</h1>
+        <p id="intro">Hello this is test flexible site bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra bra </p>
+        <div id="wrap-col">
+            <div id="left">
+            	<h2>aaaaaaaaaaaaa</h2>
+                aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa 
+            </div>
+            <div id="mid">
+            	<h2>bbbbbbbbbbb</h2>
+                bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb bbb 
+            </div>
+            <div id="right">
+            	<h2>ccccccccc</h2>
+                ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc ccc 
+            </div>
+            <div class="clear"></div>
+        </div>
+        <p>foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot foot </p>
+    </div>
+	<div id="trace">
+    	trace
+    </div>
+</body>
+</html>
