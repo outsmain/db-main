@@ -1,0 +1,30 @@
+<IfModule mod_rewrite.c>
+Options +FollowSymlinks
+RewriteEngine on
+
+# if a directory or a file exists, use it directly
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RedirectMatch ^/$ http://localhost/merge3dev
+
+
+# otherwise forward it to index.php
+RewriteRule ^confrepos$ index.php?r=confrepos&%{QUERY_STRING}[L]
+RewriteRule ^loginlog$ index.php?r=loginlog&%{QUERY_STRING}[L]
+RewriteRule ^pagename$ index.php?r=pagename/admin [L]
+RewriteRule ^accessname$ index.php?r=accessname/admin [L]
+RewriteRule ^platform$ index.php?r=platform/admin [L]
+RewriteRule ^groupname$ index.php?r=groupname/admin [L]
+RewriteRule ^manageuser$ index.php?r=edituser/admin [L]
+RewriteRule ^edituser/create$ index.php?r=edituser/create[L]
+RewriteRule ^groupname/create$ index.php?r=groupname/create[L]
+RewriteRule ^notaccess$ index.php?r=site/notaccess [L]
+RewriteRule ^accessgroup$ index.php?r=accessgroup/admin [L]
+RewriteRule ^accessgroup/create$ test3/index.php?r=accessgroup/create [L]
+RewriteRule ^subsrep$ index.php?r=Subsrep&%{QUERY_STRING} [L]
+RewriteRule ^authrep$ index.php?r=Authrep/User&serv=LoadUser [L]
+RewriteRule ^authrep$ index.php?r=Authrep/User&serv=LoadUser [L]
+RewriteRule ^authrep/user$ index.php?r=Authrep/User&serv=LoadUser [L]
+RewriteRule ^authrep/device$ index.php?r=Authrep/Device&serv=LoadDevice [L]
+</IfModule>
+
