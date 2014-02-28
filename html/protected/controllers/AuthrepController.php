@@ -39,7 +39,7 @@ class AuthrepController extends Controller
 			$user = explode(',',$_POST['username']);
 			$str = '';
 			foreach($user as $item){
-				$str .= "'".trim($item)."',";
+				if(!empty($item)) $str .= "'".trim($item)."',";
 			}
 			$str = '('.substr($str,0,-1).')';
 			$strUsername = 'AND a.user_name IN '.$str;
@@ -47,7 +47,7 @@ class AuthrepController extends Controller
 		if(!empty($_POST['event'])){
 			$strEvent = "AND a.status LIKE '%".$_POST['event']."'";
 		}
-		if(!empty($_POST['ne_name'])){
+		/*if(!empty($_POST['ne_name'])){
 			$ne_name = explode(',',$_POST['ne_name']);
 			foreach($ne_name as $item){
 				$node = explode('xx#xx',$item);
@@ -57,6 +57,28 @@ class AuthrepController extends Controller
 						$strNodeName .= "'".trim($val)."',";
 					}else{
 						$strNodeIp .= "'".trim($val)."',";
+					}
+				}
+			}
+			if(!empty($strNodeName)){
+				$strNodeName = '('.substr($strNodeName,0,-1).')';
+				$strNodeName = 'AND a.node_name IN '.$strNodeName;
+			}
+			if(!empty($strNodeIp)){
+				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
+				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
+			}
+		}*/
+
+		if(!empty($_POST['ne_name'])){
+			$ne_name = explode(',',$_POST['ne_name']);
+			foreach($ne_name as $item){
+				if(!empty($item)){					
+					$long = ip2long(trim($item));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($item)."',";
+					}else{
+						$strNodeIp .= "'".trim($item)."',";
 					}
 				}
 			}
@@ -184,7 +206,7 @@ class AuthrepController extends Controller
 		if(!empty($_POST['summary_type'])){
 			$strEvent = "AND a.sum_dur = '".$_POST['summary_type']."'";
 		}
-		if(!empty($_POST['ne_name'])){
+		/*if(!empty($_POST['ne_name'])){
 			$ne_name = explode(',',$_POST['ne_name']);
 			foreach($ne_name as $item){
 				$node = explode('xx#xx',$item);
@@ -205,8 +227,30 @@ class AuthrepController extends Controller
 				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
 				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
 			}
-		}
+		}*/
 		
+		if(!empty($_POST['ne_name'])){
+			$ne_name = explode(',',$_POST['ne_name']);
+			foreach($ne_name as $item){
+				if(!empty($item)){					
+					$long = ip2long(trim($item));
+					if ($long == -1 || $long === FALSE) {
+						$strNodeName .= "'".trim($item)."',";
+					}else{
+						$strNodeIp .= "'".trim($item)."',";
+					}
+				}
+			}
+			if(!empty($strNodeName)){
+				$strNodeName = '('.substr($strNodeName,0,-1).')';
+				$strNodeName = 'AND a.node_name IN '.$strNodeName;
+			}
+			if(!empty($strNodeIp)){
+				$strNodeIp = '('.substr($strNodeIp,0,-1).')';
+				$strNodeIp = 'AND a.node_ip IN '.$strNodeIp;
+			}
+		}
+
 		$aaData = array();
 		$aColumns = array('a.last_login','a.update_date','a.node_name','a.node_ip','a.accept_num','a.reject_num','a.success_rate','a.login_rate','a.cmd_num','a.cmd_rate');
 		$sWhere = "";
