@@ -9,6 +9,7 @@ var realtime = {
 	"event" : "",
 	"username" : "",
 	"nodename" : new Array(),
+	"click" : ""
 };
 
 function TimeDifferenceCounter(datestart,dateend){ //in > 2013-11-03 00:00:01
@@ -198,14 +199,19 @@ function CheckStatus(t, val){
 		type: 'post',
 		data: {'str':t},
 		success: function(data){
-			if(data === false){
+			if(data == false){
 				if(val > 100){
 					window.clearTimeout(timer);
 					timer = setTimeout(function(){CheckStatus(t,val)},3000);
+				}else if(val == ""){
+					return false;
 				}else{	
 					window.clearTimeout(timer);
 					timer = setTimeout(function(){CheckStatus(t,val)},800);
 				}
+			}else if(data == null){
+				window.clearTimeout(timer);
+				window.stop();
 			}else{
 				$("#dia-exp").dialog('close');
 			}
@@ -407,6 +413,8 @@ function OpenRealtime(){
 		realtime.iDisplay_Realtime = null;
 		realtime.stopRealtime = false;
 		realtime.chkRealtime = false;
+		$("#rerun").button({disabled:true});
+		$("#select").button({disabled:true});
 		LoadRealtime();
 		
 	}else{
@@ -440,6 +448,8 @@ function OpenRealtime(){
 				}
 			});
 		}
+		$("#rerun").button({disabled:false});
+		$("#select").button({disabled:false});
 		realtime.stopRealtime = true;
 	}
 }
@@ -541,7 +551,7 @@ function LoadUserTable(){
 			aoData.push( {"name": "end_date", "value": $("#"+cl+"_EndDate").val()} );
 			aoData.push( {"name": "ne_name", "value": $('#NodeName').val()} );
 			aoData.push( {"name": "event", "value": $('#Event option:selected').val()} );
-			aoData.push( {"name": "click", "value": false} );
+			aoData.push( {"name": "click", "value": realtime.click } );
 		},
 		"fnInitComplete": function(oSettings) {
 			$('#frmExport').show();

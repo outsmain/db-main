@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.js");?>
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.time.js");?>
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search_auth.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/flot/jquery.flot.time.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search_auth.js");?>
 <div class="container" id="actualbody">
 <?php 
 $serv = $_GET["serv"];
@@ -122,7 +122,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				<div class="col_2">
                      <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'summary_type');?></div>
                     <div class="input">
-						<? 
+						<?php 
 						echo CHtml::dropDownList('summary_type','',array('DAILY'=>'Daily', 'DATE_HOURLY'=>'Date Hourly'));
 						Yii::import('application.extensions.multiselect.multiSelect');
 						$options = array(
@@ -214,10 +214,10 @@ $form=$this->beginWidget('CActiveForm', array(
 	var urlSuccessRate = "<?php echo $this->createUrl('SuccessRate')?>";
 	var urlLoginRate = "<?php echo $this->createUrl('LoginRate')?>";
 	var urlCmdRate = "<?php echo $this->createUrl('CmdRate')?>";
-	var cl = '<?=get_class($model)?>';
+	var cl = '<?php echo get_class($model)?>';
 	$(document).ready(function(){
-		var StartDate = $('#'+"<?=get_class($model)?>"+'_StartDate');
-		var EndDate = $('#'+"<?=get_class($model)?>"+'_EndDate');
+		var StartDate = $('#'+"<?php echo get_class($model)?>"+'_StartDate');
+		var EndDate = $('#'+"<?php echo get_class($model)?>"+'_EndDate');
 		if($('.errorSummary').css('display') !== 'none') return false;
 		if(StartDate.val() == ''){
 			$('#'+cl+'_StartDate').parent().removeClass('input').addClass('input error');
@@ -284,15 +284,18 @@ $form=$this->beginWidget('CActiveForm', array(
 			});
 			$('#excel').one("click", function(){
 				menu.hide();
-				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export excel (.*xlsx)'});
+				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export excel (.*xlsx)',close: function(event, ui){ CheckStatus("","");}});
 				$("#frmExport").attr("action","<?php echo $this->createUrl('DeviceExportExcel')?>").submit();
 				CheckStatus('exl',$('#num_row').val());
 			});
 			$('#txt').one("click", function() {
 				menu.hide();
-				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export tab delimited (*.txt)'});
+				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export tab delimited (*.txt)',close: function(event, ui){ CheckStatus("","");}});
 				$("#frmExport").attr("action","<?php echo $this->createUrl('DeviceExportTxt')?>").submit();
 				CheckStatus('txt',$('#num_row').val());
+			});
+			$('body').one('click',function(){
+				menu.hide();
 			});
 				return false;
 			}).parent().buttonset().next().hide().menu();

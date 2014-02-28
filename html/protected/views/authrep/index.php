@@ -1,9 +1,9 @@
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/DataTable/css/dataTable.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/modal.css" type="text/css" media="screen" />
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/modal.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/assets/DataTable/js/jquery.dataTables.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/modal.js");?>
 
-<? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search_auth.js");?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search_auth.js");?>
 <div class="container" id="actualbody">
 <?php 
 $serv = $_GET["serv"];
@@ -75,6 +75,7 @@ $form=$this->beginWidget('CActiveForm', array(
 					$("#error-search").hide();
 					var txt = eval("("+oSettings.jqXHR.responseText+")");
 					$("#tmpSQL").val(txt.tmpSQL);
+					realtime.click = txt.click;
 					$("#num_row").val(txt.iTotalRecords);
 				}
 			});
@@ -122,16 +123,16 @@ $form=$this->beginWidget('CActiveForm', array(
 				<div style="width:50px;float: left;margin-right: 2%;margin-left: 1%;position: relative;">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'realtime');?></div>
                     <div style="padding:0 5px 0 5px;">
-					<? echo CHtml::checkBox("realtime",false,array("id"=>"realtime", "onclick"=>"OpenRealtime();"));?>
+					<?php echo CHtml::checkBox("realtime",false,array("id"=>"realtime", "onclick"=>"OpenRealtime();"));?>
 					</div>
                 </div>
 				<div class="col_2" style="margin-right:20px;width:auto;margin-left:0;">
                     <div style="padding-bottom:10px;"><?php echo $form->labelEx($model,'Event');?></div>
                     <div class="input">
-						<? //echo CHtml::dropDownList('Event','',CHtml::listData(TblAuthacct::model()->findAll(), 'status', 'status'),array('empty' => 'All'));
+						<?php //echo CHtml::dropDownList('Event','',CHtml::listData(TblAuthacct::model()->findAll(), 'status', 'status'),array('empty' => 'All'));
 						echo CHtml::dropDownList('Event','',array('ACCEPT'=>'Accept','REJECT'=>'Reject'),array('empty' => 'All'));
 						?>    
-						<?
+						<?php
 						Yii::import('application.extensions.multiselect.multiSelect');
 						$options = array(
 							'multiple' => false,
@@ -175,7 +176,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				</div>
 				<div class="col_2 last" style="margin-right:20px;width:auto;margin-left:0;">
 					<label>&nbsp;</label>
-					<? 
+					<?php 
 					/*Yii::app()->clientScript->registerScript('alert("ok");');
 					echo CHtml::textField('username','',array('id'=>'username','width'=>100,'maxlength'=>100,"placeholder"=>"CLLI or IP Address","class"=>"medium")); 
 					echo CHtml::activeTextField($model,'',array('id'=>'idTextField','width'=>100,'maxlength'=>100)); 
@@ -253,10 +254,10 @@ $form=$this->beginWidget('CActiveForm', array(
 	var secondurl = "<?php echo $this->createUrl('Detail')?>";
 	var urlExportData ="<?php echo $this->createUrl('CheckExportData')?>";
 	var urlLoadRealtime ="<?php echo $this->createUrl('OpenRealtime')?>";
-	var cl = '<?=get_class($model)?>';
+	var cl = '<?php echo get_class($model)?>';
 	$(document).ready(function(){
-		var StartDate = $('#'+"<?=get_class($model)?>"+'_StartDate');
-		var EndDate = $('#'+"<?=get_class($model)?>"+'_EndDate');
+		var StartDate = $('#'+"<?php echo get_class($model)?>"+'_StartDate');
+		var EndDate = $('#'+"<?php echo get_class($model)?>"+'_EndDate');
 		if($('.errorSummary').css('display') !== 'none') return false;
 		if(StartDate.val() == ''){
 			$('#'+cl+'_StartDate').parent().removeClass('input').addClass('input error');
@@ -305,6 +306,7 @@ $form=$this->beginWidget('CActiveForm', array(
 				var txt = eval('('+oSettings.jqXHR.responseText+')');
 				$('#num_row').val(txt.iTotalRecords);
 				$('#tmpSQL').val(txt.tmpSQL);
+				realtime.click = txt.click;
 				$('#dataTable').hover().css('cursor','pointer');
 				$('#dataTable tbody tr').live('click', function () {
 					var nTds = $('td', this);
@@ -328,23 +330,26 @@ $form=$this->beginWidget('CActiveForm', array(
 					primary: "ui-icon-triangle-1-s"
 				}
 			}).click(function() {
-				var menu = $( this ).parent().next().show().position({
-				my: "left top",
-				at: "left bottom",
-				of: this
-			});
-			$('#excel').one("click", function(){
-				menu.hide();
-				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export excel (.*xlsx)'});
-				$("#frmExport").attr("action","<?php echo $this->createUrl('UserExportExcel')?>").submit();
-				CheckStatus('exl',$('#num_row').val());
-			});
-			$('#txt').one("click", function() {
-				menu.hide();
-				$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export tab delimited (*.txt)'});
-				$("#frmExport").attr("action","<?php echo $this->createUrl('UserExportTxt')?>").submit();
-				CheckStatus('txt',$('#num_row').val());
-			});
+					var menu = $( this ).parent().next().show().position({
+					my: "left top",
+					at: "left bottom",
+					of: this
+				});
+				$('#excel').one("click", function(){
+					menu.hide();
+					$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export excel (.*xlsx)',close: function(event, ui){ CheckStatus("","");}});
+					$("#frmExport").attr("action","<?php echo $this->createUrl('UserExportExcel')?>").submit();
+					CheckStatus('exl',$('#num_row').val());
+				});
+				$('#txt').one("click", function() {
+					menu.hide();
+					$("#dia-exp").dialog({ position: {my:'right bottom', at:'right bottom', of:window}, width:250, hieght:140, title:'Export tab delimited (*.txt)', close: function(event, ui){ CheckStatus("","");}});
+					$("#frmExport").attr("action","<?php echo $this->createUrl('UserExportTxt')?>").submit();
+					CheckStatus('txt',$('#num_row').val());
+				});
+				$('body').one('click',function(){
+					menu.hide();
+				});
 				return false;
 			}).parent().buttonset().next().hide().menu();
 	});

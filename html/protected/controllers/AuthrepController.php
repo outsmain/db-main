@@ -110,7 +110,7 @@ class AuthrepController extends Controller
 			}
 		}
 
-		if((strtotime(date('d-m-Y')) == strtotime($_POST['start_date'])) && empty($_POST['username']) && empty($_POST['ne_name']) && empty($_POST['event']) && $_POST['click'] === 'false'){
+		if((strtotime(date('d-m-Y')) == strtotime($_POST['start_date'])) && (strtotime(date('d-m-Y 23:59:59')) == strtotime($_POST['end_date'])) && empty($_POST['username']) && empty($_POST['ne_name']) && empty($_POST['event']) && $_POST['click'] === 'false'){
 			$strSQL = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a, (SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT) b WHERE UNIX_TIMESTAMP(DATE(a.login_date)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;
@@ -130,6 +130,7 @@ class AuthrepController extends Controller
 			}
 			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
 			$n = count($query);
+			$click = 'false';
 		}else{
 			$strSQL = "SELECT DATE_FORMAT(a.login_date,'%d %b %Y %H:%i:%s') AS login_date,a.node_name,a.node_ip,a.user_name,a.user_ip,a.cmd FROM NE_AUTHACCT a
 			WHERE UNIX_TIMESTAMP(a.login_date) >= UNIX_TIMESTAMP('".$start_date."') AND UNIX_TIMESTAMP(a.login_date) <= UNIX_TIMESTAMP('".$end_date."') ".$strEvent." ".$strNodeName." ".$strNodeIp." ".$strUsername;
@@ -152,9 +153,10 @@ class AuthrepController extends Controller
 
 			$query = Yii::app()->db->createCommand($tmpSQL)->queryAll();
 			$n = count($query);
+			$click = 'true';
 		}
 		
-		$arrData = array('sEcho'=>$_POST['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL);
+		$arrData = array('sEcho'=>$_POST['sEcho'], 'iTotalRecords'=>$n, 'iTotalDisplayRecords'=>$n, 'aaData'=>$aaData, 'tmpSQL'=>$tmpSQL, 'click'=>$click);
 		echo CJSON::encode($arrData);
 	}
 	
@@ -401,12 +403,18 @@ class AuthrepController extends Controller
 		$objPHPExcel->setActiveSheetIndex(0);
 		
 		// Redirect output to a client’s web browser (Excel2007)
-		$filename = "Report_user_".date("Y-m-d_H-i",time()).".xlsx"; 
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="'.$filename);
-		header('Cache-Control: max-age=0');
+//		$filename = "Report_user_".date("Y-m-d_H-i",time()).".xlsx"; 
+//		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//		header('Content-Disposition: attachment;filename="'.$filename);
+//		header('Cache-Control: max-age=0');
+//		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$filename = "Report_user_".date("Y-m-d_H-i",time()).".xls";
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $filename . '"');
+		header('Cache-Control: max-age=0');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
 		$objWriter->save('php://output');
 		
 		self::CreateFileCheck('excel');
@@ -434,7 +442,7 @@ class AuthrepController extends Controller
 		 ->setKeywords("Report Authen Log By Device")
 		 ->setCategory("Report Authen Log By Device");
 	
-		// Add some data
+//		// Add some data
 		$objPHPExcel->getActiveSheet()->setTitle('Device-1');
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
@@ -501,17 +509,23 @@ class AuthrepController extends Controller
 			$i++;
 		}
 
-		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+//		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
 		$objPHPExcel->setActiveSheetIndex(0);
 		
-		// Redirect output to a client’s web browser (Excel2007)
-		$filename = "Report_device_".date("Y-m-d_H-i",time()).".xlsx"; 
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="'.$filename);
+		// Redirect output to a client’s web browser (Excel2007) 
+//		$filename = "Report_device_".date("Y-m-d_H-i",time()).".xlsx"; 
+//		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//		header('Content-Disposition: attachment;filename="'.$filename);
+//		header('Cache-Control: max-age=0');
+//		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		
+		$filename = "Report_device_".date("Y-m-d_H-i",time()).".xls";
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $filename . '"');
 		header('Cache-Control: max-age=0');
-
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 		$objWriter->save('php://output');
+		spl_autoload_register(array('YiiBase','autoload'));
 		
 		self::CreateFileCheck('excel');
 		
@@ -524,7 +538,7 @@ class AuthrepController extends Controller
 		ini_set("memory_limit","256M");
 		set_time_limit(0);
 		$row = Yii::app()->db->createCommand($_POST['tmpSQL'])->queryAll();
-		$strFileName = "assets\Report_user_".date("Y-m-d_H-i",time()).".txt";
+		$strFileName = "assets/Report_user_".date("Y-m-d_H-i",time()).".txt";
 		$fileName = "Report_user_".date("Y-m-d_H-i",time()).".txt";
 		$objFopen = fopen($strFileName, 'w');
 		$tab = (chr(011)); 
@@ -562,7 +576,7 @@ class AuthrepController extends Controller
 		ini_set("memory_limit","256M");
 		set_time_limit(0);
 		$row = Yii::app()->db->createCommand($_POST['tmpSQL'])->queryAll();
-		$strFileName = "assets\Report_device_".date("Y-m-d_H-i",time()).".txt";
+		$strFileName = "assets/Report_device_".date("Y-m-d_H-i",time()).".txt";
 		$fileName = "Report_device_".date("Y-m-d_H-i",time()).".txt";
 		$objFopen = fopen($strFileName, 'w');
 		$tab = (chr(011)); 
@@ -608,14 +622,16 @@ class AuthrepController extends Controller
 			}else{
 				echo "false";
 			}
-		}else{
+		}elseif($_POST['str'] == 'txt'){
 			if(is_file("assets/chktxt_".Yii::app()->session->sessionID.".tmp")){
 				unlink("assets/chktxt_".Yii::app()->session->sessionID.".tmp");
 				echo "true";
-				exit;
 			}else{
 				echo "false";
 			}
+		}else{
+			echo "";
+			Yii::app()->end();
 		}
 		ob_end_flush();
 	}
@@ -636,12 +652,8 @@ class AuthrepController extends Controller
 		if(is_file("assets/chkexcel_".Yii::app()->session->sessionID.".tmp")){
 			unlink("assets/chkexcel_".Yii::app()->session->sessionID.".tmp");
 		}
-		if(is_file("assets/xxx.txt")){
-			unlink("assets/xxx.txt");
-		}
 		$dir = scandir("assets");
-		foreach($dir as $item){
-			
+		foreach($dir as $item){	
 			if(pathinfo($item, PATHINFO_EXTENSION) === 'tmp'){
 				$strDateTime1 = date("Y-m-d H:i:s", fileatime('assets/'.$item));
 				$strDateTime2 = date("Y-m-d H:i:s");
