@@ -1,6 +1,6 @@
 <?php
 if($user = Yii::app()->session['user']==''){
-$this->redirect('index.php?r=site/login');
+$this->redirect(Yii::app()->request->baseUrl.'/index.php?r=site/login');
 exit;
 }
 $url= $_SERVER['REQUEST_URI'];
@@ -10,12 +10,12 @@ $action ="OPEN";
 Func::add_loglogmodify($user,$status,$action,$url); 
 $p_allow = Func::checkRule($url,$user);
 
-	if($p_allow == "not_allow"){
+/* 	if($p_allow == "not_allow"){
 		$status ="INVALID_COMMAND";
 		Func::add_loglogmodify($user,$status,$action,$url); 
 		$this->redirect('notaccess');
 		
-	}
+	} */
 ?>
 <?php
 /* @var $this AccessnameController */

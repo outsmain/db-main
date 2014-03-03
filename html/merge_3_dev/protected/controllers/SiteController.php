@@ -52,13 +52,18 @@ class SiteController extends Controller
 	 */
 	public function actionError()
 	{
-		if($error=Yii::app()->errorHandler->error)
+		/* if($error=Yii::app()->errorHandler->error)
 		{
 			if(Yii::app()->request->isAjaxRequest)
 				echo $error['message'];
 			else
 				$this->render('error', $error);
-		}
+		} */
+		$error = Yii::app()->errorHandler->error;
+		if ($error)
+		$this->render('error', array('error'=>$error));
+		else
+		throw new CHttpException(404, 'Page not found.');
 	}
 
 	public function actionRepass(){
@@ -72,6 +77,13 @@ class SiteController extends Controller
 		
 			$model= new LoginForm;
 			$this->render('notaccess',array('model'=>$model));
+			exit;
+		
+	}
+	public function actionNotfound(){
+		
+			$model= new LoginForm;
+			$this->render('notfound',array('model'=>$model));
 			exit;
 		
 	}

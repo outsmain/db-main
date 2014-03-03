@@ -1,7 +1,10 @@
 <?php
 /* @var $this PlatformController */
 /* @var $model PLATFORM */
-
+if($user = Yii::app()->session['user']==''){
+$this->redirect(Yii::app()->request->baseUrl.'/index.php?r=site/login');
+exit;
+}
 $this->breadcrumbs=array(
 	'Platforms'=>array('index'),
 	$model->NAME=>array('view','id'=>$model->ID),

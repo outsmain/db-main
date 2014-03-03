@@ -72,7 +72,7 @@ class PlatformController extends Controller
 			$model->attributes=$_POST['PLATFORM'];
 			if($model->save())
 				Func::add_loglogmodify($user,$status,$action,$name); 
-				$this->redirect(array('view','id'=>$model->ID));
+				$this->redirect(Yii::app()->request->baseUrl.'/platform');
 		}
 
 		$this->render('create',array(
@@ -96,7 +96,7 @@ class PlatformController extends Controller
 			$model->attributes=$_POST['PLATFORM'];
 			if($model->save())
 				Func::add_loglogmodify($user,$status,$action,$id); 
-				$this->redirect(array('view','id'=>$model->ID));
+				$this->redirect(Yii::app()->request->baseUrl.'/platform');
 		}
 
 		$this->render('update',array(

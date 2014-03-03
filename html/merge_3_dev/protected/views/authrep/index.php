@@ -1,6 +1,6 @@
 <?php
 if($user = Yii::app()->session['user']==''){
-$this->redirect('index.php?r=site/login');
+$this->redirect(Yii::app()->request->baseUrl.'/index.php?r=site/login');
 exit;
 }
 $url= $_SERVER['REQUEST_URI'];
@@ -23,6 +23,7 @@ $p_allow = Func::checkRule($url,$user);
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/modal.js");?>
 
 <? Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/search_auth.js");?>
+
 <div class="container" id="actualbody">
 <?php 
 $serv = $_GET["serv"];

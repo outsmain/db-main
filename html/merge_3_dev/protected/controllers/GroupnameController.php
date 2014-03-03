@@ -100,7 +100,7 @@ class GROUPNAMEController extends Controller
 				}
 
 			Func::add_loglogmodify($user,$status,$action,$name); 	
-			$this->redirect(array('admin'));
+			$this->redirect(Yii::app()->request->baseUrl.'/groupname');
 		
 			}
 
@@ -139,7 +139,7 @@ class GROUPNAMEController extends Controller
 				VALUES ('{$id}' ,'{$item_idn}','{$acc_id2}')");
 				$dataReader3n = $command3n->query();
 				} 
-				$this->redirect(array('admin'));
+				$this->redirect(Yii::app()->request->baseUrl.'/groupname');
 			}		
 				$this->render('update',array(
 				'model'=>$model,
@@ -185,7 +185,7 @@ class GROUPNAMEController extends Controller
 			
 				} 
 				Func::add_loglogmodify($user,$status,$action,$id); 
-				$this->redirect(array('admin'));
+				$this->redirect(Yii::app()->request->baseUrl.'/groupname');
 					}	 
 			$this->render('update',array(
 			'model'=>$model,
@@ -229,11 +229,7 @@ class GROUPNAMEController extends Controller
 			$sql2 = "DELETE FROM GROUPAUTHORIZE WHERE GROUPNAME_ID = '{$id}' AND ACCESSGROUP_ID = '{$acc_id}'";
 			$command2 = $connection2->createCommand($sql2);
 			$dataReader2 = $command2->query();
-			
-			
-			$this->redirect(admin);
-			
-			
+			$this->redirect(Yii::app()->request->baseUrl.'/groupname');
 	}
 
 	public function actionIndex()
