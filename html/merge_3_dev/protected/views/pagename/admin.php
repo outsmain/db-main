@@ -1,6 +1,6 @@
 <?php
 if($user = Yii::app()->session['user']==''){
-$this->redirect(Yii::app()->request->baseUrl.'/index.php?r=site/login');
+$this->redirect('index.php?r=site/login');
 exit;
 }
 $url= $_SERVER['REQUEST_URI'];

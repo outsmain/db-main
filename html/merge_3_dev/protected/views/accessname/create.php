@@ -1,10 +1,7 @@
 <?php
 /* @var $this AccessnameController */
 /* @var $model ACCESSNAME */
-if($user = Yii::app()->session['user']==''){
-$this->redirect(Yii::app()->request->baseUrl.'/index.php?r=site/login');
-exit;
-}
+
 $this->breadcrumbs=array(
 	'Accessnames'=>array('index'),
 	'Create',

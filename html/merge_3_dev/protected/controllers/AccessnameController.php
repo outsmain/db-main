@@ -80,7 +80,7 @@ class AccessnameController extends Controller
 		
 				$dataReader3 = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$name); 
-				$this->redirect(Yii::app()->request->baseUrl.'/accessname');
+				$this->redirect(array('admin'));
 			}	
 				}
 			
@@ -122,7 +122,7 @@ class AccessnameController extends Controller
 				$command3 = $connection3->createCommand($sql3);
 				$dataReader3 = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$id); 
-				$this->redirect(Yii::app()->request->baseUrl.'/accessname');
+				$this->redirect(array('admin'));
 			}
 		}else {
 		Yii::app()->clientScript->registerScript('uniqueid', 'alert("Please input IP Address Format");');

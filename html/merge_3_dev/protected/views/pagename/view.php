@@ -21,11 +21,10 @@ $action ="OPEN";
 Func::add_loglogmodify($user,$status,$action,$url); 
 ?>
 
-<div class="container" id="actualbody">
+<h2>View PAGENAME #<?php echo $model->ID; ?></h2>
 <div class="row clearfix">
 <div class="col_12">
 <div class="widget clearfix">
-<h2>View PAGENAME #<?php echo $model->ID; ?></h2>
 <div class="widget_inside">
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
@@ -40,7 +39,6 @@ Func::add_loglogmodify($user,$status,$action,$url);
 		'PREVPAGE',
 	),
 )); ?>
-</div>
 </div>
 </div>
 </div>

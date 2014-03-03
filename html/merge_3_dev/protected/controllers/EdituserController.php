@@ -86,7 +86,7 @@ class EdituserController extends Controller
 				$command = $connection->createCommand($sql);
 				$dataReader = $command->query();
 				Func::add_loglogmodify($user,$status,$action,$name); 	
-				$this->redirect(Yii::app()->request->baseUrl.'/manageuser');
+				$this->redirect(array('admin'));
 				
 			}
 			$this->render('create',array(
@@ -128,7 +128,7 @@ class EdituserController extends Controller
 				$command = $connection->createCommand($sql);
 				$dataReader = $command->query();
 				Func::add_loglogmodify($user,$status,$action,$name); 
-				$this->redirect(Yii::app()->request->baseUrl.'/manageuser');
+				$this->redirect(array('view','id'=>$model->ID));
 			}
 	
 		$this->render('update',array(

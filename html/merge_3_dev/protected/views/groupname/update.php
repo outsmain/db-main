@@ -1,10 +1,7 @@
 <?php
 /* @var $this GROUPNAMEController */
 /* @var $model GROUPNAME */
-if($user = Yii::app()->session['user']==''){
-$this->redirect(Yii::app()->request->baseUrl.'/index.php?r=site/login');
-exit;
-}
+
 $this->breadcrumbs=array(
 	'Groupnames'=>array('index'),
 	$model->NAME=>array('view','id'=>$model->ID),

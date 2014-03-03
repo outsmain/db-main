@@ -69,7 +69,7 @@ class ACCESSGROUPController extends Controller
 				$dataReader = $command3->query();
 				Func::add_loglogmodify($user,$status,$action,$id); 
 				}
-				$this->redirect(Yii::app()->request->baseUrl.'/accessgroup');
+				$this->redirect(array('admin'));
 			}
 
 		$this->render('create',array(
@@ -107,8 +107,7 @@ class ACCESSGROUPController extends Controller
 				$dataReader = $command->query();
 				}
 				Func::add_loglogmodify($user,$status,$action,$id); 
-				//$this->redirect(array('admin'));
-				$this->redirect(Yii::app()->request->baseUrl.'/accessgroup');
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(
