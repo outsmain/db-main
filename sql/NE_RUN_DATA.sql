@@ -7,7 +7,7 @@ CREATE TABLE `NE_RUN_DATA` (
   `NE_RUN_TYPE_ID` int(10) unsigned DEFAULT NULL,
   `DATA` text NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 
 insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (1,'2013-06-06 01:30:20','14.23.9.278',1,'*A:AUISJB2879# show router interface detail
@@ -1637,3 +1637,197 @@ Lag-id Port-id   Adm   Act/Stdby Opr   Description
 
 ===============================================================================
 *A:AUISJB2879#');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (9,'2014-02-20 15:00:00','14.75.100.1',14,'<SJAHAY02000>display mac-address
+MAC Address    VLAN/VSI          Port                      Type       Lsp
+----------------------------------------------------------------------------
+032a-1205-f7c0 589               GigabitEthernet5/0/2      dynamic    0/0
+032a-1205-f7c0 539               GigabitEthernet5/0/2      dynamic    0/0
+032a-1205-e740 540               GigabitEthernet6/0/2      dynamic    0/0
+032a-12cb-b778 625               GigabitEthernet3/0/1      dynamic    0/0
+032a-128d-cfea 2402              GigabitEthernet3/0/1      dynamic    0/0
+032a-12cb-b82f 625               GigabitEthernet3/0/2      dynamic    0/0
+032a-1269-b7c5 2401              GigabitEthernet3/0/2      dynamic    0/0
+032a-1258-239a 2469              GigabitEthernet3/0/3      dynamic    0/0
+032a-12a1-2772 625               GigabitEthernet3/0/3      dynamic    0/0
+032a-1273-9a47 689               Eth-Trunk1                dynamic    0/0
+032a-12f2-c6e2 625               Eth-Trunk1                dynamic    0/0
+032a-12f2-c6e2 689               Eth-Trunk1                dynamic    0/0
+032a-12a7-10d1 689               Eth-Trunk1                dynamic    0/0
+032a-12a5-e76a 689               Eth-Trunk1                dynamic    0/0
+032a-12ad-3501 689               Eth-Trunk1                dynamic    0/0
+
+Total matching items displayed = 15
+
+<SJAHAY02000>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (10,'2014-02-20 15:00:00','14.75.100.1',15,'<SJAHAY02000>display arp
+IP ADDRESS      MAC ADDRESS  EXPIRE(M) TYPE INTERFACE      VPN-INSTANCE
+                                       VLAN
+------------------------------------------------------------------------------
+14.75.53.222    032a-12a8-bcce         I -  Vlanif689
+14.75.53.91     032a-12a5-36cc  16     D-0  Eth-T1
+                                       689
+14.75.53.92     032a-12ad-3501  17     D-0  Eth-T1
+                                       689
+14.75.53.201    032a-12bf-ebc2  19     D-0  Eth-T1
+                                       689
+14.75.100.1   032a-12a8-bccd         I -  MEth0/0/1
+------------------------------------------------------------------------------
+Total:5         Dynamic:3       Static:0    Interface:2
+<SJAHAY02000>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (11,'2014-02-20 15:00:00','14.75.100.1',16,'<SJAHAY02000>display interface
+Aux0/0/1 current state : UP
+Line protocol current state : DOWN
+Description : Port description #1
+The configured MTU is 1500 bytes, and the active MTU is 1500 bytes
+Internet protocol processing : disabled
+ Data drive mode: interactive
+ loopback not set.
+ detect DSR_DTR enabled.
+    last 5 minutes input rate 0.0 bytes/sec, 0.0 packets/sec
+    last 5 minutes output rate 0.0 bytes/sec, 0.0 packets/sec
+    0 packets input,  0 bytes
+    0 packets output,  0 bytes
+    error: Parity 0, Frame 0, Overrun 0, FIFO 0
+ DCD=DOWN  DTR=UP  DSR=DOWN  RTS=UP  CTS=DOWN
+
+Eth-Trunk1 current state : UP
+Description : Port description #2
+Hash arithmetic : According to SMAC
+The Maximum Transmit Unit is 1500 bytes
+Internet protocol processing : disabled
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-12a8-bcce
+
+GigabitEthernet2/0/1 current state : DOWN
+Description : Port description #3
+The Maximum Transmit Unit is 1500 bytes
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-12a8-bcce
+AUTO NEGOTIATION, SPEED 1000M, DUPLEX FULL, LOOPBACK NOT SET;
+Transmitter''s pause : disable,  Receiver''s pause : disable ;
+
+Last 300 seconds input rate:  0 bits/sec, 0 packets/sec
+Last 300 seconds output rate: 0 bits/sec, 0 packets/sec
+
+Input:  0 Packets, 0 Bytes
+        0 Broadcasts, 0 Multicasts
+        0 Oversizes, 0 Undersizes
+        0 FCSs, 0 Pauses
+
+Output: 0 Packets, 0 Bytes
+        0 Broadcasts, 0 Multicasts
+        0 Oversizes, 0 Defers
+        0 FCSs, 0 Pauses
+        0 Collisions
+
+GigabitEthernet3/0/1 current state : UP
+Description : Port description #4
+The Maximum Transmit Unit is 1500 bytes
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-12a8-bcce
+NO AUTO NEGOTIATION, SPEED 1000M, DUPLEX FULL, LOOPBACK NOT SET;
+Transmitter''s pause : disable,  Receiver''s pause : disable ;
+Fiber transceiver information:
+  VendorName : HG GENUINE
+  Compliance : 1000BASE-LX
+  PartNumber : MXPD-243S
+  Modes:         Single-Mode
+  Wave length: 1310 nm
+  Fiber Type Supported and Max Transmission Distance:
+  Length for 9um: 10 km
+  RxPower: -5.44 dBm(Normal)
+  RxPower High Thresholds: -3.00 dBm
+  RxPower Low Thresholds: -19.00 dBm
+  TxPower: -6.24 dBm(Normal)
+  TxPower High Thresholds: -4.26 dBm
+  TxPower Low Thresholds: -8.26 dBm
+  Bias current: 14854 uA(Normal)
+  Bias High Thresholds: 30906 uA
+  Bias Low Thresholds: 2472 uA
+
+Last 300 seconds input rate:  39656 bits/sec, 24 packets/sec
+Last 300 seconds output rate: 235680 bits/sec, 32 packets/sec
+
+Input:  80532705 Packets, 16496959962 Bytes
+        5273 Broadcasts, 2962952 Multicasts
+        0 Oversizes, 0 Undersizes
+        0 FCSs, 0 Pauses
+
+Output: 114004982 Packets, 100043526849 Bytes
+        459265 Broadcasts, 2911777 Multicasts
+        0 Oversizes, 0 Defers
+        0 FCSs, 0 Pauses
+        0 Collisions
+
+MEth0/0/1 current state : DOWN
+Line protocol current state : DOWN
+Description : Port description #5
+The Maximum Transmit Unit is 1500 bytes
+Internet Address is 14.75.100.1/24
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-12a8-bccd
+ negotiation auto ,     speed 10M ,  duplex half, loopback not set
+    5 minutes input rate 0 bytes/sec, 0 packets/sec
+    5 minutes output rate 0 bytes/sec, 0 packets/sec
+    0 packets input,  0 bytes
+    0 input error
+    0 input CRC error
+    0 input ALIGNMENT error
+    0 input RESOURCE error
+    0 input OVERRUN error
+    0 input COLLISION error
+    0 input SHORT FRAME error
+    0 packets output,  0 bytes
+    0 output error
+    0 output MAX COLLISION error
+    0 output LATE COLLISION error
+    0 output UNDERRUN error
+    0 output LOST CRS error
+    0 output DEFERRED
+    0 output SINGLE COLLISION
+    0 output MULTIPLE COLLISION
+    0 output TOTAL COLLISION
+
+NULL0 current state : UP
+Line protocol current state :UP (spoofing)
+Description : Port description #6
+The Maximum Transmit Unit is 1500 bytes
+Internet protocol processing : disabled
+
+Vlanif689 current state : UP
+Line protocol current state : UP
+Description : Port description #7
+The Maximum Transmit Unit is 1500 bytes
+Internet Address is 14.75.53.222/24
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-12a8-bcce
+
+<SJAHAY02000>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (12,'2014-02-20 15:00:00','14.75.100.1',17,'<SJAHAY02000>display eth-trunk
+Eth-Trunk1''s state information is:
+Local:
+LAG ID: 1                   WorkingMode: STATIC
+Preempt Delay: Disabled     Hash arithmetic: According to SMAC
+System Priority: 32768      System ID: 032a-12a8-bcce
+Least Active-linknumber: 1  Max Bandwidth-affected-linknumber: 8
+Operate status: up          Number Of Up Port In Trunk: 1
+--------------------------------------------------------------------------------
+ActorPortName          Status   PortType PortPri PortNo PortKey PortState Weight
+GigabitEthernet5/0/1   Selected 1GE      32768   2561   305     11111100  1
+
+Partner:
+--------------------------------------------------------------------------------
+ActorPortName          SysPri    SystemID  PortPri PortNo  PortKey   PortState
+GigabitEthernet5/0/1   32768  032a-127f-6f65  32768  38027 32784     01111100
+
+Local:
+LAG ID: 2                   WorkingMode: STATIC
+Preempt Delay: Disabled     Hash arithmetic: According to SMAC
+System Priority: 32768      System ID: 032a-12a8-bcce
+Least Active-linknumber: 1  Max Bandwidth-affected-linknumber: 8
+Operate status: up          Number Of Up Port In Trunk: 1
+--------------------------------------------------------------------------------
+ActorPortName          Status   PortType PortPri PortNo PortKey PortState Weight
+GigabitEthernet5/0/2   Selected 1GE      32768   2561   305     11111100  1
+
+Partner:
+--------------------------------------------------------------------------------
+ActorPortName          SysPri    SystemID  PortPri PortNo  PortKey   PortState
+GigabitEthernet5/0/2   32768  032a-127f-6f66  32768  38027 32784     01111100
+
+<SJAHAY02000>');
