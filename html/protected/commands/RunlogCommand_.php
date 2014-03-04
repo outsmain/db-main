@@ -1,9 +1,50 @@
 <?php
-class RunlogCommand extends CConsoleCommand
+$yii=dirname(__FILE__).'/../../framework/yii.php';
+$config=dirname(__FILE__).'/../../protected/config/console.php';
+require_once($yii);
+$arr = require_once($config);
+
+class RunlogCommand
 {
-    public function actionIndex($start, $end){
+	public $con = null;
+	public function __construct($arr){
+		$db = $arr['components']['db'];
+		try {
+			$this->con = new PDO($db['connectionString'], $db['username'], $db['password']);
+		} catch (PDOException $e) {
+			echo 'Connection failed: ' . $e->getMessage();
+			exit;
+		}
+	}
+
+	public function LoadSQL($strSQL){
+		$sth = $this->con->query($strSQL)or die(print_r($db->errorInfo(), true));
+		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $result;
+	}
+
+	public function QuerySQL($strSQL){
+		$sth = $this->con->query($strSQL)or die(print_r($db->errorInfo(), true));
+	}
+
+    public function index($start, $end){
+		if(empty($start) && empty($end)){
+			echo "Please input start date and end date.\n";
+			exit;
+		}else if(empty($start)){
+			echo "Please input start date.\n";
+			exit;
+		}else if(empty($end)){
+			echo "Please input end date.\n";
+			exit;
+		}else{
+			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $start) || !preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $end)) {
+				echo "Please input date format YYYY-MM-DD H:i:s\n";
+				exit;
+			}
+		}
 		$strSQL = "SELECT * FROM ATTRIB_TYPE";
-		$arrType = Yii::app()->db->createCommand($strSQL)->queryAll();
+		$arrType = self::LoadSQL($strSQL);
 		foreach($arrType as $key=>$type){
 			 if($type['BRAND'] == 'ALL' && $type['MODEL'] == 'ALL' && $type['VERSION'] == 'ALL'){
 				switch($type['NAME']){
@@ -29,7 +70,7 @@ class RunlogCommand extends CConsoleCommand
 		}
 
 		$strSQLM = "SELECT b.brand,b.model,b.sw_ver,a.* FROM NE_RUN_DATA a JOIN NE_LIST b ON a.UPDATE_DATE BETWEEN '".$start."' AND '".$end."' AND b.ip_addr = a.IP_ADDR JOIN NE_RUN_TYPE c ON a.NE_RUN_TYPE_ID = c.ID";
-		$row = Yii::app()->db->createCommand($strSQLM)->queryAll();
+		$row =  self::LoadSQL($strSQLM);
 		foreach($row as $item){
 			$arrAttList = array();
 			$arrAttListId = array();
@@ -67,13 +108,13 @@ class RunlogCommand extends CConsoleCommand
 			}
 			if(!isset($arrAttList[0])){
 				$sql = "SELECT * FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID IN ('".$IdGroup."','".$IdIP."','".$IdMac."','".$IdOther."','".$IdNEXT_HOP_IP."')";
-				$rsSearch = Yii::app()->db->createCommand($sql)->queryAll();
+				$rsSearch = self::LoadSQL($sql);
 				foreach($rsSearch as $val){
 					$arrAttList[] = $val['NAME'].'-'.$val['ATTRIB_TYPE_ID'];
 				}
 			}
 			
-			$chkDup = Yii::app()->db->createCommand("SELECT * FROM NE_RUN_ATTRIB WHERE UPDATE_DATE = '".$item['UPDATE_DATE']."' AND IP_ADDR = '".$item['IP_ADDR']."'")->queryAll();
+			$chkDup = self::LoadSQL("SELECT * FROM NE_RUN_ATTRIB WHERE UPDATE_DATE = '".$item['UPDATE_DATE']."' AND IP_ADDR = '".$item['IP_ADDR']."'");
 			$arrchkDup = array();
 			if(isset($chkDup[0])){
 				foreach($chkDup as $val){
@@ -88,13 +129,13 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
@@ -109,12 +150,12 @@ class RunlogCommand extends CConsoleCommand
 								if(isset($arrAttList[0])){
 									if(!in_array($key2.'-'.$IdGroup,$arrAttList)){
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$IdGroup);
 									}				
 								}else{
 									$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$key2."')";
-									$query = Yii::app()->db->createCommand($strSQL)->query();
+									$query = self::QuerySQL($strSQL);
 									array_push($arrAttList, $key2.'-'.$IdGroup);
 								}
 								$Parrent_Group[] = $key2;
@@ -135,7 +176,7 @@ class RunlogCommand extends CConsoleCommand
 												}
 												if(!in_array($val4['key'].'-'.$id,$arrAttList)){
 													$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$val4['key']."')";
-													$query = Yii::app()->db->createCommand($strSQL)->query();
+													$query = self::QuerySQL($strSQL);
 													array_push($arrAttList, $val4['key'].'-'.$id);
 												}
 												
@@ -152,18 +193,18 @@ class RunlogCommand extends CConsoleCommand
 						$Entry_id = $key+1;
 						if(count($val) > 0){
 							foreach($val as $key2=>$val2){
-								$ParrentID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$Parrent_Group_Id[$i]."' AND NAME = '".$Parrent_Group[$i]."'")->queryAll();
-								$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$Parrent_Group_Id[$i+1]."' AND NAME = '".$key2."'")->queryAll();
+								$ParrentID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$Parrent_Group_Id[$i]."' AND NAME = '".$Parrent_Group[$i]."'");
+								$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$Parrent_Group_Id[$i+1]."' AND NAME = '".$key2."'");
 								$i++;
 								if(count($val2) > 0){
 									foreach($val2 as $key3=>$val3){
 										if(count($val3) > 0){
 											foreach($val3 as $key4=>$val4){
-												$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE NAME = '".$val4['key']."' LIMIT 1")->queryAll();
+												$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE NAME = '".$val4['key']."' LIMIT 1");
 												$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID[0]['ID'].'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val4['value'];
 												if(!in_array($strChk, $arrchkDup)){
 													$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,PARENT_GROUP_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$ParrentID[0]['ID']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val4['value']."')";
-													Yii::app()->db->createCommand($strSQL)->query();
+													self::QuerySQL($strSQL);
 													array_push($arrchkDup, $strChk);
 												}
 											}
@@ -181,18 +222,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 					
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
@@ -213,19 +254,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key3.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key3.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key3.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val3;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val3."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -243,19 +284,19 @@ class RunlogCommand extends CConsoleCommand
 									if(isset($arrAttList[0])){
 										if(!in_array($key2.'-'.$id,$arrAttList)){
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}				
 									}else{
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$id);
 									}
-									$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+									$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 									$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 									if(!in_array($strChk, $arrchkDup)){
 										$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-										Yii::app()->db->createCommand($strSQL)->query();
+										self::QuerySQL($strSQL);
 										array_push($arrchkDup, $strChk);
 									}
 								}
@@ -269,19 +310,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 					
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
-					
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
 						if(count($val) > 0){
@@ -298,19 +338,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key3.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key3.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key3.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val3;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val3."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -325,19 +365,19 @@ class RunlogCommand extends CConsoleCommand
 									if(isset($arrAttList[0])){
 										if(!in_array($key2.'-'.$id,$arrAttList)){
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}				
 									}else{
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$id);
 									}
-									$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+									$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 									$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 									if(!in_array($strChk, $arrchkDup)){
 										$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-										Yii::app()->db->createCommand($strSQL)->query();
+										self::QuerySQL($strSQL);
 										array_push($arrchkDup, $strChk);
 									}
 								}
@@ -351,18 +391,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 					
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
@@ -380,19 +420,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key3.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key3.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key3.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val3;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val3."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -407,19 +447,19 @@ class RunlogCommand extends CConsoleCommand
 									if(isset($arrAttList[0])){
 										if(!in_array($key2.'-'.$id,$arrAttList)){
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}				
 									}else{
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$id);
 									}
-									$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+									$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 									$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 									if(!in_array($strChk, $arrchkDup)){
 										$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-										Yii::app()->db->createCommand($strSQL)->query();
+										self::QuerySQL($strSQL);
 										array_push($arrchkDup, $strChk);
 									}
 								}
@@ -433,18 +473,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 					
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
@@ -456,19 +496,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key3.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key3.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key3.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val3;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val3."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -477,19 +517,19 @@ class RunlogCommand extends CConsoleCommand
 									if(isset($arrAttList[0])){
 										if(!in_array($key2.'-'.$id,$arrAttList)){
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}				
 									}else{
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$id);
 									}
-									$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+									$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 									$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 									if(!in_array($strChk, $arrchkDup)){
 										$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-										Yii::app()->db->createCommand($strSQL)->query();
+										self::QuerySQL($strSQL);
 										array_push($arrchkDup, $strChk);
 									}
 								}
@@ -503,19 +543,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 					
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
-					
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
 						if(count($val) > 0){
@@ -526,19 +565,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key3.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key3.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key3.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val3;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val3."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -547,19 +586,19 @@ class RunlogCommand extends CConsoleCommand
 									if(isset($arrAttList[0])){
 										if(!in_array($key2.'-'.$id,$arrAttList)){
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}				
 									}else{
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$id);
 									}
-									$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+									$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 									$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 									if(!in_array($strChk, $arrchkDup)){
 										$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-										Yii::app()->db->createCommand($strSQL)->query();
+										self::QuerySQL($strSQL);
 										array_push($arrchkDup, $strChk);
 									}
 								}
@@ -573,19 +612,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 					
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
-					
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
 						if(count($val) > 0){
@@ -596,19 +634,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key3.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key3.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key3."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key3.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key3."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val3;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val3."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -617,19 +655,19 @@ class RunlogCommand extends CConsoleCommand
 									if(isset($arrAttList[0])){
 										if(!in_array($key2.'-'.$id,$arrAttList)){
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}				
 									}else{
 										$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-										$query = Yii::app()->db->createCommand($strSQL)->query();
+										$query = self::QuerySQL($strSQL);
 										array_push($arrAttList, $key2.'-'.$id);
 									}
-									$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+									$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 									$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 									if(!in_array($strChk, $arrchkDup)){
 										$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-										Yii::app()->db->createCommand($strSQL)->query();
+										self::QuerySQL($strSQL);
 										array_push($arrchkDup, $strChk);
 									}
 								}
@@ -643,18 +681,18 @@ class RunlogCommand extends CConsoleCommand
 					if(isset($arrAttList[0])){
 						if(!in_array($arr['head'][0].'-'.$IdGroup, $arrAttList)){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}else{
 						if(isset($arr['head'][0])){
 							$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$IdGroup."','".$arr['head'][0]."')";
-							$query = Yii::app()->db->createCommand($strSQL)->query();
+							$query = self::QuerySQL($strSQL);
 							array_push($arrAttList, $arr['head'][0].'-'.$IdGroup);
 						}
 					}
 
-					$GroupID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'")->queryAll();
+					$GroupID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$IdGroup."' AND NAME = '".$arr['head'][0]."'");
 					$ParrentID = '';
 					foreach($arr['title'] as $key=>$val){
 						if(count($val) > 0){
@@ -665,19 +703,19 @@ class RunlogCommand extends CConsoleCommand
 										if(isset($arrAttList[0])){
 											if(!in_array($key2.'-'.$id,$arrAttList)){
 												$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-												$query = Yii::app()->db->createCommand($strSQL)->query();
+												$query = self::QuerySQL($strSQL);
 												array_push($arrAttList, $key2.'-'.$id);
 											}				
 										}else{
 											$strSQL = "INSERT INTO ATTRIB_LIST (ATTRIB_TYPE_ID, NAME) VALUES('".$id."','".$key2."')";
-											$query = Yii::app()->db->createCommand($strSQL)->query();
+											$query = self::QuerySQL($strSQL);
 											array_push($arrAttList, $key2.'-'.$id);
 										}
-										$KeyID = Yii::app()->db->createCommand("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'")->queryAll();
+										$KeyID = self::LoadSQL("SELECT ID FROM ATTRIB_LIST WHERE ATTRIB_TYPE_ID = '".$id."' AND NAME = '".$key2."'");
 										$strChk = $item['UPDATE_DATE'].'-'.$item['NE_RUN_TYPE_ID'].'-'.$item['ID'].'-'.$item['IP_ADDR'].'-'.$Entry_id.'-'.$ParrentID.'-'.$GroupID[0]['ID'].'-'.$KeyID[0]['ID'].'-'.$val2;
 										if(!in_array($strChk, $arrchkDup)){
 											$strSQL = "INSERT INTO NE_RUN_ATTRIB (UPDATE_DATE,NE_RUN_TYPE_ID,NE_RUN_DATA_ID,IP_ADDR,ENTRY_ID,GROUP_ID,ATTRIB_KEY_ID,ATTRIB_VALUE) VALUES ('".$item['UPDATE_DATE']."','".$item['NE_RUN_TYPE_ID']."','".$item['ID']."','".$item['IP_ADDR']."','".$Entry_id."','".$GroupID[0]['ID']."','".$KeyID[0]['ID']."','".$val2."')";
-											Yii::app()->db->createCommand($strSQL)->query();
+											self::QuerySQL($strSQL);
 											array_push($arrchkDup, $strChk);
 										}
 									}
@@ -1337,4 +1375,7 @@ class RunlogCommand extends CConsoleCommand
 		return $arr;
 	}
 }
+
+$run = new RunlogCommand($arr);
+$runlog = $run->index($argv[1],$argv[2]);
 ?>
