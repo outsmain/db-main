@@ -399,16 +399,19 @@ function OpenRealtime(){
 		$("#"+cl+"_EndDate").val('');
 		$("#Event").val('');
 		$("#UserName").val('');
-		$("#NodeName").multiselect("getChecked").map(function(k,item){
+		/*$("#NodeName").multiselect("getChecked").map(function(k,item){
 			realtime.nodename[k] = this.id;    
-		}).get();
+		}).get();*/
+		realtime.nodename = $("#NodeName").val();
+		$("#NodeName").val('');
+		$("#NodeName").attr('disabled', true);
 		$("#"+cl+"_StartDate").attr('disabled', true);
 		$("#"+cl+"_EndDate").attr('disabled', true);
 		$("#UserName").attr('disabled', true);
 		$("#Event").multiselect("uncheckAll");
 		$("#Event").multiselect("disable");
-		$("#NodeName").multiselect("uncheckAll");
-		$("#NodeName").multiselect("disable");
+		/*$("#NodeName").multiselect("uncheckAll");
+		$("#NodeName").multiselect("disable");*/
 		$("#submit").attr({'disabled':true,'style':'cursor:not-allowed;'});
 		realtime.iDisplay_Realtime = null;
 		realtime.stopRealtime = false;
@@ -427,18 +430,20 @@ function OpenRealtime(){
 		$("#"+cl+"_StartDate").val(realtime.startdate);
 		$("#"+cl+"_EndDate").val(realtime.enddate);
 		$("#UserName").val(realtime.username);
+		$("#NodeName").val(realtime.nodename);
 		$("#"+cl+"_StartDate").attr('disabled', false);
 		$("#"+cl+"_EndDate").attr('disabled', false);
 		$("#UserName").attr('disabled', false);
+		$("#NodeName").attr('disabled', false);
 		$("#submit").attr({'disabled':false,'style':'cursor:pointer;'});
-		$("#NodeName").multiselect('enable');
+		/*$("#NodeName").multiselect('enable');
 		if(realtime.nodename !== null){
 			var popN = realtime.nodename.pop();
 			$.each(realtime.nodename, function(k,item){
 				$('#'+realtime.nodename[k]).attr('checked',true);
 			});
 			$('#'+popN).click();
-		}
+		}*/
 		$("#Event").multiselect('enable');
 		if(realtime.event !== ''){
 			$("#Event").multiselect("widget").find(":radio").each(function(){

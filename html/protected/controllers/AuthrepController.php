@@ -11,14 +11,24 @@ class AuthrepController extends Controller
 	public function actionIndex()
 	{
 		$model = new NEAUTHACCT;
-		$this->render('index',array('model'=>$model));
+		$strSQL = "SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $val){
+			$rows[] = $val['MaxDate'];
+		}
+		$this->render('index',array('model'=>$model,'row'=>$rows));
 	}
 
 	public function actionUser()
 	{
 		$model = new NEAUTHACCT;
 		self::ClearTempFile();
-		$this->render('index',array('model'=>$model));
+		$strSQL = "SELECT MAX(login_date) AS MaxDate FROM NE_AUTHACCT";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $val){
+			$rows[] = $val['MaxDate'];
+		}
+		$this->render('index',array('model'=>$model,'row'=>$rows));
 	}
 
 	public function actionLoadUser()
@@ -98,7 +108,7 @@ class AuthrepController extends Controller
 		if(isset($_POST['sSearch']) && $_POST['sSearch'] != ""){
 			$sWhere = "AND (";
 			for ($i=0;$i<count($aColumns);$i++){
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch'])."%' OR ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_escape_string($_POST['sSearch'])."%' OR ";
 			}
 			$sWhere = substr_replace($sWhere, "", -3);
 			$sWhere .= ')';
@@ -112,7 +122,7 @@ class AuthrepController extends Controller
 				}else{
 					$sWhere .= " AND ";
 				}
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch_'.$i])."%' ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_escape_string($_POST['sSearch_'.$i])."%' ";
 			}
 		}
 		
@@ -186,7 +196,12 @@ class AuthrepController extends Controller
 	{
 		$model = new NEAUTHSUM;
 		self::ClearTempFile();
-		$this->render('device',array('model'=>$model));
+		$strSQL = "SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM WHERE sum_dur = 'DAILY'";
+		$row = Yii::app()->db->createCommand($strSQL)->queryAll();
+		foreach($row as $val){
+			$rows[] = $val['MaxDate'];
+		}
+		$this->render('device',array('model'=>$model,'row'=>$rows));
 	}
 
 	public function actionLoadDevice()
@@ -257,7 +272,7 @@ class AuthrepController extends Controller
 		if(isset($_POST['sSearch']) && $_POST['sSearch'] != ""){
 			$sWhere = "AND (";
 			for ($i=0;$i<count($aColumns);$i++){
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch'])."%' OR ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_escape_string($_POST['sSearch'])."%' OR ";
 			}
 			$sWhere = substr_replace($sWhere, "", -3);
 			$sWhere .= ')';
@@ -271,7 +286,7 @@ class AuthrepController extends Controller
 				}else{
 					$sWhere .= " AND ";
 				}
-				$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_POST['sSearch_'.$i])."%' ";
+				$sWhere .= $aColumns[$i]." LIKE '%".mysql_escape_string($_POST['sSearch_'.$i])."%' ";
 			}
 		}
 		
@@ -292,7 +307,7 @@ class AuthrepController extends Controller
 		}
 
 		if((strtotime(date('d-m-Y')) == strtotime($_POST['start_date'])) && ($_POST['summary_type'] == 'DAILY') && empty($_POST['ne_name']) && $_POST['click'] === 'false'){
-			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate,id AS DT_RowId FROM NE_AUTHSUM a, (SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM) b WHERE UNIX_TIMESTAMP(DATE(a.last_login)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
+			$strSQL = "SELECT DATE_FORMAT(a.update_date,'%d %b %Y %H:%i:%s') AS update_date,DATE_FORMAT(a.last_login,'%d %b %Y %H:%i:%s') AS last_login,IFNULL(a.node_name,'All') AS node_name,IFNULL(a.node_ip,'All') AS node_ip,CONCAT(a.accept_num,' / ',a.reject_num) AS login_num,a.success_rate,a.login_rate,a.cmd_num,a.cmd_rate,id AS DT_RowId FROM NE_AUTHSUM a, (SELECT MAX(last_login) AS MaxDate FROM NE_AUTHSUM WHERE sum_dur = '".$_POST['summary_type']."') b WHERE UNIX_TIMESTAMP(DATE(a.last_login)) = UNIX_TIMESTAMP(DATE(b.MaxDate)) ";
 			$strSQL .= $strEvent;
 			$strSQL .= $sWhere;
 			$strSQL .= $sOrder;

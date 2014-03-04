@@ -100,7 +100,7 @@ $form=$this->beginWidget('CActiveForm', array(
 								'model'=>$model,
 								'name'=>'StartDate',
 								'id' => 'StartDate',
-								'datetime'=>date('d-m-Y 00:00:00'),
+								'datetime'=>date('d-m-Y',strtotime($row[0])).' 00:00:00',
 							)); ?>
 							 <?php echo $form->error($model,'StartDate'); ?>
                         </div>
@@ -114,7 +114,7 @@ $form=$this->beginWidget('CActiveForm', array(
 							'model'=>$model,
 							'name'=>'EndDate',
 							'id' => 'EndDate',
-							'datetime'=>date('d-m-Y 23:59:59'),
+							'datetime'=>date('d-m-Y',strtotime($row[0])).' 23:59:59',
 						));?>
 						<?php echo $form->error($model,'EndDate'); ?>
                     </div>
