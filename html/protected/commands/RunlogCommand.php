@@ -2,6 +2,25 @@
 class RunlogCommand extends CConsoleCommand
 {
     public function actionIndex($start, $end){
+		$strchk = '';
+		if(empty($start)){
+			$strchk .= "Please input start date.\n";
+		}else{
+			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $start)) {
+				$strchk .= "Please input start date format YYYY-MM-DD H:i:s\n";
+			}
+		}
+		if(empty($end)){
+			$strchk .= "Please input end date.\n";
+		}else{
+			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $end)) {
+				$strchk .= "Please input end date format YYYY-MM-DD H:i:s\n";
+			}
+		}
+		if(!empty($strchk)){
+			echo $strchk;
+			exit;
+		}
 		$strSQL = "SELECT * FROM ATTRIB_TYPE";
 		$arrType = Yii::app()->db->createCommand($strSQL)->queryAll();
 		foreach($arrType as $key=>$type){

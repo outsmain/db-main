@@ -1,35 +1,19 @@
 <?php
-$yii=dirname(__FILE__).'/../../framework/yii.php';
-$config=dirname(__FILE__).'/../../protected/config/console.php';
-require_once($yii);
-$arr = require_once($config);
-
-class CallauthsumCommand
+class CallauthsumCommand extends CConsoleCommand
 {
-	public $con = null;
-	public function __construct($arr){
-		$db = $arr['components']['db'];
-		try {
-			$this->con = new PDO($db['connectionString'], $db['username'], $db['password']);
-		} catch (PDOException $e) {
-			echo 'Connection failed: ' . $e->getMessage();
-			exit;
-		}
-	}
-
-	public function CallAuthSum($startdate, $enddate, $sum_dur, $sum_type){
+	public function actionIndex($start, $end, $sum_dur, $sum_type){
 		$strchk = '';
-		if(empty($startdate)){
+		if(empty($start)){
 			$strchk .= "Please input start date.\n";
 		}else{
-			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $startdate)){
+			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $start)){
 				$strchk .= "Please input start date format YYYY-MM-DD H:i:s\n";	
 			}
 		}
-		if(empty($enddate)){
+		if(empty($end)){
 			$strchk .= "Please input end date.\n";
 		}else{
-			 if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $enddate)){
+			 if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $end)){
 				$strchk .= "Please input end date format YYYY-MM-DD H:i:s\n";	
 			}
 		}
@@ -42,12 +26,9 @@ class CallauthsumCommand
 		if(!empty($strchk)){
 			echo $strchk;
 		}else{
-			$strSQL = "CALL PROC_AUTHACCT_SUM('".$startdate."','".$enddate."','".$sum_dur."','".$sum_type."')";
-			$sth = $this->con->query($strSQL)or die(print_r($db->errorInfo(), true));
+			$strSQL = "CALL PROC_AUTHACCT_SUM('".$start."','".$end."','".$sum_dur."','".$sum_type."')";
+			$query =  Yii::app()->db->createCommand($strSQL)->execute();
 		}
 	}
 }
-
-$run = new CallauthsumCommand($arr);
-$runlog = $run->CallAuthSum($argv[1],$argv[2],$argv[3],$argv[4]);
 ?>

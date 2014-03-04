@@ -28,20 +28,24 @@ class RunlogCommand
 	}
 
     public function index($start, $end){
-		if(empty($start) && empty($end)){
-			echo "Please input start date and end date.\n";
-			exit;
-		}else if(empty($start)){
-			echo "Please input start date.\n";
-			exit;
-		}else if(empty($end)){
-			echo "Please input end date.\n";
-			exit;
+		$strchk = '';
+		if(empty($start)){
+			$strchk .= "Please input start date.\n";
 		}else{
-			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $start) || !preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $end)) {
-				echo "Please input date format YYYY-MM-DD H:i:s\n";
-				exit;
+			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $start)) {
+				$strchk .= "Please input start date format YYYY-MM-DD H:i:s\n";
 			}
+		}
+		if(empty($end)){
+			$strchk .= "Please input end date.\n";
+		}else{
+			if(!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $end)) {
+				$strchk .= "Please input end date format YYYY-MM-DD H:i:s\n";
+			}
+		}
+		if(!empty($strchk)){
+			echo $strchk;
+			exit;
 		}
 		$strSQL = "SELECT * FROM ATTRIB_TYPE";
 		$arrType = self::LoadSQL($strSQL);
