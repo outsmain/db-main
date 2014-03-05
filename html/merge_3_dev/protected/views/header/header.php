@@ -16,10 +16,25 @@ $user_id_en = base64_encode($user_id);
 	<meta charset="utf-8" />
 
         <link rel="apple-touch-con" href="" />
-
-        <title>IPNTM Admin Panel</title>
-
-        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+			<title>
+			<?php $url= $_SERVER['REQUEST_URI'];
+				if(substr($url,-7) =="subsrep"){
+					echo "IPNTM Panel [Subscriber Usage]";
+				}else if(substr($url,-7) =="authrep"){
+					echo "IPNTM Panel [NE Authentication]";
+				}else if(substr($url,-14) =="authrep/device"){
+					echo "IPNTM Panel [NE Authentication]";
+				}else if(substr($url,-12) =="authrep/user"){
+					echo "IPNTM Panel [NE Authentication]";
+				}else if(substr($url,-8) =="loginlog"){
+					echo "IPNTM Panel [Account Management]";
+				}else if(substr($url,-1) =="/"){
+					echo "IPNTM Panel [Dashboard]";
+				}else echo "IPNTM Panel [Account Management]";
+					
+			?>
+			</title
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
 
 	<!-- The Columnal Grid and mobile stylesheet -->
 	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/assets/styles/columnal/columnal.css" type="text/css" media="screen" />
@@ -85,9 +100,7 @@ $user_id_en = base64_encode($user_id);
                     <div class="left">
                         <a href="index.html" id="logo">Muse</a>
                     </div>
-
-                    
-                    <div class="right">
+					<div class="right">
                         
                         <ul id="toolbar">
                             <li><span>Logged in as</span> <a class="user" href="#"><?php echo $user ?></a> <a id="loginarrow" href="#"></a></li>
@@ -100,8 +113,8 @@ $user_id_en = base64_encode($user_id);
 
                         <div id="logindrop">
                             <ul>
-                                <li id="editprofile"><a href="index.php?r=userLogin/update&id=<?php echo $user_id_en; ?>">Edit Profile</a></li>
-                                <li id="logoutprofile"><a href="index.php?r=site/logout">Logout</a></li>
+                                <li id="editprofile"><a href="<?php echo Yii::app()->request->baseUrl; ?>/index.php?r=userLogin/update&id=<?php echo $user_id_en; ?>">Edit Profile</a></li>
+                                <li id="logoutprofile"><a href="<?php echo Yii::app()->request->baseUrl; ?>/index.php?r=site/logout">Logout</a></li>
                             </ul>
 
                         </div>
@@ -128,11 +141,28 @@ $user_id_en = base64_encode($user_id);
 				
             </nav>
 
-<div id="titlediv">
+ <div id="titlediv">
     <div class="clearfix container" id="pattern">
         <div class="row">
             <div class="col_12">
-                <h1><?php echo $page_name ?></h1>
+                <h1>
+					<?php $url= $_SERVER['REQUEST_URI'];
+						if(substr($url,-7) =="subsrep"){
+							echo "Subscriber Usage";
+						}else if(substr($url,-7) =="authrep"){
+							echo "<h1>NE Authentication</h1>";
+						}else if(substr($url,-14) =="authrep/device"){
+							echo "<h1>NE Authentication</h1>";
+						}else if(substr($url,-12) =="authrep/user"){
+							echo "<h1>NE Authentication</h1>";
+						}else if(substr($url,-8) =="loginlog"){
+							echo "<h1>Account Management</h1>";
+						}else if(substr($url,-1) =="/"){
+							echo "<h1>Dashboard</h1>";
+						}else echo "Account Management";
+							
+					?>
+				</h1>
             </div>
         </div>
     </div>
