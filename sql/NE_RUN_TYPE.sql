@@ -8,7 +8,7 @@ CREATE TABLE `NE_RUN_TYPE` (
   `COMMAND` varchar(256) DEFAULT NULL,
   `DESCRIPTION` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 
 
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (1,'ALU','ALL','ALL','show router interface detail',null);
@@ -28,3 +28,8 @@ insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (15,'HWI','CX300','ALL','display arp',null);
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (16,'HWI','CX300','ALL','display interface',null);
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (17,'HWI','CX300','ALL','display eth-trunk',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (18,'HWI','CX600','ALL','display mac-address',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (19,'HWI','CX600','ALL','display arp all',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (20,'HWI','CX600','ALL','display interface',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (21,'HWI','CX600','ALL','display vpls connection',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (22,'HWI','CX600','ALL','display vpls forwarding-info',null);

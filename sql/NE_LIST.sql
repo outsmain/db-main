@@ -21,7 +21,7 @@ CREATE TABLE `NE_LIST` (
   KEY `model` (`model`),
   KEY `brand` (`brand`),
   KEY `ip_addr` (`ip_addr`)
-) ENGINE=InnoDB AUTO_INCREMENT=10269 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9287 DEFAULT CHARSET=latin1;
 
 
 insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (1,'2013-11-13 15:12:06','2013-11-13 15:12:06','10.1.1.1','e1','e1-10.1.1.1','site1','31','6531','','DSLAM','abc1','def1','OUTDOOR',1);
@@ -1078,3 +1078,6 @@ insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`
 insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (9281,'2013-11-21 11:23:50','2013-11-21 11:23:50','11.137.163.195','PKT2L08','08-11.137.163.195','KTP','4B5432','3038','5432','OTHER',null,null,null,1);
 insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (9282,'2013-11-21 11:23:50','2013-11-21 11:23:50','11.136.204.49','CMI1B63','63-11.136.204.49','ANC','4D4931','3633','4931','SWITCH',null,null,'CSN',1);
 insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (9283,'2013-11-21 11:23:50','2013-11-21 11:23:50','11.137.49.173','PKN1B97','97-11.137.49.173','KNP','4B4E31','3937','4E31','AP',null,null,null,1);
+insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (9284,'2013-11-21 11:23:50','2013-11-21 11:23:50','14.75.101.1','SJAHAY02001','23-14.75.101.1','SJA','HWI','CX600','221','ROUTER',null,null,'CSN',1);
+insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (9285,'2013-11-21 11:23:50','2013-11-21 11:23:50','14.75.100.1','SJAHAY02000','18-14.75.100.1','SJA','HWI','CX300','32','SWITCH',null,null,'RCU',1);
+insert into `NE_LIST`(`id`,`add_date`,`update_date`,`ip_addr`,`name`,`comment`,`site_name`,`brand`,`model`,`sw_ver`,`ne_type`,`rw_community`,`ro_community`,`level`,`is_use`) values (9286,'2013-11-21 11:23:50','2013-11-21 11:23:50','14.23.9.278','AUISJB2879','8-14.23.9.278','AUI','ALU','1827','2918','ROUTER',null,null,'CSN',1);

@@ -7,7 +7,7 @@ CREATE TABLE `NE_RUN_DATA` (
   `NE_RUN_TYPE_ID` int(10) unsigned DEFAULT NULL,
   `DATA` text NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 
 insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (1,'2013-06-06 01:30:20','14.23.9.278',1,'*A:AUISJB2879# show router interface detail
@@ -1831,3 +1831,186 @@ ActorPortName          SysPri    SystemID  PortPri PortNo  PortKey   PortState
 GigabitEthernet5/0/2   32768  032a-127f-6f66  32768  38027 32784     01111100
 
 <SJAHAY02000>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (13,'2014-02-20 15:00:00','14.75.101.1',18,'<SJAHAY02001>display mac-address
+MAC address table of slot 5:
+-------------------------------------------------------------------------------
+MAC Address    VLAN/       PEVLAN CEVLAN Port            Type      LSP/LSR-ID
+               VSI/SI                                              MAC-Tunnel
+-------------------------------------------------------------------------------
+032a-1277-ca6d Mgmt_Vlan624 21     38     GE0/1/0         dynamic   5/17216
+032a-1291-db11 Mgmt_Vlan624 -      -      GE0/1/0         dynamic   5/17216
+032a-1275-31fb Mgmt_Vlan529 -      -      GE0/1/0         dynamic   5/17001
+032a-1260-2ccf Mgmt_Vlan529 529    -      GE0/1/1.529     dynamic   5/-
+-------------------------------------------------------------------------------
+Total matching items on slot 5 displayed = 4
+
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (14,'2014-02-20 15:00:00','14.75.101.1',19,'<SJAHAY02001>display arp all
+IP ADDRESS      MAC ADDRESS     EXPIRE(M) TYPE        INTERFACE   VPN-INSTANCE
+                                          VLAN/CEVLAN PVC	
+------------------------------------------------------------------------------
+14.75.146.218  032a-1260-3163             I -         GE0/1/0
+14.75.146.217  032a-12c5-4e5c   18        D-5         GE0/1/0
+14.75.100.2    032a-125c-091b             I -         GE0/0/0
+                                          562/28
+14.75.223.229  032a-121d-7a1b             I -         GE4/0/0.562    garden-2
+                                          562/211
+14.75.223.230  032a-120c-f225   5         D-4         GE4/0/0.562    garden-2
+                                          562/-       212
+------------------------------------------------------------------------------
+Total:5         Dynamic:5       Static:0    Interface:4    Remote:0
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (15,'2014-02-20 15:00:00','14.75.101.1',20,'<SJAHAY02001>display interface
+GigabitEthernet0/0/0 current state : DOWN (ifindex: 3)
+Line protocol current state : DOWN
+Description: Port description #1
+Route Port,The Maximum Transmit Unit is 1500
+Internet Address is 14.75.100.2/30
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-125c-091b
+Media type: twisted-pair, link type: auto negotiation
+loopback: none, promiscuous: off
+maximal BW: 1000M, current BW: 10M, half-duplex mode
+Last physical up time   : -
+Last physical down time : 2013-10-06 10:10:18
+Current system time: 2014-03-03 09:27:40
+Statistics last cleared:never
+    Last 300 seconds input rate: 121 bits/sec, 2918 packets/sec
+    Last 300 seconds output rate: 281 bits/sec, 120 packets/sec
+    Input peak rate 0 bits/sec, Record time: -
+    Output peak rate 0 bits/sec, Record time: 2014-03-03 09:27:40
+    Input: 0 bytes, 0 packets
+    Output: 0 bytes, 0 packets
+    Input:
+      Unicast: 290, Multicast: 291
+      Broadcast: 1201,
+      CRC: 192, Overrun: 291
+      LongPacket: 182, Jabber: 0,
+      Undersized Frame: 1928
+    Output:
+      Unicast: 192, Multicast: 1827
+      Broadcast: 182
+      Total output error: 192,Underrun: 128
+    Last 300 seconds input utility rate:  12.30%
+    Last 300 seconds output utility rate: 9.10%
+
+GigabitEthernet0/1/0 current state : UP (ifindex: 6)
+Line protocol current state : UP
+Last line protocol up time : 2013-10-06 10:11:39
+Description: Port description #2
+Route Port,The Maximum Transmit Unit is 9180
+Internet Address is 14.75.146.218/30
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-1260-3163
+The Vendor PN is RTXM191-400
+The Vendor Name is WTD
+Port BW: 1G, Transceiver max BW: 1G, Transceiver Mode: SingleMode
+WaveLength: 1310nm, Transmission Distance: 10km
+Rx Optical Power:  -6.61dBm, Normal range: [-19.014,  -3.000]dBm
+Tx Optical Power:  -5.50dBm, Normal range: [-9.003,  -3.000]dBm
+Loopback:none, full-duplex mode, negotiation: disable, Pause Flowcontrol:Receive Enable and Send Enable
+Last physical up time   : 2013-10-06 10:11:39
+Last physical down time : 2013-10-06 10:10:38
+Current system time: 2014-03-03 09:27:41
+Statistics last cleared:never
+    Last 300 seconds input rate: 14713673 bits/sec, 1830 packets/sec
+    Last 300 seconds output rate: 3949004 bits/sec, 1356 packets/sec
+    Input peak rate 34682285 bits/sec, Record time: 2014-02-12 03:59:35
+    Output peak rate 5252222 bits/sec, Record time: 2014-01-29 10:08:48
+    Input: 2141526872790 bytes, 2139179943 packets
+    Output: 422483081642 bytes, 1553876170 packets
+    Input:
+      Unicast: 2132112303 packets, Multicast: 7067639 packets
+      Broadcast: 1 packets, JumboOctets: 1084582898 packets
+      CRC: 0 packets, Symbol: 0 packets
+      Overrun: 0 packets, InRangeLength: 0 packets
+      LongPacket: 0 packets, Jabber: 0 packets, Alignment: 0 packets
+      Fragment: 0 packets, Undersized Frame: 0 packets
+      RxPause: 0 packets
+    Output:
+      Unicast: 1545037708 packets, Multicast: 4566076 packets
+      Broadcast: 4272386 packets, JumboOctets: 0 packets
+      Lost: 0 packets, Overflow: 0 packets, Underrun: 0 packets
+      System: 0 packets, Overruns: 0 packets
+      TxPause: 0 packets
+    Last 300 seconds input utility rate:  1.50%
+    Last 300 seconds output utility rate: 0.41%
+
+GigabitEthernet0/1/1.401 current state : UP (ifindex: 50)
+Line protocol current state : UP
+Description: Port description #4
+Route Port,The Maximum Transmit Unit is 9180
+Internet protocol processing : disabled
+IP Sending Frames'' Format is PKTFMT_ETHNT_2, Hardware address is 032a-1260-3164
+Current system time: 2014-03-03 09:27:41
+    Last 300 seconds input rate 0 bits/sec, 0 packets/sec
+    Last 300 seconds output rate 0 bits/sec, 0 packets/sec
+    Input: 0 packets,0 bytes
+           0 unicast,0 broadcast,0 multicast
+           0 errors,0 drops
+    Output:0 packets,0 bytes
+           0 unicast,0 broadcast,0 multicast
+           0 errors,0 drops
+    Last 300 seconds input utility rate:  0.00%
+    Last 300 seconds output utility rate: 0.00%
+
+LoopBack0 current state : UP (ifindex: 47)
+Line protocol current state : UP (spoofing)
+Last line protocol up time : 2013-10-06 10:10:02
+Description:
+Route Port,The Maximum Transmit Unit is 1500
+Internet Address is 14.75.27.151/32
+Current system time: 2014-03-03 09:27:44
+Physical is Loopback
+    Last 300 seconds input rate 0 bits/sec, 0 packets/sec
+    Last 300 seconds output rate 0 bits/sec, 0 packets/sec
+    Input: 0 packets,0 bytes
+           0 unicast,0 broadcast,0 multicast
+           0 errors,0 drops
+    Output:0 packets,0 bytes
+           0 unicast,0 broadcast,0 multicast
+           0 errors,0 drops
+    Last 300 seconds input utility rate:  0.00%
+    Last 300 seconds output utility rate: 0.00%
+
+NULL0 current state : UP (ifindex: 1)
+Line protocol current state : UP (spoofing)
+Description:
+Route Port,The Maximum Transmit Unit is 1500
+Internet protocol processing : disabled
+Current system time: 2014-03-03 09:27:44
+Physical is NULL DEV
+    Last 300 seconds input rate 0 bits/sec, 0 packets/sec
+    Last 300 seconds output rate 0 bits/sec, 0 packets/sec
+    Input: 0 packets,0 bytes
+           0 unicast,0 broadcast,0 multicast
+           0 errors,0 drops
+    Output:0 packets,0 bytes
+           0 unicast,0 broadcast,0 multicast
+           0 errors,0 drops
+    Last 300 seconds input utility rate:  0.00%
+    Last 300 seconds output utility rate: 0.00%
+
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (16,'2014-02-20 15:00:00','14.75.101.1',21,'<SJAHAY02001>display vpls connection
+
+3 total connections,
+connections: 3 up, 0 down, 3 ldp, 0 bgp
+
+VSI Name: VPLS-HSI                 Signaling: ldp
+VsiID      EncapType               PeerAddr         InLabel   OutLabel  VCState
+120008303  vlan                    14.75.254.26     187392    130337    up
+VSI Name: Mgmt_Vlan524             Signaling: ldp
+VsiID      EncapType               PeerAddr         InLabel   OutLabel  VCState
+120000516  ethernet                14.75.254.26     187394    128704    up
+VSI Name: Mgmt_Vlan528             Signaling: ldp
+VsiID      EncapType               PeerAddr         InLabel   OutLabel  VCState
+120000512  ethernet                14.75.254.26     187395    128717    up
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (17,'2014-02-20 15:00:00','14.75.101.1',22,'<SJAHAY02001>display vpls forwarding-info
+Total Number   : 4,        4  up,  0  down
+
+Vsi-Name                        PeerIP         VcOrSiteId  PwState
+VPLS-HSI                        14.75.254.26   120008303   UP
+Mgmt_Vlan524                    14.75.254.26   120000516   UP
+Mgmt_Vlan528                    14.75.254.26   120000512   UP
+Mgmt_Vlan555                    14.75.254.26   120000513   UP
+<SJAHAY02001>');
