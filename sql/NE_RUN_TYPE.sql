@@ -8,7 +8,7 @@ CREATE TABLE `NE_RUN_TYPE` (
   `COMMAND` varchar(256) DEFAULT NULL,
   `DESCRIPTION` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 
 
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (1,'ALU','ALL','ALL','show router interface detail',null);
@@ -33,3 +33,7 @@ insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (20,'HWI','CX600','ALL','display interface',null);
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (21,'HWI','CX600','ALL','display vpls connection',null);
 insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (22,'HWI','CX600','ALL','display vpls forwarding-info',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (23,'HWI','CX600','ALL','display isis route',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (24,'HWI','CX600','ALL','display isis peer',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (25,'HWI','CX600','ALL','display mpls l2vc',null);
+insert into `NE_RUN_TYPE`(`ID`,`BRAND`,`MODEL`,`VERSION`,`COMMAND`,`DESCRIPTION`) values (26,'HWI','CX600','ALL','display isis lsdb',null);

@@ -7,7 +7,7 @@ CREATE TABLE `NE_RUN_DATA` (
   `NE_RUN_TYPE_ID` int(10) unsigned DEFAULT NULL,
   `DATA` text NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 
 
 insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (1,'2013-06-06 01:30:20','14.23.9.278',1,'*A:AUISJB2879# show router interface detail
@@ -2013,4 +2013,135 @@ VPLS-HSI                        14.75.254.26   120008303   UP
 Mgmt_Vlan524                    14.75.254.26   120000516   UP
 Mgmt_Vlan528                    14.75.254.26   120000512   UP
 Mgmt_Vlan555                    14.75.254.26   120000513   UP
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (18,'2014-02-20 15:00:00','14.75.101.1',23,'<SJAHAY02001>display isis route
+
+                         Route information for ISIS(1)
+                         -----------------------------
+
+                        ISIS(1) Level-1 Forwarding Table
+                        --------------------------------
+
+ IPV4 Destination     IntCost    ExtCost ExitInterface   NextHop          Flags
+----------------------------------------------------------------------------
+0.0.0.0/0            10         NULL    GE7/5/0         14.92.174.189   A/-/-/-
+14.92.145.100/30     20         NULL    GE7/5/0         14.92.174.189   A/-/-/-
+14.91.26.109/32      0          NULL    Loop0           Direct          D/-/L/-
+14.92.174.120/30     20         NULL    GE7/5/0         14.92.174.189   A/-/-/-
+     Flags: D-Direct, A-Added to URT, L-Advertised in LSPs, S-IGP Shortcut,
+                               U-Up/Down Bit Set
+
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (19,'2014-02-20 15:00:00','14.75.101.1',24,'<SJAHAY02001>display isis peer
+
+                          Peer information for ISIS(1)
+
+  System Id     Interface          Circuit Id       State HoldTime Type     PRI
+-------------------------------------------------------------------------------
+SJAHAY02002     GE7/5/0            1200000017        Up   23s      L1       --
+SJAHAY02003     GE7/5/1            1200000017        Up   23s      L1       --
+
+Total Peer(s): 1
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (20,'2014-02-20 15:00:00','14.75.101.1',25,'<SJAHAY02001>display mpls l2vc
+ total LDP VC : 3     2 up       1 down
+
+ *client interface     : GigabitEthernet1/1/1.1304
+  session state        : up
+  AC status            : up
+  VC state             : up
+  VC ID                : 125002066
+  VC type              : VLAN
+  destination          : 14.92.254.20
+  local VC label       : 146432       remote VC label      : 128103
+  control word         : disable
+  forwarding entry     : exist
+  local group ID       : 0
+  manual fault         : not set
+  active state         : active
+  link state           : up
+  local VC MTU         : 1500         remote VC MTU        : 1500
+  tunnel policy name   : --
+  traffic behavior name: --
+  PW template name     : --
+  primary or secondary : primary
+  create time          : 723 days, 14 hours, 46 minutes, 1 seconds
+  up time              : 77 days, 4 hours, 5 minutes, 52 seconds
+  last change time     : 77 days, 4 hours, 5 minutes, 52 seconds
+  VC last up time      : 2013/12/26 12:28:21
+  VC total up time     : 723 days, 13 hours, 44 minutes, 5 seconds
+  CKey                 : 10
+  NKey                 : 9
+
+ *client interface     : GigabitEthernet1/1/1.1354
+  session state        : up
+  AC status            : up
+  VC state             : up
+  VC ID                : 124050013
+  VC type              : Ethernet
+  destination          : 14.92.254.20
+  local VC label       : 146433       remote VC label      : 128100
+  control word         : disable
+  forwarding entry     : exist
+  local group ID       : 0
+  manual fault         : not set
+  active state         : active
+  link state           : up
+  local VC MTU         : 9180         remote VC MTU        : 9180
+  tunnel policy name   : --
+  traffic behavior name: --
+  PW template name     : --
+  primary or secondary : primary
+  create time          : 723 days, 14 hours, 45 minutes, 57 seconds
+  up time              : 136 days, 4 hours, 50 minutes, 58 seconds
+  last change time     : 77 days, 4 hours, 6 minutes, 1 seconds
+  VC last up time      : 2013/10/28 11:43:15
+  VC total up time     : 723 days, 12 hours, 11 minutes, 7 seconds
+  CKey                 : 11
+  NKey                 : 9
+
+ *client interface     : GigabitEthernet1/1/2.1301
+  session state        : up
+  AC status            : up
+  VC state             : down
+  VC ID                : 125002534
+  VC type              : VLAN
+  destination          : 14.94.254.20
+  local VC label       : 146449       remote VC label      : 0
+  control word         : disable
+  forwarding entry     : not exist
+  local group ID       : 0
+  manual fault         : not set
+  active state         : active
+  link state           : down
+  local VC MTU         : 1500         remote VC MTU        : 0
+  tunnel policy name   : --
+  traffic behavior name: --
+  PW template name     : --
+  primary or secondary : primary
+  create time          : 658 days, 2 hours, 30 minutes, 34 seconds
+  up time              : 0 days, 0 hours, 0 minutes, 0 seconds
+  last change time     : 379 days, 1 hours, 4 minutes, 3 seconds
+  VC last up time      : 2013/02/03 11:19:03
+  VC total up time     : 275 days, 14 hours, 41 minutes, 46 seconds
+  CKey                 : 27
+  NKey                 : 9
+
+<SJAHAY02001>');
+insert into `NE_RUN_DATA`(`ID`,`UPDATE_DATE`,`IP_ADDR`,`NE_RUN_TYPE_ID`,`DATA`) values (21,'2014-02-20 15:00:00','14.75.101.1',26,'<SJAHAY02001>display isis lsdb
+
+                        Database information for ISIS(1)
+                        --------------------------------
+
+                          Level-1 Link State Database
+
+LSPID                 Seq Num      Checksum      Holdtime      Length  ATT/P/OL
+-------------------------------------------------------------------------------
+SJAHAY02002.00-00*     0x0002a466   0x7af         1077          281     0/0/0
+SJAHAY02003.00-00      0x0002bde7   0x6551        643           281     0/0/0
+SJAHAY02004.00-00+     0x0002bd5d   0xce0a        954           186     0/0/0
+
+   *(In TLV)-Leaking Route, *(By LSPID)-Self LSP, +-Self LSP(Extended),
+           ATT-Attached, P-Partition, OL-Overload
+
 <SJAHAY02001>');
